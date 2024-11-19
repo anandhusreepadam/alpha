@@ -113,3 +113,10 @@ body, h1, p {
     text-decoration: underline;
   }
   
+  .error-message{
+    color:red;
+    font-size: 0.75rem;
+    display: none;
+    position: relative;
+   bottom: 20px;
+  }

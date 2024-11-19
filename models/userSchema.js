@@ -22,6 +22,7 @@ const userSchema = new Schema({
     googleId:{
         type:String,
         unique:true,
+        sparse:true
     },
     Password:{
         type:String,
@@ -36,8 +37,8 @@ const userSchema = new Schema({
         default:false,
     },
     cart:[{
-        typ:Schema.Types.ObjectId,
-        ref:'Cart',
+        type:Schema.Types.ObjectId,
+        ref:"Cart",
     }],
     wallet:{
         type:Number,
@@ -55,19 +56,22 @@ const userSchema = new Schema({
         default:Date.now,
     },
     referalCode:{
-        type:String
+        type:String,
+        // required:true
     },
     redeemed:{
-        type:Boolean
+        type:Boolean,
+        // default:false
     },
     redeemedUsers:[{
         type:Schema.Types.ObjectId,
-        ref:'User'
+        ref:"User",
+        // required:true
     }],
     searchHistory:[{
         category:{
             type:Schema.Types.ObjectId,
-            ref:'Category'
+            ref:"Category"
         },
         brand:{
             type:String
