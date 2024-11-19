@@ -1,6 +1,9 @@
 const User = require('../../models/userSchema')
 const nodemailer = require('nodemailer')
 const env = require('dotenv').config();
+const bcrypt = require('bcrypt')
+
+
 
 const loadSignup = async (req, res) => {
     try {
@@ -11,12 +14,19 @@ const loadSignup = async (req, res) => {
     }
 }
 
-
-
+const loadVerifyOtp = async (req, res) => {
+    try {
+        return res.render('verify-otp')
+    } catch (error) {
+        console.log('Verify page not loading:', error);
+        res.status(500).send('Server Error');
+    }
+}
 
 function generateOtp() {
     return Math.floor(100000 + Math.random() * 900000).toString();
 }
+
 async function sendVerificationEmail(email, otp) {
     try {
         const transporter = nodemailer.createTransport({
@@ -45,10 +55,9 @@ async function sendVerificationEmail(email, otp) {
     }
 }
 
-
 const signup = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { name, phone, email, password } = req.body;
         console.log(req.body)
         const findUser = await User.findOne({ email })
         if (findUser) {
@@ -63,15 +72,16 @@ const signup = async (req, res) => {
         }
 
         req.session.userOtp = otp;
-        req.session.userData = { email, password };
+        req.session.userData = { name,phone,email, password };
 
-        // res.render('verify-otp')
+        res.render('verify-otp')
         console.log("OTP Sent", otp)
     } catch (error) {
         console.error("Signup error", error);
         res.redirect("/pageNotFound");
     }
 }
+
 const loadShopping = async (req, res) => {
     try {
         return res.render('shop');
@@ -80,6 +90,7 @@ const loadShopping = async (req, res) => {
         res.status(500).send('Server Error');
     }
 }
+
 const pageNotFound = async (req, res) => {
     try {
         res.render('page-404')
@@ -87,7 +98,6 @@ const pageNotFound = async (req, res) => {
         res.redirect('/pageNotFound')
     }
 }
-
 
 const loadHomepage = async (req, res) => {
     try {
@@ -98,12 +108,47 @@ const loadHomepage = async (req, res) => {
     }
 }
 
+const securePassword =async(password)=>{
+    try {
+        const paswordHash = await bcrypt.hash(password,10)
 
+        return passwordHash;
+    } catch (error) {
+        
+    }
+}
+
+const verifyOtp = async (req,res)=>{
+    try {
+        const {otp} = req.body;
+        if(otp==req.session.userOtp){
+            const user = req.session.userData;
+            const passwordHash = await securePassword(user.password);
+            const saveUserData = new User({
+                name:user.name,
+                email:user.email,
+                phone:user.phone,
+                password:passwordHash
+            })
+
+            await saveUserData.save();
+            req.session.user = saveUserData._id;
+            res.json({success:true,redirectUrl:'/'})
+        }else{
+            res.status(400).json({success:false,message:'Invalid OTP, Please try again'})
+        }
+    } catch (error) {
+        console.log("Error Verifying OTP",error);
+        res.status(500).json({success:false,message:"An error occured"})
+    }
+}
 
 module.exports = {
     loadHomepage,
     pageNotFound,
     loadSignup,
     loadShopping,
-    signup
+    signup,
+    loadVerifyOtp,
+    verifyOtp
 };

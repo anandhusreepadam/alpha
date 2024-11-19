@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Email - Online Dress Shop</title>
+    <link rel="stylesheet" href="./css/login.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+</head>
+
+<body>
+    <div class="container">
+        <!-- Image Section -->
+        <div class="image-section">
+            <img src="https://via.placeholder.com/600x800" alt="Fashionable Dresses">
+        </div>
+        <!-- Form Section -->
+        <div class="form-section">
+            <h1>Email Verification</h1>
+            <p>Enter the OTP sent to your email to verify your account.</p>
+            <form id="otp-form" action="/verify-otp" method="POST" onsubmit="return validateOTPForm()">
+                <label for="otp">One-Time Password (OTP)</label>
+                <input type="text" id="otp" name="otp" placeholder="Enter OTP" required maxlength="6" pattern="\d{6}">
+
+                <button type="submit" class="verify-btn">Verify</button>
+            </form>
+
+            <p id="timer">Time remaining: 2:00</p>
+
+            <p>Didn't receive an OTP? <button id="resend-btn" class="resend-btn" onclick="resendOTP()" disabled>Resend
+                    OTP</button></p>
+
+            <p>Go back to <a href="/login">Log In</a> or <a href="/signup">Sign Up</a></p>
+        </div>
+    </div>
+
+    <script>
+        // let timerElement = document.getElementById('timer');
+        // let resendButton = document.getElementById('resend-btn');
+        // let timeLeft = 120; // 2 minutes in seconds
+
+        // // Function to start the countdown timer
+        // function startTimer() {
+        //     const interval = setInterval(() => {
+        //         if (timeLeft <= 0) {
+        //             clearInterval(interval);
+        //             timerElement.textContent = "OTP expired. Please request a new one.";
+        //             resendButton.disabled = false;
+        //         } else {
+        //             const minutes = Math.floor(timeLeft / 60);
+        //             const seconds = timeLeft % 60;
+        //             timerElement.textContent = `Time remaining: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        //             timeLeft--;
+        //         }
+        //     }, 1000);
+        // }
+
+        // // Function to simulate resending the OTP
+        // function resendOTP() {
+        //     timeLeft = 120; // Reset timer to 2 minutes
+        //     resendButton.disabled = true; // Disable the button again
+        //     timerElement.textContent = "Time remaining: 2:00";
+        //     startTimer();
+        //     alert("A new OTP has been sent to your email.");
+        //     // Add actual resend OTP functionality here (e.g., an AJAX call to the server)
+        // }
+
+        // Start the timer on page load
+        // document.addEventListener('DOMContentLoaded', () => {
+        //     startTimer();
+        // });
+
+        function validateOTPForm() {
+            const otpInput = document.getElementById('otp').value;
+            $.ajax({
+                type: 'POST',
+                url: 'verify-otp',
+                data: { otp: otpInput },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'OTP Verifid Successfully',
+                            showConfirmButton: false,
+                            timer: 1500,
+                        }).then(() => {
+                            window.location.href = response.redirectUrl;
+                        })
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message,
+                        })
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid OTP',
+                        text: 'Enter valid OTP'
+                    })
+                }
+            })
+            return false;
+        }
+    </script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</body>
+
+</html>
