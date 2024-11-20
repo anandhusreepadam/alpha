@@ -149,21 +149,21 @@
 
 					<!-- Icon header -->
 					<div class="wrap-icon-header flex-w flex-r-m">
-						<%if(locals.user){%>
+						<%if(user){%>
 							<div class="dropdown">
 								<a href="#" class="sign-in-link">
-									<%=locals.user.name%>
+									<%=user.name%>
 								</a>
 								<div class="dropdown-content">
 									<a href="/userProfile">Profile</a>
 									<a href="/logout">Logout</a>
 								</div>
 							</div>
-
 							<%}else{%>
-
-								<a href="/login">Login</a>
-								<a href="/signup">Sign Up</a>
+								<div>
+									<a href="/login">Login</a>
+									<a href="/signup">Sign Up</a>
+								</div>
 
 								<%}%>
 									<div

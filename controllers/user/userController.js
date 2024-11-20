@@ -92,13 +92,9 @@ const pageNotFound = async (req, res) => {
 
 const loadHomepage = async (req, res) => {
     try {
-        const user = req.session.user;
-        if (user) {
-            const userData = await User.findOne({ _id: user._id });
-            res.render('home', { user: userData })
-        } else {
-            return res.render('home');
-        }
+        const userSession = req.session.user;
+        const user = userSession ? await User.findById(userSession._id) : null;
+        res.render('home', { user }); // Pass user as null if not logged in
     } catch (error) {
         console.log('Home Page not found');
         res.status(500).send('Server Error');
@@ -111,7 +107,8 @@ const securePassword = async (password) => {
 
         return passwordHash;
     } catch (error) {
-
+        console.error('Error hashing password:', error);
+        throw new Error('Failed to secure password');
     }
 }
 
@@ -186,23 +183,35 @@ const login = async (req, res) => {
 
         if (!findUser) {
             return res.render('login', { message: 'User not found' });
-
         } if (findUser.isBlocked) {
             return res.render('login', { message: "User is blocked by admin" });
-
         }
 
-        const passwordMatch = bcrypt.compare(password, findUser.password)
+        const passwordMatch = await bcrypt.compare(password, findUser.password)
 
         if (!passwordMatch) {
             return res.render('login', { message: 'Incorrect Password' });
-
         }
-        req.session.user = findUser._id;
+        req.session.user = { _id: findUser._id, name: findUser.name };
         res.redirect('/')
     } catch (error) {
         console.error('login error', error);
         res.render('login', { message: 'Login failed please try again' })
+    }
+}
+
+const logout = async (req,res)=>{
+    try {
+        req.session.destroy((err)=>{
+            if(err){
+                console.log('Session destroy error',err.message);
+                return res.redirect("/pageNotFound");
+            }
+            return res.redirect('/login');
+        })
+    } catch (error) {
+        console.log('Logout Error'.error);
+        res.redirect('/pageNotFound');
     }
 }
 
@@ -215,5 +224,6 @@ module.exports = {
     verifyOtp,
     resendOtp,
     loadLogin,
-    login
+    login,
+    logout
 };

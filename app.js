@@ -1,17 +1,16 @@
 const express = require('express');
 const app = express();
 const path = require('path');
-const dotenv = require('dotenv');
-dotenv.config();
+const dotenv = require('dotenv').config();
 const session = require('express-session');
 const passport = require('./config/passport')
-
+const userRouter = require('./routes/userRouter');
 
 
 const db = require('./config/db');
-const userRouter = require('./routes/userRouter');
-
 db();
+
+
 
 app.use(express.static('public'))
 app.use(express.json());

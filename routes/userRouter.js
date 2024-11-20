@@ -18,7 +18,7 @@ res.redirect('/')
 
 router.get('/login',userController.loadLogin);
 router.post('/login',userController.login);
-
+router.get('/logout',userController.logout);
 
 
 
