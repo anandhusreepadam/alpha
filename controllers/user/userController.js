@@ -92,7 +92,7 @@ const pageNotFound = async (req, res) => {
 
 const loadHomepage = async (req, res) => {
     try {
-        const userSession = req.session.user;
+        const userSession = req.session.user; 
         const user = userSession ? await User.findById(userSession._id) : null;
         res.render('home', { user }); // Pass user as null if not logged in
     } catch (error) {
@@ -126,7 +126,7 @@ const verifyOtp = async (req, res) => {
             })
 
             await saveUserData.save();
-            req.session.user = saveUserData._id;
+            req.session.user = {_id:saveUserData._id,name:saveUserData.name};
             res.json({ success: true, redirectUrl: '/login' })
         } else {
             res.status(400).json({ success: false, message: 'Invalid OTP, Please try again' })
@@ -165,7 +165,6 @@ const resendOtp = async (req, res) => {
 const loadLogin = async (req, res) => {
     try {
         if (!req.session.user) {
-
             return res.render('login')
         } else {
             res.redirect('/')
