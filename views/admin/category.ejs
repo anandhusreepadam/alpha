@@ -82,28 +82,33 @@
                                                                 Offer</a></button>
                                                         <%}%>
                                             </td>
-                                            <td>
+                                            <!-- <td>
                                                 <%if(category.isListed){%>
                                                     <span>Listed</span>
                                                     <%}else{%>
                                                         <span>Unlisted</span>
                                                         <%}%>
 
-                                            </td>
+                                            </td> -->
                                             <td>
                                                 <%if(category.isListed){%>
-                                                    <button class="btn btn-info">
-                                                        <a style="text-decoration:none" href="/admin/listCategory?id=<%=category.id%>">Unlist</a>
+                                                    <button class="btn btn-success">
+                                                        <a style="text-decoration:none" class="text-white" href="/admin/listCategory?id=<%=category.id%>">Unlist</a>
                                                     </button>
                                                     <%}else{%>
                                                         <button class="btn btn-warning">
-                                                            <a style="text-decoration:none" href="/admin/unlistCategory?id=<%=category.id%>">List</a>
+                                                            <a style="text-decoration:none" class="text-white" href="/admin/unlistCategory?id=<%=category.id%>">List</a>
                                                            
                                                         </button>
                                                         <%}%>
                                                     
                                                 </td>
-                                            <td class="text-end">
+                                                <td><button class="btn">
+                                                    <a href="/admin/editCategory?id=<%=category.id%>">Edit</a>
+                                                </button>
+                                                </td>
+
+                                            <!-- <td class="text-end">
                                                 <div class="dropdown">
                                                     <a href="#" data-bs-toggle="dropdown"
                                                         class="btn btn-light rounded btn-sm font-sm">
@@ -116,7 +121,7 @@
                                                     </div>
                                                 </div>
                                                 <!-- dropdown //end -->
-                                            </td>
+                                            </td> -->
                                         </tr>
                                         <%})%>
                                 </tbody>

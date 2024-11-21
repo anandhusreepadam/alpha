@@ -1,9 +1,6 @@
 const User = require('../../models/userSchema');
 
 
-
-
-
 const customerInfo = async (req, res) => {
     try {
         let search = '';
@@ -64,8 +61,6 @@ const customerUnblocked = async (req, res) => {
         res.redirect('/pageError')
     }
 }
-
-
 
 module.exports = {
     customerInfo,
