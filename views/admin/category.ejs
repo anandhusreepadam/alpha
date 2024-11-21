@@ -74,14 +74,35 @@
                                             </td>
                                             <td>
                                                 <%if(category.categoryOffer===0){%>
-                                                    <button class=""><a href="#" onclick="addOffer('<%=category._id%>')">Add
+                                                    <button class="btn btn-success"><a style="text-decoration:none" class="text-white" href="#" onclick="addOffer('<%=category._id%>')">Add
                                                             Offer</a></button>
                                                     <%}else{%>
-                                                        <button><a href="#"
+                                                        <button class="btn btn-danger"><a style="text-decoration:none" class="text-white" href="#"
                                                                 onclick="removeOffer('<%=category._id%>')">Remove
                                                                 Offer</a></button>
                                                         <%}%>
                                             </td>
+                                            <td>
+                                                <%if(category.isListed){%>
+                                                    <span>Listed</span>
+                                                    <%}else{%>
+                                                        <span>Unlisted</span>
+                                                        <%}%>
+
+                                            </td>
+                                            <td>
+                                                <%if(category.isListed){%>
+                                                    <button class="btn btn-info">
+                                                        <a style="text-decoration:none" href="/admin/listCategory?id=<%=category.id%>">Unlist</a>
+                                                    </button>
+                                                    <%}else{%>
+                                                        <button class="btn btn-warning">
+                                                            <a style="text-decoration:none" href="/admin/unlistCategory?id=<%=category.id%>">List</a>
+                                                           
+                                                        </button>
+                                                        <%}%>
+                                                    
+                                                </td>
                                             <td class="text-end">
                                                 <div class="dropdown">
                                                     <a href="#" data-bs-toggle="dropdown"
@@ -261,6 +282,7 @@
         }
 
         async function removeOffer(categoryId) {
+            console.log(categoryId)
             try {
                 const response = await fetch('/admin/removeCategoryOffer', {
                     method: 'POST',
