@@ -93,6 +93,7 @@ const getAllProducts = async (req,res)=>{
         const category = await Category.find({isListed:true});
         // const brand = await Brand.find({isBlocked:false});
         if(category){
+            console.log(productData);
 res.render('products',{
     data:productData,
     currentPage:page,
