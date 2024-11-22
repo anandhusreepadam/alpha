@@ -27,7 +27,7 @@ const addProducts = async (req, res) => {
         const productExists = await Product.findOne({
             productName: products.productName,
         });
-        
+
         if (!productExists) {
             const images = [];
 
@@ -62,47 +62,47 @@ const addProducts = async (req, res) => {
             });
             await newProduct.save();
             console.log('products added successfully')
-            return res.status(200).json({redirectTo:'/admin/addProducts?success=true'});
+            return res.status(200).json({ redirectTo: '/admin/addProducts?success=true' });
         } else {
             return res.status(400).json('Product already exists, Please try with another name');
         }
     } catch (error) {
         console.error('Error saving product', error);
-        return res.status(500).json({redirectTo:'/admin/pageError'});
+        return res.status(500).json({ redirectTo: '/admin/pageError' });
     }
 }
 
-const getAllProducts = async (req,res)=>{
+const getAllProducts = async (req, res) => {
     try {
         const search = req.query.search || "";
         const page = req.query.page || 1;
         const limit = 4;
         const productData = await Product.find({
-            $or:[
-                {productName:{$regex:new RegExp('.*'+search+'.*','i')}},
+            $or: [
+                { productName: { $regex: new RegExp('.*' + search + '.*', 'i') } },
                 // {brand:{$regex:new RegExp('.*'+search+'.*','i')}},
             ]
-        }).limit(limit*1).skip((page-1)*limit).populate('category').exec();
+        }).limit(limit * 1).skip((page - 1) * limit).populate('category').exec();
 
         const count = await Product.find({
-            $or:[
-                {productName:{$regex:new RegExp('.*'+search+'.*','i')}},
+            $or: [
+                { productName: { $regex: new RegExp('.*' + search + '.*', 'i') } },
                 // {brand:{$regex:new RegExp('.*'+search+'.*','i')}}
             ],
         }).countDocuments();
-        const category = await Category.find({isListed:true});
+        const category = await Category.find({ isListed: true });
         // const brand = await Brand.find({isBlocked:false});
-        if(category){
-            console.log(productData);
-res.render('products',{
-    data:productData,
-    currentPage:page,
-    totalPages:Math.ceil(count/limit),
-    cat:category,
-    // brand:brand
-})
+        if (category) {
 
-        }else{
+            res.render('products', {
+                data: productData,
+                currentPage: page,
+                totalPages: Math.ceil(count / limit),
+                cat: category,
+                // brand:brand
+            })
+
+        } else {
             res.render('page-404');
         }
     } catch (error) {
@@ -110,9 +110,47 @@ res.render('products',{
     }
 };
 
+const addProductOffer = async (req, res) => {
+    try {
+        const { productId, percentage } = req.body;
+        const findProduct = await Product.findOne({ _id: productId });
+        const findCategory = await Category.findOne({ _id: findProduct.category });
+        if (findCategory.categoryOffer > percentage) {
+            return res.json({ status: false, message: 'This product category already has a category offer' })
+        }
+        findProduct.salePrice = findProduct.salePrice - Math.floor(findProduct.regularPrice * (percentage / 100));
+        findProduct.productOffer = parseInt(percentage);
+        await findProduct.save();
+        findCategory.categoryOffer = 0;
+        await findCategory.save();
+        res.json({ status: true });
+    } catch (error) {
+        res.redirect('/pageError');
+        res.status(500).json({ status: false, message: "Internal Server Error" });
+
+    }
+}
+
+const removeProductOffer = async ( req, res ) => {
+    try {
+        console.log('before hiii in remove product offer')
+        const { productId } = req.body;
+        console.log('after hiii in remove product offer')
+        const findProduct = await Product.findOne({ _id: productId });
+        const percentage = findProduct.productOffer;
+        findProduct.salePrice = findProduct.salePrice + Math.floor(findProduct.regularPrice * (percentage / 100));
+        findProduct.productOffer = 0;
+        await findProduct.save();
+        res.json({ status: true })
+    } catch (error) {
+        res.redirect('/pageError');
+    }
+}
+
 module.exports = {
     getProductAddPage,
     addProducts,
-    getAllProducts
-
+    getAllProducts,
+    addProductOffer,
+    removeProductOffer
 }

@@ -2,7 +2,7 @@ const { fileLoader } = require('ejs');
 const multer = require('multer');
 const path = require('path');
 
-console.log('hii in multer');
+
 const storage = multer.diskStorage({
 
     destination:(req,res,cb)=>{
