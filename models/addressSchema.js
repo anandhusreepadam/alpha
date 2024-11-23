@@ -41,7 +41,7 @@ const addressSchema = new Schema({
             required: true
         },
     }]
-})
+},{timestamps:true})
 
 const Address = mongoose.model("Address",addressSchema);
 

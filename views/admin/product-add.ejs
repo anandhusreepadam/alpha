@@ -206,10 +206,8 @@
 
         async function submitForm(event) {
             event.preventDefault();
-
             if (validateForm()) {
                 console.log('validated');/////////////////////////////////////
-
 
                 const formData = new FormData(document.getElementById('productForm'))
 
@@ -218,8 +216,8 @@
                         method: 'POST',
                         body: formData,
                     });
-                    const result = await response.json(); // assuming your server returns JSON
-                    location.href=result.redirectTo;
+                    const result = await response.json(); // server returns JSON
+                    location.href = result.redirectTo;
                 } catch (error) {
                     console.error("Request failed", error);
                 }
@@ -228,13 +226,9 @@
             }
         }
 
-
-
-
         function viewImage1(event) {
             document.getElementById('imgView1').src = URL.createObjectURL(event.target.files[0])
             console.log('in  view image 1');////////////////////////////////////
-
         }
         function viewImage2(event) {
             document.getElementById('imgView2').src = URL.createObjectURL(event.target.files[0])
@@ -263,6 +257,7 @@
                     zoomable: true
                 });
                 console.log('just before cropper parentNode');/////////////////////////////////
+
                 let cropperContainer = document.querySelector('#croppedImg' + index).parentNode;
                 cropperContainer.style.display = 'block';
 
@@ -272,10 +267,9 @@
                     let croppedImage = document.getElementById('croppedImg' + index);
                     croppedImage.src = croppedCanvas.toDataURL('image/jpeg', 0.8);
 
-                    
-                    
+
+
                     await croppedCanvas.toBlob((blob) => {
-                        
                         let timestamp = new Date().getTime();
                         let fileName = `cropped-img-${timestamp}-${index}.png`;
                         let input = document.getElementById('input' + index);
@@ -293,46 +287,6 @@
             reader.readAsDataURL(input.files[0]);
         }
 
-        const selectedImages = [];
-      
-
-        document.getElementById('input1').addEventListener('change', handleFileSelect);
-
-        function handleFileSelect(event) {
-    
-            const addedImagesContainer = document.getElementById('addedImagesContainer');
-            addedImagesContainer.innerHTML = '';
-            const files = event.target.files;
-
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                selectedImages.push(file);
-                const thumbnail = document.createElement('div')
-                thumbnail.classList.add('thumbnail');
-
-                const img = document.createElement('img');
-                img.src = URL.createObjectURL(file);
-                img.alt = 'thumbnail';
-                img.style.width = '50px';
-                img.style.height = 'auto';
-                const removeIcon = document.createElement('span');
-                removeIcon.classList.add('remove-icon');
-                removeIcon.innerHTML = '&times';
-                removeIcon.addEventListener('click', function () {
-                    const index = selectedImages.indexOf(file);
-                    if (index != -1) {
-                        selectedImages.splice(index, 1);
-
-                    }
-                    thumbnail.remove();
-                })
-                thumbnail.appendChild(img);
-                thumbnail.appendChild(removeIcon);
-                addedImagesContainer.appendChild(thumbnail);
-                console.log('after append child');////////////////////////////////
-            }
-        }
-
         function validateForm() {
             console.log('inside validate form');//////////////////////////
             clearErrorMessages();
@@ -346,6 +300,7 @@
             const images = document.getElementById('input1')
             const quantity = document.getElementsByName('quantity')[0].value;
             let isValid = true
+
             if (name.trim() === "") {
                 displayErrorMessage('productName-error', 'Please enter a product name.');
                 isValid = false;
@@ -353,7 +308,6 @@
                 displayErrorMessage('productName-error', 'Product name should contain only alphabetic characters.');
                 isValid = false;
             }
-
             if (description.trim() === "") {
                 displayErrorMessage('description-error', 'Please enter a product description.');
                 isValid = false;
@@ -407,7 +361,6 @@
                 element.innerText = '';
             });
             const errorMessage = document.getElementById('errorMessage');
-
         }
 
     </script>

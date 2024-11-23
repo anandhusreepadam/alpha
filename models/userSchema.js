@@ -51,10 +51,6 @@ const userSchema = new Schema({
         type:Schema.Types.ObjectId,
         ref:"Order"
     }],
-    createdOn:{
-        type:Date,
-        default:Date.now,
-    },
     referalCode:{
         type:String,
         // required:true
@@ -82,7 +78,7 @@ const userSchema = new Schema({
         }
     }]
 
-})
+},{timestamps:true})
 
 
 

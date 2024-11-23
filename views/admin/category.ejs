@@ -36,12 +36,7 @@
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" />
-                                            </div>
-                                        </th>
-                                        <th>ID</th>
+                                        <th>No.</th>
                                         <th>Name</th>
                                         <th>Description</th>
                                         <th>Slug</th>
@@ -53,12 +48,7 @@
                                     <%cat.reverse().forEach((category,index)=>{%>
 
                                         <tr>
-                                            <td class="text-center">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" value="" />
-                                                </div>
-                                            </td>
-                                            <td>21</td>
+                                            <td><%=index+1+(currentPage-1)*6%></td>
                                             <td><b>
                                                     <%=category.name%>
                                                 </b></td>
@@ -100,27 +90,21 @@
                                                             <a style="text-decoration:none" class="text-white" href="/admin/unlistCategory?id=<%=category._id%>">List</a>
                                                            
                                                         </button>
-                                                        <%}%>
-                                                    
+                                                        <%}%>                                                    
                                                 </td>
                                                 <td><button class="btn">
                                                     <a href="/admin/editCategory?id=<%=category._id%>">Edit</a>
                                                 </button>
                                                 </td>
-
-                                            <!-- <td class="text-end">
-                                                <div class="dropdown">
-                                                    <a href="#" data-bs-toggle="dropdown"
-                                                        class="btn btn-light rounded btn-sm font-sm">
-                                                        <i class="material-icons md-more_horiz"></i>
-                                                    </a>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="#">View detail</a>
-                                                        <a class="dropdown-item" href="#">Edit info</a>
-                                                        <a class="dropdown-item text-danger" href="#">Delete</a>
-                                                    </div>
-                                                </div>
-                                                dropdown //end -->
+                                                <td>
+                                                    <% if (!category.isDeleted) { %>
+                                                        <button class="btn btn-danger" onclick="softDeleteCategory('<%= category._id %>')">
+                                                            Delete
+                                                        </button>
+                                                    <% } else { %>
+                                                        <span class="text-muted">Deleted</span>
+                                                    <% } %>
+                                                </td>
 
                                             </td>
                                         </tr>
@@ -188,11 +172,11 @@
                     return response.json();
                 })
                 .then(data => {
-                    
+                    console.log('Success:', data);/////////////////////////////////
                     location.reload();
                 })
                 .catch(error => {
-                   
+                    console.error('Error occurred:', error.message);/////////////////////////
                     if (error.message === 'Category already exists') {
                         Swal.fire({
                             icon: 'error',
@@ -323,6 +307,51 @@
             }
 
         }
+
+        async function softDeleteCategory(categoryId) {
+    // Confirm the action before proceeding
+    const confirmation = await Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to recover this category!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+    });
+
+    if (confirmation.isConfirmed) {
+        try {
+            // Send fetch request to delete the category
+            const response = await fetch(`/admin/deleteCategory/${categoryId}`, {
+                method: 'POST', // Can also use DELETE, depending on your API design
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Show success alert
+                Swal.fire(
+                    'Deleted!',
+                    'The category has been soft deleted.',
+                    'success'
+                ).then(() => {
+                    // Reload the page or update the UI dynamically
+                    location.reload();
+                });
+            } else {
+                // Show error message from the server
+                Swal.fire('Error', data.message || 'Failed to delete the category', 'error');
+            }
+        } catch (error) {
+            console.error('Error soft deleting category:', error);
+            Swal.fire('Error', 'An unexpected error occurred while deleting the category', 'error');
+        }
+    }
+}
 
 
     </script>
