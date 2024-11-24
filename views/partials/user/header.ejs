@@ -93,16 +93,13 @@
 							Help & FAQs
 						</a>
 
-						<a href="#" class="flex-c-m trans-04 p-lr-25">
-							My Account
-						</a>
-
+					
 						<a href="#" class="flex-c-m trans-04 p-lr-25">
 							EN
 						</a>
 
 						<a href="#" class="flex-c-m trans-04 p-lr-25">
-							USD
+							INR
 						</a>
 					</div>
 				</div>
@@ -119,15 +116,12 @@
 					<!-- Menu desktop -->
 					<div class="menu-desktop">
 						<ul class="main-menu">
-							<li class="active-menu">
-								<a href="home.ejs">Home</a>
-								<ul class="sub-menu">
-									<li><a href="home.ejs">Homepage 1</a></li>
-								</ul>
+							<li class="">
+								<a href="/">Home</a>
 							</li>
 
 							<li>
-								<a href="product.html">Shop</a>
+								<a href="/shop">Shop</a>
 							</li>
 
 							<li class="label1" data-label1="hot">
@@ -152,9 +146,13 @@
 					<div class="wrap-icon-header flex-w flex-r-m">
 						<%if(user){%>
 							<div class="dropdown">
+								<ul class="main-menu">
+									<li class="active-menu">
 								<a href="#" class="sign-in-link">
 									<%=user.name%>
 								</a>
+								</li>
+								</ul>
 								<div class="dropdown-content">
 									<a href="/userProfile">Profile</a>
 									<a href="/logout">Logout</a>
@@ -162,8 +160,16 @@
 							</div>
 							<%}else{%>
 								<div>
-									<a href="/login">Login</a>
-									<a href="/signup">Sign Up</a>
+									<ul class="main-menu">
+										<li class="active-menu">
+							
+											<a href="/login">Login</a>
+										</li>
+										<li>
+
+											<a href="/signup">Sign Up</a>
+										</li>
+									</ul>
 								</div>
 
 								<%}%>
@@ -191,7 +197,7 @@
 		<div class="wrap-header-mobile">
 			<!-- Logo moblie -->
 			<div class="logo-mobile">
-				<a href="home.ejs"><img src="images/icons/logo-01.png" alt="IMG-LOGO"></a>
+				<a href="/"><img src="images/icons/logo-01.png" alt="IMG-LOGO"></a>
 			</div>
 
 			<!-- Icon header -->

@@ -914,13 +914,17 @@ Input, textarea : 14px/1.6 '', Arial, sans-serif;
   height: 100vh;
   top: 0;
   right: 0;
-  background-color: rgba(0,0,0,0.0);
+  background-color: rgba(0, 0, 0, 0);
   visibility: hidden;
+
   
   -webkit-transition: all 0.4s;
   -o-transition: all 0.4s;
   -moz-transition: all 0.4s;  
   transition: all 0.4s;
+}
+.shop-head{
+  margin-top: 10vh;;
 }
 
 .header-cart {

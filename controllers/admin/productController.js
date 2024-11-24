@@ -35,7 +35,7 @@ const addProducts = async (req, res) => {
                 for (let i = 0; i < req.files.length; i++) {
                     const originalImagePath = req.files[i].path;
                     const resizedImagePath = path.join('public', 'uploads', 'product-images', req.files[i].filename);
-                    await sharp(originalImagePath).resize({ width: 440, height: 440 }).toFile(resizedImagePath);
+                    await sharp(originalImagePath).resize({ width: 270, height: 334 }).toFile(resizedImagePath);
                     images.push(req.files[i].filename);
                 }
             }
@@ -186,7 +186,6 @@ const getEditProduct = async (req, res) => {
 const editProduct = async (req, res) => {
     try {
         const id = req.params.id;
-        const product = await Product.findOne({ _id: id });
         const data = req.body;
         const existingProduct = await Product.findOne({
             productName: data.productName,

@@ -2,8 +2,17 @@ const User = require('../../models/userSchema')
 const nodemailer = require('nodemailer')
 const env = require('dotenv').config();
 const bcrypt = require('bcrypt')
+const Product = require('../../models/productSchema')
 
-
+const getAllProducts = async function() {
+try {
+    
+    const response = await Product.find({isDeleted:false,isBlocked:false})
+    return response;
+} catch (error) {
+    console.log(error.message)
+}
+}
 
 const loadSignup = async (req, res) => {
     try {
@@ -75,7 +84,10 @@ const signup = async (req, res) => {
 
 const loadShopping = async (req, res) => {
     try {
-        return res.render('shop');
+        const userSession = req.session.user; 
+        const user = userSession ? await User.findById(userSession._id) : null;
+        const allProducts = await getAllProducts()
+        return res.render('shop',{user,allProducts});
     } catch (error) {
         console.log('Shopping page not loading:', error);
         res.status(500).send('Server Error');
@@ -92,9 +104,11 @@ const pageNotFound = async (req, res) => {
 
 const loadHomepage = async (req, res) => {
     try {
+    
         const userSession = req.session.user; 
         const user = userSession ? await User.findById(userSession._id) : null;
-        res.render('home', { user }); // Pass user as null if not logged in
+        const allProducts = await getAllProducts()
+        res.render('home', { user ,allProducts});
     } catch (error) {
         console.log('Home Page not found');
         res.status(500).send('Server Error');
@@ -214,6 +228,14 @@ const logout = async (req,res)=>{
     }
 }
 
+const loadProductPage = async(req,res)=>{
+    try {
+        const id = req.params.id;
+        return res.render('product')
+    } catch (error) {
+        
+    }
+}
 module.exports = {
     loadHomepage,
     pageNotFound,
@@ -224,5 +246,6 @@ module.exports = {
     resendOtp,
     loadLogin,
     login,
-    logout
+    logout,
+    loadProductPage
 };

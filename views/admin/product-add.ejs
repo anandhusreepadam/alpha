@@ -259,7 +259,7 @@
                 let image = document.getElementById('imgView' + index);
                 image.src = dataURL;
                 let cropper = new Cropper(image, {
-                    aspectRatio: 1,
+                    aspectRatio: 270 / 334,
                     viewMode: 1,
                     guides: true,
                     background: false,
@@ -275,7 +275,7 @@
                 saveButton.addEventListener('click', async function () {
                     let croppedCanvas = cropper.getCroppedCanvas();
                     let croppedImage = document.getElementById('croppedImg' + index);
-                    croppedImage.src = croppedCanvas.toDataURL('image/jpeg', 0.8);
+                    croppedImage.src = croppedCanvas.toDataURL('image/jpeg', 1.0);
 
 
 

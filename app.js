@@ -29,7 +29,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-
+app.use("/product-images",express.static('public/uploads/product-images'))
 
 
 app.use((req,res,next)=>{
