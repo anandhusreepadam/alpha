@@ -216,8 +216,18 @@
                         method: 'POST',
                         body: formData,
                     });
-                    const result = await response.json(); // server returns JSON
-                    location.href = result.redirectTo;
+                    const result = await response.json();
+                    if(response.ok){
+                        Swal.fire(
+                            'Added!',
+                            'Product added Successfully .',
+                            'success'
+                        ).then(()=>{
+                            location.href = result.redirectTo;
+                        })
+                    } else {
+                        Swal.fire('Error', data.message || 'Failed to Add Product', 'error');
+                    }
                 } catch (error) {
                     console.error("Request failed", error);
                 }
@@ -363,5 +373,6 @@
             const errorMessage = document.getElementById('errorMessage');
         }
 
+        
     </script>
     <%- include("../../views/partials/admin/footer") %>

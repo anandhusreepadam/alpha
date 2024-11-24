@@ -91,13 +91,13 @@ const getAllProducts = async (req, res) => {
             ],
         }).countDocuments();
         const category = await Category.find({ isListed: true });
+        const totalPages = Math.ceil(count/limit)
         // const brand = await Brand.find({isBlocked:false});
         if (category) {
-
             res.render('products', {
                 data: productData,
                 currentPage: page,
-                totalPages: Math.ceil(count / limit),
+                totalPages: totalPages,
                 cat: category,
                 // brand:brand
             })
@@ -224,6 +224,19 @@ const editProduct = async (req, res) => {
     }
 }
 
+const deleteProduct = async (req,res)=>{
+    const id = req.params.id;
+    try {
+        const product = await Product.findOneAndUpdate({_id:id},{isDeleted:true},{new:true});
+        if(!product){
+            return res.status(404).json({message:'Product not found'});
+        }
+        res.status(200).json({message:`${product} deleted successfully`});
+    } catch (error) {
+        res.status(500).json({message:'Error occured during deleting product',error:error.message});
+    }
+}
+
 const deleteSingleImage = async (req, res) => {
     try {
         const { imageNameToServer, productIdToServer } = req.body;
@@ -252,5 +265,6 @@ module.exports = {
     unblockProduct,
     getEditProduct,
     editProduct,
+    deleteProduct,
     deleteSingleImage
 }

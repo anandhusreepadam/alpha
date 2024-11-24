@@ -2,6 +2,11 @@ const express = require('express');
 const router = express.Router();
 const {userAtuth,adminAuth}=require('../middlewares/auth');
 
+//tester
+const working = (req,res,next)=>{
+console.log('route working')
+next();
+}
 
 //Multer
 const multer = require('multer');
@@ -31,26 +36,26 @@ router.get('/unBlockCustomer',adminAuth,customerController.customerUnblocked);
 router.get('/category',adminAuth,categoryController.categoryInfo);
 router.post('/category',adminAuth,categoryController.addCategory);
 router.post('/addCategoryOffer',adminAuth,categoryController.addCategoryOffer);
-router.post('/removeCategoryOffer',adminAuth,categoryController.removeCategoryOffer)
+router.post('/removeCategoryOffer',adminAuth,categoryController.removeCategoryOffer);
 router.get('/listCategory',adminAuth,categoryController.getListCategory);
 router.get('/unlistCategory',adminAuth,categoryController.getUnlistCategory);
 router.get('/editCategory',adminAuth,categoryController.getEditCategory);
-router.post('/editCategory/:id',adminAuth,categoryController.editCategory)
-router.post('/deleteCategory/:id',adminAuth,categoryController.deleteCategory)
+router.post('/editCategory/:id',adminAuth,categoryController.editCategory);
+router.post('/deleteCategory/:id',adminAuth,categoryController.deleteCategory);
 
 
 //Product Management
 router.get('/addProducts',adminAuth,productController.getProductAddPage);
-router.post('/addProducts',adminAuth,uploads.array('images',4),productController.addProducts)
+router.post('/addProducts',adminAuth,uploads.array('images',4),productController.addProducts);
 router.get('/products',adminAuth,productController.getAllProducts);
 router.post('/addProductOffer',adminAuth,productController.addProductOffer);
 router.post('/removeProductOffer',adminAuth,productController.removeProductOffer);
-router.get('/blockProduct',adminAuth,productController.blockProduct)
-router.get('/unblockProduct',adminAuth,productController.unblockProduct)
+router.get('/blockProduct',adminAuth,productController.blockProduct);
+router.get('/unblockProduct',adminAuth,productController.unblockProduct);
 router.get('/editProduct',adminAuth,productController.getEditProduct);
 router.post('/editProduct/:id',adminAuth,uploads.array('images',4),productController.editProduct);
 router.post('/deleteImage',adminAuth,productController.deleteSingleImage);
-
+router.post('/deleteProduct/:id',working,adminAuth,productController.deleteProduct);
 
 
 

@@ -64,10 +64,13 @@
                                             </td>
                                             <td>
                                                 <%if(category.categoryOffer===0){%>
-                                                    <button class="btn btn-success"><a style="text-decoration:none" class="text-white" href="#" onclick="addOffer('<%=category._id%>')">Add
+                                                    <button class="btn btn-success"><a style="text-decoration:none"
+                                                            class="text-white" href="#"
+                                                            onclick="addOffer('<%=category._id%>')">Add
                                                             Offer</a></button>
                                                     <%}else{%>
-                                                        <button class="btn btn-danger"><a style="text-decoration:none" class="text-white" href="#"
+                                                        <button class="btn btn-danger"><a style="text-decoration:none"
+                                                                class="text-white" href="#"
                                                                 onclick="removeOffer('<%=category._id%>')">Remove
                                                                 Offer</a></button>
                                                         <%}%>
@@ -83,29 +86,30 @@
                                             <td>
                                                 <%if(category.isListed){%>
                                                     <button class="btn btn-success">
-                                                        <a style="text-decoration:none" class="text-white" href="/admin/listCategory?id=<%=category._id%>">Unlist</a>
+                                                        <a style="text-decoration:none" class="text-white"
+                                                            href="/admin/listCategory?id=<%=category._id%>">Unlist</a>
                                                     </button>
                                                     <%}else{%>
                                                         <button class="btn btn-warning">
-                                                            <a style="text-decoration:none" class="text-white" href="/admin/unlistCategory?id=<%=category._id%>">List</a>
-                                                           
+                                                            <a style="text-decoration:none" class="text-white"
+                                                                href="/admin/unlistCategory?id=<%=category._id%>">List</a>
                                                         </button>
-                                                        <%}%>                                                    
-                                                </td>
-                                                <td><button class="btn">
+                                                        <%}%>
+                                            </td>
+                                            <td><button class="btn">
                                                     <a href="/admin/editCategory?id=<%=category._id%>">Edit</a>
                                                 </button>
-                                                </td>
-                                                <td>
-                                                    <% if (!category.isDeleted) { %>
-                                                        <button class="btn btn-danger" onclick="softDeleteCategory('<%= category._id %>')">
-                                                            Delete
-                                                        </button>
+                                            </td>
+                                            <td>
+                                                <% if (!category.isDeleted) { %>
+                                                    <button class="btn btn-danger"
+                                                        onclick="softDeleteCategory('<%= category._id %>')">
+                                                        Delete
+                                                    </button>
                                                     <% } else { %>
                                                         <span class="text-muted">Deleted</span>
-                                                    <% } %>
-                                                </td>
-
+                                                        <%}%>
+                                            </td>
                                             </td>
                                         </tr>
                                         <%})%>
@@ -141,9 +145,10 @@
         <!-- card .// -->
     </section>
     <!-- content-main end// -->
-
+    <%-include("../../views/partials/admin/footer")%>
 
     <script>
+
         function handleFormSubmit(event) {
             event.preventDefault();
             if (!validateForm()) {
@@ -151,8 +156,6 @@
             }
             const name = document.getElementsByName("name")[0].value;
             const description = document.getElementById('descriptionId').value;
-
-           
 
             fetch('/admin/category', {
                 method: 'POST',
@@ -164,9 +167,7 @@
                 .then(response => {
                     if (!response.ok) {
                         return response.json().then(err => {
-                           
                             throw new Error(err.error);
-
                         })
                     }
                     return response.json();
@@ -183,7 +184,6 @@
                             title: 'Oops',
                             text: 'Category already exists'
                         })
-
                     } else {
                         Swal.fire({
                             icon: 'error',
@@ -272,7 +272,7 @@
         }
 
         async function removeOffer(categoryId) {
-            console.log(categoryId)
+
             try {
                 const response = await fetch('/admin/removeCategoryOffer', {
                     method: 'POST',
@@ -309,50 +309,48 @@
         }
 
         async function softDeleteCategory(categoryId) {
-    // Confirm the action before proceeding
-    const confirmation = await Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to recover this category!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, delete it!'
-    });
-
-    if (confirmation.isConfirmed) {
-        try {
-            // Send fetch request to delete the category
-            const response = await fetch(`/admin/deleteCategory/${categoryId}`, {
-                method: 'POST', // Can also use DELETE, depending on your API design
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+            // Confirm the action before proceeding
+            const confirmation = await Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to recover this category!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
             });
 
-            const data = await response.json();
+            if (confirmation.isConfirmed) {
+                try {
+                    // Send fetch request to delete the category
+                    const response = await fetch(`/admin/deleteCategory/${categoryId}`, {
+                        method: 'POST', // Can also use DELETE, depending on your API design
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
 
-            if (response.ok) {
-                // Show success alert
-                Swal.fire(
-                    'Deleted!',
-                    'The category has been soft deleted.',
-                    'success'
-                ).then(() => {
-                    // Reload the page or update the UI dynamically
-                    location.reload();
-                });
-            } else {
-                // Show error message from the server
-                Swal.fire('Error', data.message || 'Failed to delete the category', 'error');
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        // Show success alert
+                        Swal.fire(
+                            'Deleted!',
+                            'The category has been soft deleted.',
+                            'success'
+                        ).then(() => {
+                            // Reload the page or update the UI dynamically
+                            location.reload();
+                        });
+                    } else {
+                        // Show error message from the server
+                        Swal.fire('Error', data.message || 'Failed to delete the category', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error soft deleting category:', error);
+                    Swal.fire('Error', 'An unexpected error occurred while deleting the category', 'error');
+                }
             }
-        } catch (error) {
-            console.error('Error soft deleting category:', error);
-            Swal.fire('Error', 'An unexpected error occurred while deleting the category', 'error');
         }
-    }
-}
-
 
     </script>
-    <%-include("../../views/partials/admin/footer")%>

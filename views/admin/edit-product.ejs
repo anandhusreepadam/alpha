@@ -226,13 +226,9 @@
 
             async function submitForm(event) {
                 event.preventDefault();
-
                 if (validateForm()) {
                     console.log('validated');/////////////////////////////////////
-
-
                     const formData = new FormData(document.getElementById('productForm'))
-
                     try {
                         const response = await fetch('/admin/editProduct/<%=product._id%>', {
                             method: 'POST',
@@ -247,9 +243,6 @@
                     console.log("Form validation failed");
                 }
             }
-
-
-
 
             function validateForm() {
                 let imageDatas = false
@@ -266,25 +259,19 @@
                 const quantity = document.getElementsByName('quantity');
                 imageDatas = document.getElementById("imageDatas")?.value;
                 let isValid = true;
+
                 if (name.trim() === "") {
                     displayErrorMessage('productName-error', 'Please enter a product name.');
                     isValid = false;
                 }
-
                 if (description === '') {
                     displayErrorMessage('description-error', 'Please enter a product description.');
                     isValid = false;
                 }
-
-
                 if (parseInt(quantity) < 0) {
                     displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
                     isValid = false;
                 }
-
-
-
-
                 if (!/^\d+(\.\d{1, 2})?$/.test(price) || parseFloat(price) < 0) {
                     displayErrorMessage('regularPrice-error', 'Please enter a valid non-negative price.');
                     isValid = false;
@@ -309,7 +296,6 @@
                 errorElement.style.display = "block";
             }
 
-
             function clearErrorMessages() {
                 const errorElements = document.getElementsByClassName('error-message');
                 Array.from(errorElements).forEach(element => {
@@ -320,30 +306,21 @@
 
             }
 
-
-
-
             function viewImage1(event) {
                 document.getElementById('imgView1').src = URL.createObjectURL(event.target.files[0])
             }
-
 
             function viewImage2(event) {
                 document.getElementById('imgView2').src = URL.createObjectURL(event.target.files[0])
             }
 
-
             function viewImage3(event) {
                 document.getElementById('imgView3').src = URL.createObjectURL(event.target.files[0])
             }
 
-
             function viewImage4(event) {
                 document.getElementById('imgView4').src = URL.createObjectURL(event.target.files[0])
             }
-
-
-
 
             function viewImage(event, index) {
                 let input = event.target;
