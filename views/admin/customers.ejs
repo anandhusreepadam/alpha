@@ -62,7 +62,14 @@
                                     <td>
                                         <%=data[i].email%>
                                     </td>
-                                    <td><span class="badge rounded-pill alert-success">Active</span></td>
+
+                                    <td>
+                                        <%if(data[i].isBlocked===false){%>
+                                        <span class="badge rounded-pill alert-success">Active</span>
+                                        <%}else{%>
+                                            <span class="badge rounded-pill alert-danger">Blocked</span>
+                                            <%}%>
+                                    </td>
                                     <td>08.07.2020</td>
                                     <td class="text-end">
                                         <%if(data[i].isBlocked===false){%>

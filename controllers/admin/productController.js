@@ -25,7 +25,7 @@ const addProducts = async (req, res) => {
     try {
         const products = req.body;
         const productExists = await Product.findOne({
-            productName: products.productName,
+            productName: { $regex: new RegExp(`^${products.productName}$`, 'i') },
         });
 
         if (!productExists) {

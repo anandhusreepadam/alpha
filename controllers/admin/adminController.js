@@ -5,14 +5,20 @@ const bcrypt = require('bcrypt');
 
 
 const pageError= async(req,res)=>{
-    res.render('admin-error')
+    try {
+        return res.render('admin-error')
+    } catch (error) {
+        
+    }
 }
 
 const loadLogin = (req,res)=>{
+    const msg = req.session.pass;
+    req.session.pass=null;
     if(req.session.admin){
         return res.redirect('/admin');
     }
-    res.render('admin-login',{message:null});
+    res.render('admin-login',{message:msg});
 }
 
 const login = async (req,res)=>{
@@ -20,14 +26,16 @@ const login = async (req,res)=>{
         const{email,password}=req.body;
         const admin= await User.findOne({email,isAdmin:true});
         if(admin){
-            const passwordMatch = bcrypt.compare(password,admin.password);
+            const passwordMatch = await bcrypt.compare(password,admin.password);
             if(passwordMatch){
                 req.session.admin=true;
                 return res.redirect('/admin');
             }else{
+                req.session.pass= "Wrong Password";
                 return res.redirect('/admin/login')
             }
         }else{
+            req.session.pass="Invalid Admin Credential"
             return res.redirect('/admin/login')
         }
     } catch (error) {

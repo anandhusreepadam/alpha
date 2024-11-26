@@ -1,19 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responsive Product Details</title>
+
+
+
+
+<section class="bg0 p-t-23 p-b-140">
+
+    <div class="container">
+    <title>Product Details</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        
         /* Main Image Styling */
+        .breadcrumb {
+            background-color: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb a {
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
         .main-image-container {
             position: relative;
             overflow: hidden;
             border: 1px solid #ddd;
             width: 100%;
-            height: 250px; /* Reduced size */
+            height: 600px; /* Reduced size */
         }
 
         .main-image-container img {
@@ -30,7 +48,7 @@
 
         /* Thumbnails Styling */
         .thumbnails-container {
-            max-height: 300px;
+            max-height: 600px;
             overflow-y: auto;
         }
 
@@ -105,35 +123,42 @@
 <body>
 
 <div class="container mt-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/shop">Shop</a></li>
+            <li class="breadcrumb-item " aria-current="page"><%= product.productName %></li>
+        </ol>
+    </nav>
     <div class="row">
         <!-- Thumbnails Section -->
         <div class="col-md-2 thumbnails-container d-flex flex-column">
             <div class="thumbnail">
-                <img src="https://via.placeholder.com/100" alt="Image 1" class="img-thumbnail" onclick="changeMainImage(this)">
+                <img src="/uploads/product-images/<%=product.productImage[0]%>" alt="Image 1" class="img-thumbnail" onclick="changeMainImage(this)">
             </div>
             <div class="thumbnail">
-                <img src="https://via.placeholder.com/100" alt="Image 2" class="img-thumbnail" onclick="changeMainImage(this)">
+                <img src="/uploads/product-images/<%=product.productImage[1]%>" alt="Image 2" class="img-thumbnail" onclick="changeMainImage(this)">
             </div>
             <div class="thumbnail">
-                <img src="https://via.placeholder.com/100" alt="Image 3" class="img-thumbnail" onclick="changeMainImage(this)">
+                <img src="/uploads/product-images/<%=product.productImage[2]%>" alt="Image 3" class="img-thumbnail" onclick="changeMainImage(this)">
             </div>
             <div class="thumbnail">
-                <img src="https://via.placeholder.com/100" alt="Image 4" class="img-thumbnail" onclick="changeMainImage(this)">
+                <img src="/uploads/product-images/<%=product.productImage[3]%>" alt="Image 4" class="img-thumbnail" onclick="changeMainImage(this)">
             </div>
         </div>
 
         <!-- Main Image Section -->
         <div class="col-md-6">
             <div class="main-image-container" id="mainImageContainer">
-                <img src="https://via.placeholder.com/400" id="mainProductImage" alt="Product">
+                <img src="/uploads/product-images/<%=product.productImage[0]%>" id="mainProductImage" alt="Product">
             </div>
         </div>
 
         <!-- Product Details -->
         <div class="col-md-4">
-            <h1>Product Name</h1>
-            <p class="text-muted">Category: Electronics</p>
-            <h3 class="text-danger">$299.99</h3>
+            <h1><%=product.productName%></h1>
+            <p class="text-muted"><%=product.description%></p>
+            <h3 class="text-danger">₹<%=product.salePrice%></h3>
             <div>
                 <span class="rating">
                     <i class="fas fa-star"></i>
@@ -177,6 +202,8 @@
         </div>
     </div>
 </div>
+</div>
+</section>
 
 <script>
     // Change Main Image

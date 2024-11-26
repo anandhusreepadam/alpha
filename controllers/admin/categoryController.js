@@ -129,22 +129,24 @@ const getUnlistCategory = async (req,res)=>{
 const getEditCategory = async (req,res)=>{
     try {
         const id = req.query.id;
+        const error = req.session?.editCategoryError;
+        req.session.editCategoryError=null
         const category = await Category.findOne({_id:id});
         console.log(category.id)
-        res.render('edit-category',{category:category});
-
+        res.render('edit-category',{category:category,error:error});
     } catch (error) {
+        console.log(error)
         res.redirect('/pageError')
     }
 }
 
 const editCategory = async (req,res)=>{
     try {
-        const id = req.params.id;
-        const {categoryName,description} = req.body;
+        const {categoryName,description,id} = req.body;
         const existingCategory = await Category.findOne({name:categoryName});
         if(existingCategory){
-            return res.status(400).json({error:'Category exists please choose another name'});
+            req.session.editCategoryError= "product already exist, please choose another name"
+            return res.redirect(`/admin/editCategory?id=${id}`)
         }
         const updateCategory = await Category.findByIdAndUpdate(id,{
             name:categoryName,

@@ -3,15 +3,16 @@ const nodemailer = require('nodemailer')
 const env = require('dotenv').config();
 const bcrypt = require('bcrypt')
 const Product = require('../../models/productSchema')
+const passport = require('passport');
 
-const getAllProducts = async function() {
-try {
-    
-    const response = await Product.find({isDeleted:false,isBlocked:false})
-    return response;
-} catch (error) {
-    console.log(error.message)
-}
+const getAllProducts = async function () {
+    try {
+
+        const response = await Product.find({ isDeleted: false, isBlocked: false })
+        return response;
+    } catch (error) {
+        console.log(error.message)
+    }
 }
 
 const loadSignup = async (req, res) => {
@@ -84,10 +85,10 @@ const signup = async (req, res) => {
 
 const loadShopping = async (req, res) => {
     try {
-        const userSession = req.session.user; 
+        const userSession = req.session.user;
         const user = userSession ? await User.findById(userSession._id) : null;
         const allProducts = await getAllProducts()
-        return res.render('shop',{user,allProducts});
+        return res.render('shop', { user, allProducts });
     } catch (error) {
         console.log('Shopping page not loading:', error);
         res.status(500).send('Server Error');
@@ -104,11 +105,10 @@ const pageNotFound = async (req, res) => {
 
 const loadHomepage = async (req, res) => {
     try {
-    
-        const userSession = req.session.user; 
+        const userSession = req.session.user;
         const user = userSession ? await User.findById(userSession._id) : null;
         const allProducts = await getAllProducts()
-        res.render('home', { user ,allProducts});
+        res.render('home', { user, allProducts });
     } catch (error) {
         console.log('Home Page not found');
         res.status(500).send('Server Error');
@@ -140,7 +140,7 @@ const verifyOtp = async (req, res) => {
             })
 
             await saveUserData.save();
-            req.session.user = {_id:saveUserData._id,name:saveUserData.name};
+            req.session.user = { _id: saveUserData._id, name: saveUserData.name };
             res.json({ success: true, redirectUrl: '/login' })
         } else {
             res.status(400).json({ success: false, message: 'Invalid OTP, Please try again' })
@@ -175,6 +175,7 @@ const resendOtp = async (req, res) => {
         res.status(500).json({ success: false, message: 'Internal server error. Please try again' });
     }
 }
+
 
 const loadLogin = async (req, res) => {
     try {
@@ -213,11 +214,11 @@ const login = async (req, res) => {
     }
 }
 
-const logout = async (req,res)=>{
+const logout = async (req, res) => {
     try {
-        req.session.destroy((err)=>{
-            if(err){
-                console.log('Session destroy error',err.message);
+        req.session.destroy((err) => {
+            if (err) {
+                console.log('Session destroy error', err.message);
                 return res.redirect("/pageNotFound");
             }
             return res.redirect('/login');
@@ -228,12 +229,15 @@ const logout = async (req,res)=>{
     }
 }
 
-const loadProductPage = async(req,res)=>{
+const loadProductPage = async (req, res) => {
     try {
+        const user =req.session.user;
         const id = req.params.id;
-        return res.render('product')
+        const product = await Product.findById(id)
+
+        return res.render('product', {user, product })
     } catch (error) {
-        
+
     }
 }
 module.exports = {
@@ -247,5 +251,6 @@ module.exports = {
     loadLogin,
     login,
     logout,
-    loadProductPage
+    loadProductPage,
+
 };

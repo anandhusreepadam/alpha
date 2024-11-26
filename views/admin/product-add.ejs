@@ -223,10 +223,12 @@
                             'Product added Successfully .',
                             'success'
                         ).then(()=>{
+                            
                             location.href = result.redirectTo;
+
                         })
                     } else {
-                        Swal.fire('Error', data.message || 'Failed to Add Product', 'error');
+                        Swal.fire('Error', result || 'Failed to Add Product', 'error');
                     }
                 } catch (error) {
                     console.error("Request failed", error);

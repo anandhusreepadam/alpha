@@ -107,8 +107,8 @@
                                                         Delete
                                                     </button>
                                                     <% } else { %>
-                                                        <span class="text-muted">Deleted</span>
-                                                        <%}%>
+                                                    <span class="text-muted">Deleted</span>
+                                                <%}%>
                                             </td>
                                             </td>
                                         </tr>
@@ -116,24 +116,19 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="pagination-container">
-                            <% if (currentPage> 1) { %>
-                                <a href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
-                                <% } %>
+                        <div class="container mt-3">
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination justify-content-center mb-20" style="margin-right: 200px;">
                                     <% for (let i=1; i <=totalPages; i++) { %>
-                                        <% if (i===currentPage) { %>
-                                            <span class="current-page">
+                                        <li class="page-item <%=(i === currentPage) ? 'active' : '' %>">
+                                            <a class="page-link" href="?page=<%= i %>">
                                                 <%= i %>
-                                            </span>
-                                            <% } else { %>
-                                                <a href="?page=<%= i %>">
-                                                    <%= i %>
-                                                </a>
-                                                <% } %>
-                                                    <% } %>
-                                                        <% if (currentPage < totalPages) { %>
-                                                            <a href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
-                                                            <% } %>
+
+                                            </a>
+                                        </li>
+                                        <% } %>
+                                </ul>
+                            </nav>
                         </div>
                     </div>
                     <!-- .col// -->
@@ -147,210 +142,210 @@
     <!-- content-main end// -->
     <%-include("../../views/partials/admin/footer")%>
 
-    <script>
+        <script>
 
-        function handleFormSubmit(event) {
-            event.preventDefault();
-            if (!validateForm()) {
-                return
-            }
-            const name = document.getElementsByName("name")[0].value;
-            const description = document.getElementById('descriptionId').value;
-
-            fetch('/admin/category', {
-                method: 'POST',
-                headers: {
-                    'content-type': 'application/json'
-                },
-                body: JSON.stringify({ name, description })
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => {
-                            throw new Error(err.error);
-                        })
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Success:', data);/////////////////////////////////
-                    location.reload();
-                })
-                .catch(error => {
-                    console.error('Error occurred:', error.message);/////////////////////////
-                    if (error.message === 'Category already exists') {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops',
-                            text: 'Category already exists'
-                        })
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: "Oops",
-                            text: 'An error occured while adding the category'
-                        })
-                    }
-                })
-        }
-
-        function validateForm() {
-            clearErrorMessages();
-            const name = document.getElementsByName('name')[0].value.trim();
-            const description = document.getElementById('descriptionId').value.trim();
-            isValid = true;
-
-
-            if (name == "") {
-                displayErrorMessage("name-error", "Please enter a name");
-                isValid = false
-            } else if (!/^[a-zA-Z\s]+$/.test(name)) {
-                displayErrorMessage('name-error', "Category name should contain only alphabetic characters");
-                isValid = false;
-            }
-            if (description === "") {
-                displayErrorMessage("description-error", "Please enter a description");
-                isValid = false;
-            }
-            return isValid
-        }
-
-        function displayErrorMessage(elementId, message) {
-            var errorElement = document.getElementById(elementId);
-            errorElement.innerText = message;
-            errorElement.style.display = 'block';
-        }
-
-        function clearErrorMessages() {
-            const errorElements = document.getElementsByClassName('error-message');
-            Array.from(errorElements).forEach((element) => {
-                element.innerText = '';
-                element.style.display = 'none';
-            })
-        }
-
-        async function addOffer(categoryId) {
-            const { value: amount } = await Swal.fire({
-                title: 'Offer in percentage',
-                input: 'number',
-                inputLabel: 'Percentage',
-                inputPlaceholder: '%'
-            });
-            if (amount) {
-                try {
-                    const response = await fetch('/admin/addCategoryOffer', {
-                        method: 'POST',
-                        headers: {
-                            'content-type': "application/json"
-                        },
-                        body: JSON.stringify({
-                            percentage: amount,
-                            categoryId: categoryId,
-                        }),
-                    });
-                    const data = await response.json();
-                    if (response.ok && data.status === true) {
-                        Swal.fire(
-                            "Offer added",
-                            "The offer has been added",
-                            'Success'
-                        ).then(() => {
-                            location.reload();
-                        })
-                    } else {
-                        Swal.fire("Failed", data.message || 'Adding offer failed', 'error')
-                    }
-                } catch (error) {
-                    Swal.fire(
-                        "Error",
-                        'An error occured while adding the offer',
-                        'error'
-                    );
-                    console.log('Error adding offer', error);
+            function handleFormSubmit(event) {
+                event.preventDefault();
+                if (!validateForm()) {
+                    return
                 }
-            }
-        }
+                const name = document.getElementsByName("name")[0].value;
+                const description = document.getElementById('descriptionId').value;
 
-        async function removeOffer(categoryId) {
-
-            try {
-                const response = await fetch('/admin/removeCategoryOffer', {
+                fetch('/admin/category', {
                     method: 'POST',
                     headers: {
                         'content-type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        categoryId: categoryId,
-                    })
+                    body: JSON.stringify({ name, description })
                 })
-
-                const data = await response.json();
-                if (response.ok && data.status === true) {
-                    Swal.fire(
-                        "Offer has been removed ",
-                        'success'
-                    ).then(() => {
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(err => {
+                                throw new Error(err.error);
+                            })
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Success:', data);/////////////////////////////////
                         location.reload();
-                    });
-                } else {
-                    Swal.fire('Failed', data.message || "Removing offer failed", error)
-                    console.log('Error')
+                    })
+                    .catch(error => {
+                        console.error('Error occurred:', error.message);/////////////////////////
+                        if (error.message === 'Category already exists') {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops',
+                                text: 'Category already exists'
+                            })
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: "Oops",
+                                text: 'An error occured while adding the category'
+                            })
+                        }
+                    })
+            }
+
+            function validateForm() {
+                clearErrorMessages();
+                const name = document.getElementsByName('name')[0].value.trim();
+                const description = document.getElementById('descriptionId').value.trim();
+                isValid = true;
+
+
+                if (name == "") {
+                    displayErrorMessage("name-error", "Please enter a name");
+                    isValid = false
+                } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+                    displayErrorMessage('name-error', "Category name should contain only alphabetic characters");
+                    isValid = false;
+                }
+                if (description === "") {
+                    displayErrorMessage("description-error", "Please enter a description");
+                    isValid = false;
+                }
+                return isValid
+            }
+
+            function displayErrorMessage(elementId, message) {
+                var errorElement = document.getElementById(elementId);
+                errorElement.innerText = message;
+                errorElement.style.display = 'block';
+            }
+
+            function clearErrorMessages() {
+                const errorElements = document.getElementsByClassName('error-message');
+                Array.from(errorElements).forEach((element) => {
+                    element.innerText = '';
+                    element.style.display = 'none';
+                })
+            }
+
+            async function addOffer(categoryId) {
+                const { value: amount } = await Swal.fire({
+                    title: 'Offer in percentage',
+                    input: 'number',
+                    inputLabel: 'Percentage',
+                    inputPlaceholder: '%'
+                });
+                if (amount) {
+                    try {
+                        const response = await fetch('/admin/addCategoryOffer', {
+                            method: 'POST',
+                            headers: {
+                                'content-type': "application/json"
+                            },
+                            body: JSON.stringify({
+                                percentage: amount,
+                                categoryId: categoryId,
+                            }),
+                        });
+                        const data = await response.json();
+                        if (response.ok && data.status === true) {
+                            Swal.fire(
+                                "Offer added",
+                                "The offer has been added",
+                                'Success'
+                            ).then(() => {
+                                location.reload();
+                            })
+                        } else {
+                            Swal.fire("Failed", data.message || 'Adding offer failed', 'error')
+                        }
+                    } catch (error) {
+                        Swal.fire(
+                            "Error",
+                            'An error occured while adding the offer',
+                            'error'
+                        );
+                        console.log('Error adding offer', error);
+                    }
                 }
             }
-            catch (error) {
-                Swal.fire(
-                    "Error",
-                    'An error occured while removing the offer',
-                    "eror"
-                );
-                console.error("Error removing offer", error)
-            }
 
-        }
+            async function removeOffer(categoryId) {
 
-        async function softDeleteCategory(categoryId) {
-            // Confirm the action before proceeding
-            const confirmation = await Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to recover this category!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, delete it!'
-            });
-
-            if (confirmation.isConfirmed) {
                 try {
-                    // Send fetch request to delete the category
-                    const response = await fetch(`/admin/deleteCategory/${categoryId}`, {
-                        method: 'POST', // Can also use DELETE, depending on your API design
+                    const response = await fetch('/admin/removeCategoryOffer', {
+                        method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    });
+                            'content-type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            categoryId: categoryId,
+                        })
+                    })
 
                     const data = await response.json();
-
-                    if (response.ok) {
-                        // Show success alert
+                    if (response.ok && data.status === true) {
                         Swal.fire(
-                            'Deleted!',
-                            'The category has been soft deleted.',
+                            "Offer has been removed ",
                             'success'
                         ).then(() => {
-                            // Reload the page or update the UI dynamically
                             location.reload();
                         });
                     } else {
-                        // Show error message from the server
-                        Swal.fire('Error', data.message || 'Failed to delete the category', 'error');
+                        Swal.fire('Failed', data.message || "Removing offer failed", error)
+                        console.log('Error')
                     }
-                } catch (error) {
-                    console.error('Error soft deleting category:', error);
-                    Swal.fire('Error', 'An unexpected error occurred while deleting the category', 'error');
+                }
+                catch (error) {
+                    Swal.fire(
+                        "Error",
+                        'An error occured while removing the offer',
+                        "eror"
+                    );
+                    console.error("Error removing offer", error)
+                }
+
+            }
+
+            async function softDeleteCategory(categoryId) {
+                // Confirm the action before proceeding
+                const confirmation = await Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to recover this category!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                });
+
+                if (confirmation.isConfirmed) {
+                    try {
+                        // Send fetch request to delete the category
+                        const response = await fetch(`/admin/deleteCategory/${categoryId}`, {
+                            method: 'POST', // Can also use DELETE, depending on your API design
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        const data = await response.json();
+
+                        if (response.ok) {
+                            // Show success alert
+                            Swal.fire(
+                                'Deleted!',
+                                'The category has been soft deleted.',
+                                'success'
+                            ).then(() => {
+                                // Reload the page or update the UI dynamically
+                                location.reload();
+                            });
+                        } else {
+                            // Show error message from the server
+                            Swal.fire('Error', data.message || 'Failed to delete the category', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error soft deleting category:', error);
+                        Swal.fire('Error', 'An unexpected error occurred while deleting the category', 'error');
+                    }
                 }
             }
-        }
 
-    </script>
+        </script>

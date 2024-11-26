@@ -4,6 +4,11 @@ const userController = require('../controllers/user/userController');
 const passport = require('passport');
 
 
+////Route Tester
+const working = (req,res,next)=>{
+console.log('Route is working fine')
+}
+
 router.get('/pageNotFound',userController.pageNotFound)
 router.get('/',userController.loadHomepage)
 router.get('/signup',userController.loadSignup);
