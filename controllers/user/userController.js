@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt')
 const Product = require('../../models/productSchema')
 const passport = require('passport');
 
+
 const getAllProducts = async function () {
     try {
 
@@ -88,7 +89,7 @@ const loadShopping = async (req, res) => {
         const userSession = req.session.user;
         const user = userSession ? await User.findById(userSession._id) : null;
         const allProducts = await getAllProducts()
-        return res.render('shop', { user, allProducts });
+        return res.render('shop', { user, allProducts,title:"Shop" });
     } catch (error) {
         console.log('Shopping page not loading:', error);
         res.status(500).send('Server Error');
@@ -97,7 +98,7 @@ const loadShopping = async (req, res) => {
 
 const pageNotFound = async (req, res) => {
     try {
-        res.render('page-404')
+        res.render('page-404',{title:"404"})
     } catch (error) {
         res.redirect('/pageNotFound')
     }
@@ -108,7 +109,7 @@ const loadHomepage = async (req, res) => {
         const userSession = req.session.user;
         const user = userSession ? await User.findById(userSession._id) : null;
         const allProducts = await getAllProducts()
-        res.render('home', { user, allProducts });
+        res.render('home', { user, allProducts,title:"Chanel One" });
     } catch (error) {
         console.log('Home Page not found');
         res.status(500).send('Server Error');
@@ -176,7 +177,6 @@ const resendOtp = async (req, res) => {
     }
 }
 
-
 const loadLogin = async (req, res) => {
     try {
         if (!req.session.user) {
@@ -193,7 +193,7 @@ const login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        const findUser = await User.findOne({ isAdmin: 0, email: email });
+        const findUser = await User.findOne({ isAdmin: false, email: email });
 
         if (!findUser) {
             return res.render('login', { message: 'User not found' });
@@ -235,11 +235,22 @@ const loadProductPage = async (req, res) => {
         const id = req.params.id;
         const product = await Product.findById(id)
 
-        return res.render('product', {user, product })
+        return res.render('product', {user, product,title:product.productName })
     } catch (error) {
 
     }
 }
+
+const loadProfile = async(req,res)=>{
+    try {
+        const userSession = req.session.user;
+        const user = userSession ? await User.findById(userSession._id) : null;
+        res.render('profile',{user,title:"Profile"})
+    } catch (error) {
+        
+    }
+}
+
 module.exports = {
     loadHomepage,
     pageNotFound,
@@ -252,5 +263,5 @@ module.exports = {
     login,
     logout,
     loadProductPage,
-
+    loadProfile
 };

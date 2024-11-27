@@ -65,23 +65,23 @@
 
                                     <td>
                                         <%if(data[i].isBlocked===false){%>
-                                        <span class="badge rounded-pill alert-success">Active</span>
-                                        <%}else{%>
-                                            <span class="badge rounded-pill alert-danger">Blocked</span>
-                                            <%}%>
+                                            <span class="badge rounded-pill alert-success">Active</span>
+                                            <%}else{%>
+                                                <span class="badge rounded-pill alert-danger">Blocked</span>
+                                                <%}%>
                                     </td>
                                     <td>08.07.2020</td>
                                     <td class="text-end">
                                         <%if(data[i].isBlocked===false){%>
                                             <a href="/admin/blockCustomer?id=<%=data[i].id%>"
                                                 class="btn btn-sm btn-brand rounded font-sm mt-15">Block</a>
-                                            <%}else{%>
-                                                <a href="/admin/unblockCustomer?id=<%=data[i].id%>"
-                                                    class="btn btn-sm btn-brand rounded font-sm mt-15">Unblock</a>
-                                                <%}%>
+                                        <%}else{%>
+                                            <a href="/admin/unblockCustomer?id=<%=data[i].id%>"
+                                                class="btn btn-sm btn-brand rounded font-sm mt-15">Unblock</a>
+                                        <%}%>
                                     </td>
                                 </tr>
-                                <%}%>
+                            <%}%>
                         </tbody>
                     </table>
                     <!-- table-responsive.// -->
@@ -99,7 +99,7 @@
                                 <%=i%>
                             </a>
                         </li>
-                        <%}%>
+                    <%}%>
                 </ul>
             </nav>
         </div>

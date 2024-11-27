@@ -8,11 +8,12 @@ const userAuth = (req,res,next)=>{
             if(data && !data.isBlocked){
                 next()
             }else{
-                res.redirect('/login')
+                req.session.destroy();
+                res.redirect('/login');
             }
         })
         .catch(error=>{
-            console.log('Error in user auth middleware')
+            console.log('Error in user auth middleware',error)
             res.status(500).send('Internal Server Error')
         })
     }else{
@@ -30,12 +31,10 @@ const adminAuth = (req,res,next)=>{
         }
     })
     .catch(error=>{
-        console.log("Error in admin auth Middleware");
+        console.log("Error in admin auth Middleware",error);
         res.status(500).send('Internal server error');
     })
 }
-
-
 
 module.exports={
     userAuth ,

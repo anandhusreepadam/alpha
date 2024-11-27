@@ -60,7 +60,7 @@ const customerUnblocked = async (req, res) => {
     } catch (error) {
         res.redirect('/pageError')
     }
-}
+};
 
 module.exports = {
     customerInfo,

@@ -108,7 +108,7 @@ const getAllProducts = async (req, res) => {
     } catch (error) {
         res.redirect('/pageError')
     }
-};
+}
 
 const addProductOffer = async (req, res) => {
     try {
