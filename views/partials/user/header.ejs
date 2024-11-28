@@ -2,39 +2,42 @@
 <html lang="en">
 
 <head>
-	<title><%=title%></title>
+	<title>
+		<%=title%>
+	</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-<!--===============================================================================================-->	
-	<link rel="icon" type="image/png" href="/images/icons/favicon.png"/>
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
+	<link rel="icon" type="image/png" href="/images/icons/favicon.png" />
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="/vendor/bootstrap/css/bootstrap.min.css">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="/fonts/iconic/css/material-design-iconic-font.min.css">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="/fonts/linearicons-v1.0.0/icon-font.min.css">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="/vendor/animate/animate.css">
-<!--===============================================================================================-->	
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="/vendor/css-hamburgers/hamburgers.min.css">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="/vendor/animsition/css/animsition.min.css">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="/vendor/select2/select2.min.css">
-<!--===============================================================================================-->	
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="/vendor/daterangepicker/daterangepicker.css">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="/vendor/slick/slick.css">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="/vendor/MagnificPopup/magnific-popup.css">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="/vendor/perfect-scrollbar/perfect-scrollbar.css">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="/css/util.css">
 	<link rel="stylesheet" type="text/css" href="/css/main.css">
-<!--===============================================================================================-->
+
+	<!--===============================================================================================-->
 </head>
 
 <body class="animsition">
@@ -46,11 +49,15 @@
 
 			<div class="wrap-menu-desktop">
 				<nav class="limiter-menu-desktop container">
-					
-					<!-- Logo desktop -->		
+
+					<!-- Logo desktop -->
 					<a href="/" class="logo">
-						<img src="/images/icons/logo-01.svg" alt="IMG-LOGO">
+						<img src="/images/icons/logo-01.png" alt="IMG-LOGO">
+						
 					</a>
+					<style>
+					
+					</style>
 
 					<!-- Menu desktop -->
 					<div class="menu-desktop">
@@ -73,88 +80,100 @@
 								<a href="#">Contact</a>
 							</li>
 						</ul>
-					</div>	
+					</div>
 
 					<!-- Icon header -->
 
-                    <!-- Style for dropdown -->
-                    <style>
-                        .dropdown {
-                            position: relative;
-                            display: inline-block;
-                        }
-                
-                        .dropdown-content {
-                            display: none;
-                            position: absolute;
-                            background-color: #f9f9f9;
-                            min-width: 160px;
-                            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-                            z-index: 1;
-                        }
-                
-                        .dropdown-content a {
-                            color: black;
-                            padding: 12px 16px;
-                            text-decoration: none;
-                            display: block;
-                        }
-                
-                        .dropdown-content a:hover {
-                            background-color: #f1f1f1;
-                        }
-                
-                        .dropdown:hover .dropdown-content {
-                            display: block;
-                        }
-                
-                        .dropdown:hover .sign-in-link {
-                            color: #007bff;
-                        }
-                    </style>
-                     
+					<!-- Style for dropdown -->
+					<style>
+						.dropdown {
+							position: relative;
+							display: inline-block;
+						}
+
+						.dropdown-content {
+							display: none;
+							position: absolute;
+							background-color: #f9f9f9;
+							min-width: 160px;
+							box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+							z-index: 1;
+						}
+
+						.dropdown-content a {
+							color: black;
+							padding: 12px 16px;
+							text-decoration: none;
+							display: block;
+						}
+
+						.dropdown-content a:hover {
+							background-color: #f1f1f1;
+						}
+
+						.dropdown:hover .dropdown-content {
+							display: block;
+						}
+
+						.dropdown:hover .sign-in-link {
+							color: #007bff;
+						}
+
+						.spacer {
+							height: 9vh;
+						}
+					</style>
+
 					<div class="wrap-icon-header flex-w flex-r-m">
-                        <%if(user){%>
-						<div class="dropdown">
-							<ul class="main-menu">
-								<li class="active-menu">
-							        <a href="#" class="sign-in-link"><%=user.name%></a>
-							    </li>
-							</ul>
-							<div class="dropdown-content">
-								<a href="/profile">Profile</a>
-								<a href="/logout">Logout</a>
+						<%if(user){%>
+							<div class="dropdown">
+								<ul class="main-menu">
+									<li class="active-menu">
+										<a href="#" class="sign-in-link">
+											Hello, <%=user.name%>
+										</a>
+									</li>
+								</ul>
+								<div class="dropdown-content">
+									<a href="/profile">Profile</a>
+									<a href="/logout">Logout</a>
+								</div>
 							</div>
-						</div>
-					<%}else{%>
-						<div>
-							<ul class="main-menu">
-								<li class="active-menu">
-									<a href="/login">Login</a>
-								</li>
-								<li>
-									<a href="/signup">Sign Up</a>
-								</li>
-							</ul>
-						</div>
-					<%}%>
-						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
-							<i class="zmdi zmdi-search"></i>
-						</div>
-						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="2">
-							<i class="zmdi zmdi-shopping-cart"></i>
-						</div>
-						<a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti" data-notify="0">
-							<i class="zmdi zmdi-favorite-outline"></i>
-						</a>
+							<%}else{%>
+								<div>
+									<ul class="main-menu">
+										<li class="active-menu">
+											<a href="/login">Login</a>
+										</li>
+										<li>
+											<a href="/signup">Sign Up</a>
+										</li>
+									</ul>
+								</div>
+								<%}%>
+									<div
+										class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
+										<i class="zmdi zmdi-search"></i>
+									</div>
+									
+									<a href="/cart" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart"
+										data-notify="2">
+											<i class="zmdi zmdi-shopping-cart"></i>
+										</a>
+								
+									<a href="/wishlist"
+										class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti"
+										data-notify="0">
+										<i class="zmdi zmdi-favorite-outline"></i>
+									</a>
 					</div>
 				</nav>
-			</div>	
+			</div>
 		</div>
 
 		<!-- Header Mobile -->
 		<div class="wrap-header-mobile">
-			<!-- Logo moblie -->		
+			<!-- Logo moblie -->
 			<div class="logo-mobile">
 				<a href="/"><img src="/images/icons/logo-01.svg" alt="IMG-LOGO"></a>
 			</div>
@@ -165,11 +184,15 @@
 					<i class="zmdi zmdi-search"></i>
 				</div>
 
-				<div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart" data-notify="2">
-					<i class="zmdi zmdi-shopping-cart"></i>
+				<div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart"
+					data-notify="2">
+					<a href="/cart">
+						<i class="zmdi zmdi-shopping-cart"></i>
+					</a>
 				</div>
 
-				<a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti" data-notify="0">
+				<a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti"
+					data-notify="0">
 					<i class="zmdi zmdi-favorite-outline"></i>
 				</a>
 			</div>
@@ -226,4 +249,4 @@
 	</header>
 
 
-<!-- //////////////////////////////////////////////////////////////////////////////////////////// -->
+	<!-- //////////////////////////////////////////////////////////////////////////////////////////// -->

@@ -118,7 +118,13 @@ Input, textarea : 14px/1.6 '', Arial, sans-serif;
 
 
 /*//////////////////////////////////////////////////////////////////
+
 [ LOADDING ]*/
+ /* All link underlines are thrown */
+a{
+  text-decoration: none !important;
+}
+
 .animsition-loading-1 {
   position: absolute;
   top: 50%;
