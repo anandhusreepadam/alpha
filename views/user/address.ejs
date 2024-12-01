@@ -1,0 +1,223 @@
+<%-include("../../views/partials/user/header")%>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="x-ua-compatible" content="ie=edge" />
+        <meta name="description" content="" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta property="og:title" content="" />
+        <meta property="og:type" content="" />
+        <meta property="og:url" content="" />
+        <meta property="og:image" content="" />
+        <!-- Favicon -->
+
+        <!-- Template CSS -->
+        <link href="assets/css/main.css?v=1.1" rel="stylesheet" type="text/css" />
+    </head>
+
+    <body>
+        <div class="spacer"></div>
+
+        <section class="content-main">
+            <div class="content-header">
+                <h2 class="content-title">Manage Addresses</h2>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row gx-5">
+                        <aside class="col-lg-3 border-end">
+                            <nav class="nav nav-pills flex-lg-column mb-4">
+                                <a class="nav-link" href="/profile">General</a>
+                                <a class="nav-link active" aria-current="page" href="/address">Addresses</a>
+                                <a class="nav-link" href="#">Admin account</a>
+                                <a class="nav-link" href="#">SEO settings</a>
+                            </nav>
+                        </aside>
+                        <div class="col-lg-9">
+                            <section class="content-body p-xl-4">
+                                <!-- Address Management Section -->
+                                <form method="post" form id="addressForm" enctype="multipart/form-data" onsubmit="submitForm(event)">
+                                    <div class="row gx-3 mb-3">
+                                        <div class="col-lg-6">
+                                            <label class="form-label">Name</label>
+                                            <input class="form-control" value="<%=user.name%>" name="name" type="text" placeholder="Full Name" />
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <label class="form-label">Phone Number</label>
+                                            <input class="form-control" value="<%=user.phone%>" name="phone" type="tel" placeholder="1234567890" />
+                                        </div>
+                                    </div>
+                                    <div class="row gx-3 mb-3">
+                                        <div class="col-lg-12">
+                                            <label class="form-label">Address</label>
+                                            <textarea class="form-control" rows="3" name="fullAddress" placeholder="Full Address"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="row gx-3 mb-3">
+                                        <div class="col-lg-6">
+                                            <label class="form-label">City</label>
+                                            <input class="form-control" name="city"  type="text" placeholder="City" />
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <label class="form-label">State</label>
+                                            <input class="form-control" name="state"  type="text" placeholder="State" />
+                                        </div>
+                                    </div>
+                                    <div class="row gx-3 mb-3">
+                                        <div class="col-lg-6">
+                                            <label class="form-label">Pin Code</label>
+                                            <input class="form-control" name="pincode" type="text" placeholder="123456" />
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <label class="form-label">Address Type</label>
+                                            <select class="form-control" name="addressType">
+                                                <option value="home"  selected>Home</option>
+                                                <option value="office">Office</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary" type="submit">Save Address</button>
+                                </form>
+                            </section>
+                            <% if (addressData) { %>
+                                <div class="existing-addresses">
+                                    <h4 class="mb-3">Your Saved Addresses</h4>
+                                    <div class="row gx-3">
+                                        <% addressData.forEach(function(address) { %>
+                                            <div class="col-lg-6 mb-3">
+                                                <div class="card border">
+                                                    <div class="card-body">
+                                                        <h6><%= address.name %></h6>
+                                                        <p>
+                                                            <strong>Address:</strong> <%= address.address %><br />
+                                                            <strong>City:</strong> <%= address.city %><br />
+                                                            <strong>State:</strong> <%= address.state %><br />
+                                                            <strong>Pin Code:</strong> <%= address.pincode %><br />
+                                                            <strong>Phone:</strong> <%= address.phone %><br />
+                                                            <strong>Type:</strong> <%= address.type === "home" ? "Home" : "Office" %>
+                                                        </p>
+                                                        <button class="btn btn-outline-primary btn-sm me-2">Edit</button>
+                                                        <button class="btn btn-outline-danger btn-sm">Delete</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% }); %>
+                                    </div>
+                                </div>
+                            <% } else { %>
+                                <p class="text-muted">No addresses found. Add a new address using the form above.</p>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <script src="assets/js/vendors/jquery-3.6.0.min.js"></script>
+        <script src="assets/js/vendors/bootstrap.bundle.min.js"></script>
+        <script src="assets/js/vendors/select2.min.js"></script>
+        <script src="assets/js/vendors/perfect-scrollbar.js"></script>
+        <script src="assets/js/vendors/jquery.fullscreen.min.js"></script>
+        <script src="assets/js/main.js?v=1.1" type="text/javascript"></script>
+    </body>
+</html>
+<%-include("../../views/partials/user/footer")%>
+
+
+<script>
+
+async function submitForm(event) {
+    console.log('hii in submit')
+    event.preventDefault();
+    if(validateForm()){
+        const formData  = new FormData(document.getElementById('addressForm'));
+        for (let [key, value] of formData.entries()) {
+    console.log(key, value); // Logs each key-value pair    
+    }
+        try {
+            const response = await fetch('/addAddress',{
+                method:'POST',
+                body:formData
+            });
+            const result = await response.json();
+            if(response.ok){
+                Swal.fire(
+                            'Saved!',
+                            'The address have been saved successfully',
+                            'success'
+                ).then(()=>{
+                    location.reload();
+                });
+            }else{
+                Swal.fire('Error',result.message||"Failed to Save Address",'error');
+            }
+        } catch (error) {
+            console.log('Error saving Address',error);
+            Swal.fire("Error",'An unexpected error occured while adding Address','error');
+        }
+    }
+};
+
+function validateForm() {
+
+
+    // Clearing previous error messages
+    const errorElements = document.querySelectorAll('.error-message');
+    errorElements.forEach(el => el.remove());
+
+
+    const nameInput = document.querySelector('input[placeholder="Full Name"]');
+    const phoneInput = document.querySelector('input[placeholder="1234567890"]');
+    const addressInput = document.querySelector('textarea[placeholder="Full Address"]');
+    const cityInput = document.querySelector('input[placeholder="City"]');
+    const stateInput = document.querySelector('input[placeholder="State"]');
+    const pinCodeInput = document.querySelector('input[placeholder="123456"]');
+    const addressTypeSelect = document.querySelector('select[name="addressType"]');
+
+    let isValid = true;
+
+    function showError(input, message) {
+        isValid = false;
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.style.color = 'red';
+        errorDiv.style.fontSize = '0.9em';
+        errorDiv.textContent = message;
+        input.parentNode.appendChild(errorDiv);
+    }
+
+    if (nameInput.value.trim() === "") {
+        showError(nameInput, "Name is required.");
+    }
+
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(phoneInput.value.trim())) {
+        showError(phoneInput, "Invalid phone number. It must be 10 digits.");
+    }
+
+    if (addressInput.value.trim() === "") {
+        showError(addressInput, "Address is required.");
+    }
+
+    if (cityInput.value.trim() === "") {
+        showError(cityInput, "City is required.");
+    }
+
+    if (stateInput.value.trim() === "") {
+        showError(stateInput, "State is required.");
+    }
+
+    const pinCodeRegex = /^[0-9]{6}$/;
+    if (!pinCodeRegex.test(pinCodeInput.value.trim())) {
+        showError(pinCodeInput, "Invalid pin code. It must be 6 digits.");
+    }
+
+    return isValid;
+}
+
+
+
+
+
+
+</script>

@@ -112,7 +112,6 @@ const loadSignup = async (req, res) => {
 const signup = async (req, res) => {
     try {
         const { name, phone, email, password } = req.body;
-        console.log(req.body)
         const findUser = await User.findOne({ email })
         if (findUser) {
             return res.render('signup', { message: 'User with this email already exists' });
@@ -337,7 +336,7 @@ const logout = async (req, res) => {
 
 const pageNotFound = async (req, res) => {
     try {
-        res.render('page-404', { title: "404" })
+        res.render('page-404', { title: "404" ,user:null})
     } catch (error) {
         res.redirect('/pageNotFound')
     }

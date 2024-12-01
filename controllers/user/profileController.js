@@ -1,7 +1,10 @@
+const Address = require('../../models/addressSchema');
 const User = require('../../models/userSchema');
 const nodemailer = require('nodemailer')
 const bcrypt = require('bcrypt');
 
+
+//functions
 async function getUser(req) {
     try {
         const userSession = req.session.user;
@@ -43,6 +46,18 @@ async function sendVerificationEmail(email, otp) {
     }
 }
 
+async function securePassword(password) {
+    try {
+        const passwordHash = await bcrypt.hash(password, 10)
+        return passwordHash;
+    } catch (error) {
+        console.error('Error hashing password', error);
+        throw new Error('Failed to secure password');
+    }
+}
+
+
+//routes
 const loadConfirmPassword = async (req, res) => {
     try {
         const user = await getUser(req);
@@ -99,21 +114,12 @@ const verifyChangeOtp = async (req, res) => {
             await User.updateOne({_id:user._id},{$set:{email:req.session.email}})
             res.redirect('/profile')
         } else {
-            res.render('verifyChangeOtp', { message: "Invalid OTP", user: req.session.userData });
+            res.render('newEmail', { message: "Invalid OTP", user: req.session.userData,title:"Update Email" });
         }
     } catch (error) {
         res.redirect('/pageNotFound')
     }
 }
-
-const loadChangePassword = async (req, res) => {
-    try {
-        res.render('changePassword');
-    } catch (error) {
-        res.redirect('/pageNotFound');
-    }
-}
-
 
 const loadNewEmail = async (req, res) => {
     try {
@@ -124,13 +130,84 @@ const loadNewEmail = async (req, res) => {
     }
 }
 
+const loadChangePassword = async (req, res) => {
+    try {
+        const user = await getUser(req);
+        res.render('changePassword',{user,title:"Update Password"});
+    } catch (error) {
+        res.redirect('/pageNotFound');
+    }
+}
+
+const changePassword = async(req,res)=>{
+    try {
+        const user = await getUser(req);
+        const {currentPassword,newPassword} = req.body;
+        const passwordMatch = await bcrypt.compare(currentPassword,user.password);
+        console.log(currentPassword)
+        if(passwordMatch){
+            if(currentPassword==newPassword){
+                return res.render('changePassword',{message:"New password cannot be the same as the current password.",user,title:"Update Password"});
+            }
+            const passwordHash = await securePassword(newPassword);
+            await User.updateOne({_id:user._id},{$set:{password:passwordHash}});
+            console.log('password updated Successfully');
+            return res.redirect('/profile');
+        }else{
+            return res.render('changePassword',{message:"Wrong Password",user,title:"Update Password"});
+        }
+        
+    } catch (error) {
+        console.log(error);
+        res.redirect('/pageNotfound');
+    }
+}
+
+const loadAddress = async (req,res)=>{
+    try {
+        const user = await getUser(req);
+        const addressData = await Address.findOne({userId:user._id})
+        const addresses = addressData ? addressData.address : [];
+        res.render('address',{title:"Address",user,addressData:addresses});
+    } catch (error) {
+        console.log(error);
+        res.redirect('/pageNotFound');
+    }
+}
+
+const addAddress = async(req,res)=>{
+    try {
+        const user = await getUser(req);
+        const {name,fullAddress,city,state,phone,pincode,addressType}=req.body;
+        const userAddress = await Address.findOne({userId:user._id})
+        if(!userAddress){
+
+            const newAddress = new Address({
+                userId:user._id,
+                address:[{name,fullAddress,city,state,phone,pincode,addressType}]
+            });
+            await newAddress.save();
+        }else{
+            userAddress.address.push({name,fullAddress,city,state,phone,pincode,addressType});
+            await userAddress.save();
+        }
+        res.status(200).json('Address Saved Successfully');
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json('Error while saving Address')
+    }
+}
+
 
 module.exports = {
-    // changeEmail,
     verifyChangeOtp,
-    loadChangePassword,
-    confirmPassword,
     loadNewEmail,
+    newEmail,
     loadConfirmPassword,
-    newEmail
+    confirmPassword,
+    loadChangePassword,
+    changePassword,
+    loadAddress,
+    addAddress
 }

@@ -4,7 +4,8 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const { userAuth, profileAuth } = require('../middlewares/auth');
-
+const multer = require('multer');
+const upload = multer();
 
 ////Route Tester
 const working = (req,res,next)=>{
@@ -46,13 +47,18 @@ router.get('/wishlist',userAuth,userController.loadWishlist);
 
 
 //Profile Management
-router.get('/changePassword',profileAuth,userAuth,profileController.loadChangePassword);
 router.get('/confirmPassword',profileAuth,userAuth,profileController.loadConfirmPassword);
 router.post('/confirmPassword',profileAuth,userAuth,profileController.confirmPassword);
-router.post('/verifyChangeOtp',profileController.verifyChangeOtp);
-router.post('/confirmPassword',profileController.confirmPassword);
-router.get('/newEmail',profileController.loadNewEmail);
-router.post('/newEmail',profileController.newEmail);
+router.post('/verifyChangeOtp',profileAuth,userAuth,profileController.verifyChangeOtp);
+router.get('/newEmail',profileAuth,userAuth,profileController.loadNewEmail);
+router.post('/newEmail',profileAuth,userAuth,profileController.newEmail);
+router.get('/changePassword',profileAuth,userAuth,profileController.loadChangePassword);
+router.post('/changePassword',profileAuth,userAuth,profileController.changePassword);
+
+
+//Address Management
+router.get('/address',profileAuth,userAuth,profileController.loadAddress);
+router.post('/addAddress',upload.none(),profileController.addAddress);
 
 
 module.exports=router

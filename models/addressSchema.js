@@ -20,7 +20,7 @@ const addressSchema = new Schema({
             type: String,
             required: true
         },
-        ladndMark: {
+        fullAddress: {
             type: String,
             required: true
         },
@@ -38,7 +38,7 @@ const addressSchema = new Schema({
         },
         altPhone: {
             type: String,
-            required: true
+            required: false
         },
     }]
 },{timestamps:true})

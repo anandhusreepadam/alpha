@@ -219,15 +219,9 @@
 
         <script>
 
-
-
-
-
-
             async function submitForm(event) {
                 event.preventDefault();
                 if (validateForm()) {
-                    console.log('validated');/////////////////////////////////////
                     const formData = new FormData(document.getElementById('productForm'))
                     try {
                         const response = await fetch('/admin/editProduct/<%=product._id%>', {
@@ -285,8 +279,7 @@
                     displayErrorMessage('color-error', 'Please enter a color.');
                     isValid = false;
                 }
-
-                console.log(isValid, 'returning validation')
+                
                 return isValid;
             }
 

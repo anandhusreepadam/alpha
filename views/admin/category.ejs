@@ -304,7 +304,7 @@
             }
 
             async function softDeleteCategory(categoryId) {
-                // Confirm the action before proceeding
+   
                 const confirmation = await Swal.fire({
                     title: 'Are you sure?',
                     text: "You won't be able to recover this category!",
@@ -317,9 +317,8 @@
 
                 if (confirmation.isConfirmed) {
                     try {
-                        // Send fetch request to delete the category
                         const response = await fetch(`/admin/deleteCategory/${categoryId}`, {
-                            method: 'POST', // Can also use DELETE, depending on your API design
+                            method: 'POST', 
                             headers: {
                                 'Content-Type': 'application/json'
                             }
@@ -328,17 +327,15 @@
                         const data = await response.json();
 
                         if (response.ok) {
-                            // Show success alert
                             Swal.fire(
                                 'Deleted!',
                                 'The category has been soft deleted.',
                                 'success'
                             ).then(() => {
-                                // Reload the page or update the UI dynamically
+                                // Reloading the page
                                 location.reload();
                             });
                         } else {
-                            // Show error message from the server
                             Swal.fire('Error', data.message || 'Failed to delete the category', 'error');
                         }
                     } catch (error) {
