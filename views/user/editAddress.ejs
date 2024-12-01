@@ -19,7 +19,7 @@
 
         <section class="content-main">
             <div class="content-header">
-                <h2 class="content-title">Manage Addresses</h2>
+                <h2 class="content-title">Edit Addresse</h2>
             </div>
             <div class="card">
                 <div class="card-body">
@@ -39,33 +39,33 @@
                                     <div class="row gx-3 mb-3">
                                         <div class="col-lg-6">
                                             <label class="form-label">Name</label>
-                                            <input class="form-control" value="<%=user.name%>" name="name" type="text" placeholder="Full Name" />
+                                            <input class="form-control" value="<%=address.name%>" name="name" type="text" placeholder="Full Name" />
                                         </div>
                                         <div class="col-lg-6">
                                             <label class="form-label">Phone Number</label>
-                                            <input class="form-control" value="<%=user.phone%>" name="phone" type="tel" placeholder="1234567890" />
+                                            <input class="form-control" value="<%=address.phone%>" name="phone" type="tel" placeholder="1234567890" />
                                         </div>
                                     </div>
                                     <div class="row gx-3 mb-3">
                                         <div class="col-lg-12">
                                             <label class="form-label">Address</label>
-                                            <textarea class="form-control" rows="3" name="fullAddress" placeholder="Full Address"></textarea>
+                                            <textarea class="form-control"  rows="3" name="fullAddress" placeholder="Full Address"><%=address.fullAddress%></textarea>
                                         </div>
                                     </div>
                                     <div class="row gx-3 mb-3">
                                         <div class="col-lg-6">
                                             <label class="form-label">City</label>
-                                            <input class="form-control" name="city"  type="text" placeholder="City" />
+                                            <input class="form-control" name="city" value="<%=address.city%>"  type="text" placeholder="City" />
                                         </div>
                                         <div class="col-lg-6">
                                             <label class="form-label">State</label>
-                                            <input class="form-control" name="state"  type="text" placeholder="State" />
+                                            <input class="form-control" name="state"  type="text" value="<%=address.state%>" placeholder="State" />
                                         </div>
                                     </div>
                                     <div class="row gx-3 mb-3">
                                         <div class="col-lg-6">
                                             <label class="form-label">Pin Code</label>
-                                            <input class="form-control" name="pincode" type="text" placeholder="123456" />
+                                            <input class="form-control" name="pincode" value="<%=address.pincode%>" type="text" placeholder="123456" />
                                         </div>
                                         <div class="col-lg-6">
                                             <label class="form-label">Address Type</label>
@@ -78,34 +78,6 @@
                                     <button class="btn btn-primary" type="submit">Save Address</button>
                                 </form>
                             </section>
-                            <% if (addressData) { %>
-                                <div class="existing-addresses">
-                                    <h4 class="mb-3">Your Saved Addresses</h4>
-                                    <div class="row gx-3">
-                                        <% addressData.forEach(function(address) { %>
-                                            <div class="col-lg-6 mb-3">
-                                                <div class="card border">
-                                                    <div class="card-body">
-                                                        <h6><%= address.name %></h6>
-                                                        <p>
-                                                            <strong>Address:</strong> <%= address.fullAddress %><br />
-                                                            <strong>City:</strong> <%= address.city %><br />
-                                                            <strong>State:</strong> <%= address.state %><br />
-                                                            <strong>Pin Code:</strong> <%= address.pincode %><br />
-                                                            <strong>Phone:</strong> <%= address.phone %><br />
-                                                            <strong>Type:</strong> <%= address.addressType=='home'?'Home':'Office'%>
-                                                        </p>
-                                                        <a href="/editAddress?id=<%=address._id%>" class="btn btn-outline-primary btn-sm me-2">Edit</a>
-                                                        <a onclick="deleteAddress('<%=address._id%>')" class="btn btn-outline-danger btn-sm">Delete</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        <% }); %>
-                                    </div>
-                                </div>
-                            <% } else { %>
-                                <p class="text-muted">No addresses found. Add a new address using the form above.</p>
-                            <% } %>
                         </div>
                     </div>
                 </div>
@@ -130,8 +102,11 @@ async function submitForm(event) {
     event.preventDefault();
     if(validateForm()){
         const formData  = new FormData(document.getElementById('addressForm'));
+        for (let [key, value] of formData.entries()) {
+    console.log(key, value); // Logs each key-value pair    
+    }
         try {
-            const response = await fetch('/addAddress',{
+            const response = await fetch('/editAddress?id=<%=address._id%>',{
                 method:'POST',
                 body:formData
             });
@@ -142,7 +117,7 @@ async function submitForm(event) {
                             'The address have been saved successfully',
                             'success'
                 ).then(()=>{
-                    location.reload();
+                    location.href= result.redirect;
                 });
             }else{
                 Swal.fire('Error',result.message||"Failed to Save Address",'error');
@@ -210,46 +185,6 @@ function validateForm() {
 
     return isValid;
 }
-
-async function deleteAddress(addressId){
-    console.log('hello')
-    const confirmation = await Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to recover this Address!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, delete it!'
-            })
-    if (confirmation.isConfirmed) {
-        try {
-            const response = await fetch(`/deleteAddress?id=${addressId}`,{
-                method:'POST',
-
-            });
-            const result = await response.json();
-
-            if(response.ok){
-                    Swal.fire(
-                                'Deleted',
-                                'The address have been deleted successfully',
-                                'success'
-                    ).then(()=>{
-                        location.reload();
-                    });
-                }else{
-                    Swal.fire('Error',result.message||"Failed to delete Address",'error');
-                }
-    
-        } catch (error) {
-            console.log('Error deleting Address',error);
-            Swal.fire("Error",'An unexpected error occured while deleting Address','error');
-        }
-    }
-}
-
-
 
 
 </script>

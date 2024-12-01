@@ -59,6 +59,8 @@ router.post('/changePassword',profileAuth,userAuth,profileController.changePassw
 //Address Management
 router.get('/address',profileAuth,userAuth,profileController.loadAddress);
 router.post('/addAddress',upload.none(),profileController.addAddress);
-
+router.get('/editAddress',profileController.loadEditAddress);
+router.post('/editAddress',upload.none(),profileController.editAddress);
+router.post('/deleteAddress',profileController.deleteAddress)
 
 module.exports=router
