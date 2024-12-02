@@ -14,7 +14,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-3">
-                        <form method="post" action="/admin/category" onsubmit="return handleFormSubmit(event)">
+                        <form   onsubmit="createCategory(event)">
                             <div class="mb-4">
                                 <label for="product_name" class="form-label">Name</label>
                                 <input type="text" name="name" placeholder="Type here" class="form-control" id="name" />
@@ -39,9 +39,12 @@
                                         <th>No.</th>
                                         <th>Name</th>
                                         <th>Description</th>
-                                        <th>Slug</th>
-                                        <th>Order</th>
-                                        <th class="text-end">Action</th>
+                                        <th>Offer %</th>
+                                        <th>Offer Action</th>
+                                        <th>List Action</th>
+                                        <th>Edit Action</th>
+                                        <th>Delete Action</th>
+                             
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -87,12 +90,12 @@
                                                 <%if(category.isListed){%>
                                                     <button class="btn btn-success">
                                                         <a style="text-decoration:none" class="text-white"
-                                                            href="/admin/listCategory?id=<%=category._id%>">Unlist</a>
+                                                        onclick="unlistCategory('<%=category._id%>')">Unlist</a>
                                                     </button>
                                                     <%}else{%>
                                                         <button class="btn btn-warning">
                                                             <a style="text-decoration:none" class="text-white"
-                                                                href="/admin/unlistCategory?id=<%=category._id%>">List</a>
+                                                            href="/admin/listCategory?id=<%=category._id%>">List</a>
                                                         </button>
                                                         <%}%>
                                             </td>
@@ -144,12 +147,12 @@
 
         <script>
 
-            function handleFormSubmit(event) {
+          async  function createCategory(event) {
                 event.preventDefault();
                 if (!validateForm()) {
-                    return
+                    return 
                 }
-                const name = document.getElementsByName("name")[0].value;
+                const name = document.getElementById("name").value;
                 const description = document.getElementById('descriptionId').value;
 
                 fetch('/admin/category', {
@@ -167,12 +170,15 @@
                         }
                         return response.json();
                     })
+                    Swal.fire(
+                        'Added!',
+                        'Category added Successfully .',
+                        'success'
+                    )
                     .then(data => {
-                        console.log('Success:', data);/////////////////////////////////
                         location.reload();
                     })
                     .catch(error => {
-                        console.error('Error occurred:', error.message);/////////////////////////
                         if (error.message === 'Category already exists') {
                             Swal.fire({
                                 icon: 'error',
@@ -191,7 +197,7 @@
 
             function validateForm() {
                 clearErrorMessages();
-                const name = document.getElementsByName('name')[0].value.trim();
+                const name = document.getElementById('name').value.trim();
                 const description = document.getElementById('descriptionId').value.trim();
                 isValid = true;
 
@@ -244,11 +250,11 @@
                             }),
                         });
                         const data = await response.json();
-                        if (response.ok && data.status === true) {
+                        if (response.ok) {
                             Swal.fire(
                                 "Offer added",
                                 "The offer has been added",
-                                'Success'
+                                'success'
                             ).then(() => {
                                 location.reload();
                             })
@@ -283,7 +289,7 @@
                     if (response.ok && data.status === true) {
                         Swal.fire(
                             "Offer has been removed ",
-                            'success'
+                            "success",
                         ).then(() => {
                             location.reload();
                         });
@@ -344,5 +350,47 @@
                     }
                 }
             }
+
+            async function unlistCategory(categoryId){
+            const confirmation = await Swal.fire({
+                title: 'Are you sure?',
+                text: "You want to Unlist this Category?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, Unlist it!'
+            })
+            
+            if (confirmation.isConfirmed) {
+                try {
+                    const response = await fetch(`/admin/unlistCategory?id=${categoryId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    const data = await response.json()
+                    if (response.ok) {
+                        Swal.fire(
+                            'Unlisted!',
+                            'The Category has been Unlisted.',
+                            'success'
+                        ).then(() => {
+                            location.reload();
+                        })
+                    } else {
+                        Swal.fire('Error', data.message || 'Failed to Unlist the category', 'error')
+                        .then(()=>{
+                            location.href = data.redirect
+                        })
+                    }
+                } catch (error) {
+                    console.error('Error Unlisting the Category:', error);
+                    Swal.fire('Error', 'An unexpected error occurred while Unlisting the category', 'error');
+                }
+            }
+        }
+    
 
         </script>

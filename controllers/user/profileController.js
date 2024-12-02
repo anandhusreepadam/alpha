@@ -175,6 +175,24 @@ const loadAddress = async (req, res) => {
     }
 }
 
+const saveUserData = async(req,res)=>{
+    try {
+        const user = req.session.user;
+        const data = req.body;
+        if(!user){
+            return res.status(400).json('Error User not found');
+        }
+        await User.updateOne({_id:user._id},{
+            name:data.name,
+            phone:data.phone,
+            lastName:data.lastName
+        })
+        res.status(200).json('success')
+    } catch (error) {
+        res.status(500).json('Error occured')
+    }
+}
+
 const addAddress = async (req, res) => {
     try {
         const user = await getUser(req);
@@ -291,6 +309,7 @@ module.exports = {
     loadChangePassword,
     changePassword,
     loadAddress,
+    saveUserData,
     addAddress,
     loadEditAddress,
     editAddress,

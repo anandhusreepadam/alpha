@@ -12,6 +12,7 @@
 
         <!-- Template CSS -->
         <link href="assets/css/main.css?v=1.1" rel="stylesheet" type="text/css" />
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </head>
 
     <body>
@@ -137,7 +138,7 @@ async function submitForm(event) {
             });
             const result = await response.json();
             if(response.ok){
-                Swal.fire(
+                swal(
                             'Saved!',
                             'The address have been saved successfully',
                             'success'
@@ -145,11 +146,11 @@ async function submitForm(event) {
                     location.reload();
                 });
             }else{
-                Swal.fire('Error',result.message||"Failed to Save Address",'error');
+                swal('Error',result.message||"Failed to Save Address",'error');
             }
         } catch (error) {
             console.log('Error saving Address',error);
-            Swal.fire("Error",'An unexpected error occured while adding Address','error');
+            swal("Error",'An unexpected error occured while adding Address','error');
         }
     }
 };
@@ -231,7 +232,7 @@ async function deleteAddress(addressId){
             const result = await response.json();
 
             if(response.ok){
-                    Swal.fire(
+                    swal(
                                 'Deleted',
                                 'The address have been deleted successfully',
                                 'success'
@@ -239,12 +240,12 @@ async function deleteAddress(addressId){
                         location.reload();
                     });
                 }else{
-                    Swal.fire('Error',result.message||"Failed to delete Address",'error');
+                    swal('Error',result.message||"Failed to delete Address",'error');
                 }
     
         } catch (error) {
             console.log('Error deleting Address',error);
-            Swal.fire("Error",'An unexpected error occured while deleting Address','error');
+            swal("Error",'An unexpected error occured while deleting Address','error');
         }
     }
 }

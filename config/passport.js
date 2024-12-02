@@ -12,6 +12,7 @@ passport.use(new GoogleStrategy({
 async(acessToken,refreshToken,profile,done)=>{
     try {
         let user = await User.findOne({googleId:profile.id});
+        console.log('in auth found user',user)
         if(user){
             return done(null,user);
         }else{

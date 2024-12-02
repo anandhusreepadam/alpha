@@ -58,6 +58,7 @@ router.post('/changePassword',profileAuth,userAuth,profileController.changePassw
 
 //Address Management
 router.get('/address',profileAuth,userAuth,profileController.loadAddress);
+router.post('/saveUserData',upload.none(),profileController.saveUserData)
 router.post('/addAddress',upload.none(),profileController.addAddress);
 router.get('/editAddress',profileController.loadEditAddress);
 router.post('/editAddress',upload.none(),profileController.editAddress);

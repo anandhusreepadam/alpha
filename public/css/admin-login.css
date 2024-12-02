@@ -1,4 +1,4 @@
-/* General Reset */
+
 body, h1, p {
     margin: 0;
     padding: 0;
@@ -14,7 +14,7 @@ body {
     background-color: #f8f8f8;
 }
 
-/* Container */
+
 .container {
     display: flex;
     width: 80%;
@@ -25,7 +25,6 @@ body {
     overflow: hidden;
 }
 
-/* Image Section */
 .image-section {
     flex: 1;
     background-color: #eee;
@@ -37,7 +36,7 @@ body {
     object-fit: cover;
 }
 
-/* Form Section */
+
 .form-section {
     flex: 1;
     padding: 40px;
@@ -113,7 +112,6 @@ a:hover {
     text-decoration: underline;
 }
 
-/* Error Message */
 .error-message {
     color: red;
     font-size: 0.75rem;
@@ -122,11 +120,11 @@ a:hover {
     bottom: 20px;
 }
 
-/* Admin-Specific Styling */
+
 .form-section h1 {
     font-size: 36px;
-    color: #2e3d49; /* Darker color for the admin page */
-    font-weight: 700; /* Make heading bold */
+    color: #2e3d49; 
+    font-weight: 700; 
 }
 
 .form-section p {

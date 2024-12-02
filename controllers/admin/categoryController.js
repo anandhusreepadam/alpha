@@ -6,6 +6,7 @@ const Product = require('../../models/productSchema');
 
 const categoryInfo = async (req, res) => {
     try {
+        
         const page = parseInt(req.query.page) || 1;
         const limit = 6;
         const skip = (page - 1) * limit;
@@ -29,6 +30,8 @@ const categoryInfo = async (req, res) => {
         console.log(error)
         res.redirect('/pageError')
     }
+
+    
 }
 
 const addCategory = async (req,res)=>{
@@ -109,7 +112,7 @@ const removeCategoryOffer = async (req,res)=>{
 const getListCategory = async (req,res)=>{
     try {
         let id = req.query.id;
-        await Category.updateOne({_id:id},{$set:{isListed:false}});
+        await Category.updateOne({_id:id},{$set:{isListed:true}});
         res.redirect('/admin/category');
     } catch (error) {
         res.redirect('/pageError')
@@ -119,10 +122,10 @@ const getListCategory = async (req,res)=>{
 const getUnlistCategory = async (req,res)=>{
     try {
         let id = req.query.id;
-        await Category.updateOne({_id:id},{$set:{isListed:true}});
-        res.redirect('/admin/category');
+        await Category.updateOne({_id:id},{$set:{isListed:false}});
+        res.status(200).json('Success');
     } catch (error) {
-        res.redirect('/pageError')
+        res.status(500).json({redirect:'/pageError'})
     }
 }
 

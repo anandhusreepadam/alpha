@@ -40,18 +40,18 @@
                             </aside>
                             <div class="col-lg-9">
                                 <section class="content-body p-xl-4">
-                                    <form>
+                                    <form id="userForm" enctype="multipart/form-data" onsubmit="submitForm(event)">
                                         <div class="row">
                                             <div class="col-lg-8">
                                                 <div class="row gx-3">
                                                     <div class="col-6 mb-3">
                                                         <label class="form-label">First name</label>
-                                                        <input class="form-control" value="<%=user.name%>" type="text" placeholder="Type here" />
+                                                        <input class="form-control" value="<%=user.name%>" name="name" type="text" placeholder="Type here" />
                                                     </div>
                                                     <!-- col .// -->
                                                     <div class="col-6 mb-3">
                                                         <label class="form-label">Last name</label>
-                                                        <input class="form-control" value="<%=user.lastName%>" type="text" placeholder="Type here" />
+                                                        <input class="form-control" value="<%=user.lastName%>" name="lastName" type="text" placeholder="Type here" />
                                                     </div>
                                                     <!-- col .// -->
                                                     <div class="col-lg-6 mb-3">
@@ -61,7 +61,7 @@
                                                     <!-- col .// -->
                                                     <div class="col-lg-6 mb-3">
                                                         <label class="form-label">Phone</label>
-                                                        <input class="form-control" value="<%=user.phone%>" type="tel" placeholder="+1234567890" />
+                                                        <input class="form-control" value="<%=user.phone%>" name="phone" type="tel" placeholder="+1234567890" />
                                                     </div>
 
                                                     <!-- col .// -->
@@ -74,7 +74,7 @@
                                         </div>
                                         <!-- row.// -->
                                         <br />
-                                        <button class="btn btn-primary" type="submit">Save changes</button>
+                                        <button class="btn btn-primary"  type="submit">Save changes</button>
                                     </form>
                                     <hr class="my-5" />
                                     <div class="row" style="max-width: 920px">
@@ -117,7 +117,39 @@
         <script src="assets/js/vendors/jquery.fullscreen.min.js"></script>
         <!-- Main Script -->
         <script src="assets/js/main.js?v=1.1" type="text/javascript"></script>
+
     </body>
 </html>
 
 <%-include("../../views/partials/user/footer")%>
+
+<script>
+async function submitForm(event) {
+    event.preventDefault();
+    const formData = new FormData(document.getElementById('userForm'));
+    try {
+        const response = await fetch('/saveUserData',{
+            method:'POST',
+            body:formData
+        })
+        const result = await response.json();
+        if(response.ok){
+            swal({
+  icon: 'success',
+  title: 'Saved!',
+  text: 'The user data have been updated successfully',
+  confirmButtonText: 'OK',
+}).then(()=>{
+                    location.reload();
+                });
+            }else{
+                swal('Error',result.message||"Failed to Update User Data",'error');
+            }
+    } catch (error) {
+        console.log('Error updating user Data',error);
+        swal("Error",'An unexpected error occured while updating user Data','error');
+    }
+}
+
+
+</script>

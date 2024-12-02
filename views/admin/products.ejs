@@ -28,11 +28,12 @@
                     <!-- <th scope="col"><b>Brand</b></th> -->
                     <th scope="col"><b>Category</b></th>
                     <th scope="col"><b>Sale Price</b></th>
-                    <th scope="col"><b>Offer Price</b></th>
+                    <th scope="col"><b>Offer %</b></th>
                     <th scope="col"><b>Offer</b></th>
                     <th scope="col"><b>Quantity</b></th>
                     <th scope="col"><b>Action</b></th>
                     <th scope="col"><b>Edit</b></th>
+                    <th scope="col"><b>Delete Action</b></th>
                 </tr>
             </thead>
             <tbody>
@@ -81,7 +82,7 @@
                         <td>
                             <%if(data[i].isBlocked==false){%>
                                 <button class="btn btn-success" style="width: 80px;">
-                                    <a href="/admin/blockProduct?id=<%=data[i]._id%>" class="text-white"
+                                    <a onclick="blockProduct('<%=data[i]._id%>')"class="text-white"
                                         style="text-decoration: none;">Block</a>
                                 </button>
                                 <%}else{%>
@@ -249,6 +250,49 @@
             }
         }
 
+        async function blockProduct(productId){
+            const confirmation = await Swal.fire({
+                title: 'Are you sure?',
+                text: "You want to block this Product?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, Block it!'
+            })
+            
+            if (confirmation.isConfirmed) {
+                try {
+                    const response = await fetch(`/admin/blockProduct?id=${productId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    const data = await response.json()
+                    if (response.ok) {
+                        Swal.fire(
+                            'Blocked!',
+                            'The product has been Blocked.',
+                            'success'
+                        ).then(() => {
+                            location.reload();
+                        })
+                    } else {
+                        Swal.fire('Error', data.message || 'Failed to Block the proudct', 'error')
+                        .then(()=>{
+                            location.href = data.redirect
+                        })
+                        
+                    }
+
+                } catch (error) {
+                    console.error('Error Blocking the Product:', error);
+                    Swal.fire('Error', 'An unexpected error occurred while blocking the product', 'error');
+                }
+            }
+        }
+    
     </script>
 
 
