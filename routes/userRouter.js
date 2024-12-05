@@ -1,5 +1,6 @@
 const userController = require('../controllers/user/userController');
 const profileController = require('../controllers/user/profileController');
+const cartController = require ('../controllers/user/cartController');
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
@@ -12,6 +13,7 @@ const working = (req,res,next)=>{
 console.log('Route is working fine');
 next();
 }
+
 
 
 ////404
@@ -39,14 +41,13 @@ router.get('/logout',userController.logout);
 
 //Load User Pages
 router.get('/',userAuth,userController.loadHomepage);
-router.get('/profile',profileAuth,userAuth,userController.loadProfile);
 router.get('/shop',userAuth,userController.loadShopping);
 router.get('/product/:id',userAuth,userController.loadProductPage);
-router.get('/cart',userAuth,userController.loadCart);
 router.get('/wishlist',userAuth,userController.loadWishlist);
 
 
 //Profile Management
+router.get('/profile',profileAuth,userAuth,userController.loadProfile);
 router.get('/confirmPassword',profileAuth,userAuth,profileController.loadConfirmPassword);
 router.post('/confirmPassword',profileAuth,userAuth,profileController.confirmPassword);
 router.post('/verifyChangeOtp',profileAuth,userAuth,profileController.verifyChangeOtp);
@@ -63,5 +64,21 @@ router.post('/addAddress',upload.none(),profileController.addAddress);
 router.get('/editAddress',profileController.loadEditAddress);
 router.post('/editAddress',upload.none(),profileController.editAddress);
 router.post('/deleteAddress',profileController.deleteAddress)
+
+
+//Cart Management
+router.get('/cart',profileAuth,userAuth,cartController.loadCart);
+router.post('/addToCart',cartController.addToCart);
+router.delete('/cart',cartController.deleteCart);
+
+
+
+
+
+
+router.get('/test',(req,res)=>{
+    res.render('test',{user:null,title:'test',product:{}})
+})
+
 
 module.exports=router

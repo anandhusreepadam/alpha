@@ -95,16 +95,12 @@
 </html>
 <%-include("../../views/partials/user/footer")%>
 
-
 <script>
 
 async function submitForm(event) {
     event.preventDefault();
     if(validateForm()){
         const formData  = new FormData(document.getElementById('addressForm'));
-        for (let [key, value] of formData.entries()) {
-    console.log(key, value); // Logs each key-value pair    
-    }
         try {
             const response = await fetch('/editAddress?id=<%=address._id%>',{
                 method:'POST',
@@ -130,12 +126,8 @@ async function submitForm(event) {
 };
 
 function validateForm() {
-
-
-    // Clearing previous error messages
     const errorElements = document.querySelectorAll('.error-message');
     errorElements.forEach(el => el.remove());
-
 
     const nameInput = document.querySelector('input[placeholder="Full Name"]');
     const phoneInput = document.querySelector('input[placeholder="1234567890"]');
@@ -182,9 +174,7 @@ function validateForm() {
     if (!pinCodeRegex.test(pinCodeInput.value.trim())) {
         showError(pinCodeInput, "Invalid pin code. It must be 6 digits.");
     }
-
     return isValid;
 }
-
 
 </script>

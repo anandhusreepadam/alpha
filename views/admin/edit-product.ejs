@@ -261,7 +261,6 @@
 
             function validateForm() {
                 let imageDatas = false
-                console.log("validate form");
                 clearErrorMessages();
                 const name = document.getElementsByName('productName')[0].value;
                 const description = document.getElementsByName('description')[0].value;
@@ -373,10 +372,8 @@
                 reader.readAsDataURL(input.files[0]);
             }
 
-
             const selectedImages = [];
             document.getElementById("imageInput").addEventListener("change", handleFileSelect);
-
 
             function handleFileSelect(event) {
                 const addedImagesContainer = document.getElementById("addedImagesContainer");
@@ -407,7 +404,6 @@
                     addedImagesContainer.appendChild(thumbnail);
                 }
             };
-
 
 function deleteSingleImage(imageId, productId) {
     $.ajax({

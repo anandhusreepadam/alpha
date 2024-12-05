@@ -20,19 +20,20 @@
                <div class="mb-4">
                    <button type="submit" class="btn btn-primary w-100">Verify</button>
                </div>
-           </form>
-         
-         
+           </form>         
        </div>
    </div>
 </section>
+
+<%- include("../../views/partials/user/footer") %>
+
 <script>
+
    function validateLoginForm() {
        const emailInput = document.getElementById('email');
        const emailError = document.getElementById('email-error');
        const emailValue = emailInput.value.trim();
        const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-
 
        if (emailValue === '') {
            emailError.textContent = 'Please enter your email.';
@@ -48,8 +49,9 @@
            return true;
        }
    }
+
 </script>
-<%- include("../../views/partials/user/footer") %>
+
 
 
 

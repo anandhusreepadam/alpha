@@ -133,9 +133,7 @@ const addProductOffer = async (req, res) => {
 
 const removeProductOffer = async (req, res) => {
     try {
-        console.log('before hiii in remove product offer')
         const { productId } = req.body;
-        console.log('after hiii in remove product offer')
         const findProduct = await Product.findOne({ _id: productId });
         const percentage = findProduct.productOffer;
         findProduct.salePrice = findProduct.salePrice + Math.floor(findProduct.regularPrice * (percentage / 100));
@@ -239,7 +237,6 @@ const deleteProduct = async (req,res)=>{
 const deleteSingleImage = async (req, res) => {
     try {
         const { imageNameToServer, productIdToServer } = req.body;
-        console.log("req body of delete image",req.body)
         const product = await Product.findByIdAndUpdate(productIdToServer, { $pull: { productImage: imageNameToServer } });
         const imagePath = path.join('public', 'uploads', 're-image', imageNameToServer);
         if (fs.existsSync(imagePath)) {

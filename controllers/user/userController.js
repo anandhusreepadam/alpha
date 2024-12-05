@@ -1,17 +1,15 @@
-const Product = require('../../models/productSchema')
-const User = require('../../models/userSchema')
-const nodemailer = require('nodemailer')
+const Product = require('../../models/productSchema');
+const User = require('../../models/userSchema');
+const Cart = require('../../models/cartSchema');
+const nodemailer = require('nodemailer');
 const { response } = require('express');
-const env = require('dotenv').config();
-const passport = require('passport');
-const bcrypt = require('bcrypt')
-
+const bcrypt = require('bcrypt');
 
 
 ////Functions 
 function generateOtp() {
     return Math.floor(100000 + Math.random() * 900000).toString();
-}
+};
 
 async function sendVerificationEmail(email, otp) {
     try {
@@ -38,7 +36,7 @@ async function sendVerificationEmail(email, otp) {
         console.log("Error sending Email", error)
         return false;
     }
-}
+};
 
 async function securePassword(password) {
     try {
@@ -48,7 +46,7 @@ async function securePassword(password) {
         console.error('Error hashing password', error);
         throw new Error('Failed to secure password');
     }
-}
+};
 
 async function getAllProducts() {
     try {
@@ -57,7 +55,7 @@ async function getAllProducts() {
     } catch (error) {
         console.log(error.message)
     }
-}
+};
 
 
 ////Routes
@@ -73,7 +71,7 @@ const loadLogin = async (req, res) => {
     } catch (error) {
         res.redirect('/pageNotFound')
     }
-}
+};
 
 const login = async (req, res) => {
     try {
@@ -87,7 +85,7 @@ const login = async (req, res) => {
             return res.render('login', { message: "User is blocked by admin" });
         }
 
-        const passwordMatch =  bcrypt.compare(password, findUser.password)
+        const passwordMatch = bcrypt.compare(password, findUser.password)
 
         if (!passwordMatch) {
             return res.render('login', { message: 'Incorrect Password' });
@@ -98,7 +96,7 @@ const login = async (req, res) => {
         console.error('login error', error);
         res.render('login', { message: 'Login failed please try again' })
     }
-}
+};
 
 const loadSignup = async (req, res) => {
     try {
@@ -107,7 +105,7 @@ const loadSignup = async (req, res) => {
         console.log('Home page not loading:', error);
         res.status(500).send('Server Error');
     }
-}
+};
 
 const signup = async (req, res) => {
     try {
@@ -133,7 +131,7 @@ const signup = async (req, res) => {
         console.error("Signup error", error);
         res.redirect("/pageNotFound");
     }
-}
+};
 
 const verifyOtp = async (req, res) => {
     try {
@@ -157,7 +155,7 @@ const verifyOtp = async (req, res) => {
         console.log("Error Verifying OTP", error);
         res.status(500).json({ success: false, message: "An error occured" })
     }
-}
+};
 
 const resendOtp = async (req, res) => {
     try {
@@ -178,7 +176,7 @@ const resendOtp = async (req, res) => {
         console.error('Error resending OTP:', error);
         res.status(500).json({ success: false, message: 'Internal server error. Please try again' });
     }
-}
+};
 
 const loadForgotPassword = async (req, res) => {
     try {
@@ -186,7 +184,7 @@ const loadForgotPassword = async (req, res) => {
     } catch (error) {
         res.redirect('/pageNotFound')
     }
-}
+};
 
 const forgotPassword = async (req, res) => {
     try {
@@ -210,7 +208,7 @@ const forgotPassword = async (req, res) => {
     } catch (error) {
         res.redirect('/pageNotFound')
     }
-}
+};
 
 const verifyForgotOtp = async (req, res) => {
     try {
@@ -224,7 +222,7 @@ const verifyForgotOtp = async (req, res) => {
         console.log("Error Verifying OTP", error);
         res.status(500).json({ success: false, message: "An error occured" })
     }
-}
+};
 
 const loadResetPassword = async (req, res) => {
     try {
@@ -232,7 +230,7 @@ const loadResetPassword = async (req, res) => {
     } catch (error) {
 
     }
-}
+};
 
 const resetPassword = async (req, res) => {
     try {
@@ -250,74 +248,69 @@ const resetPassword = async (req, res) => {
         console.log("An error occured", error)
         res.redirect('/pageNotFound')
     }
-}
+};
 
 const loadHomepage = async (req, res) => {
     try {
+        req.session.user = req.user?req.user:req.session.user;
         const userSession = req.session.user;
         const user = userSession ? await User.findById(userSession._id) : null;
+        const cart = user ? await Cart.findOne({ userId: user._id }).populate('items.productId') : null;
         const allProducts = await getAllProducts()
         allProducts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-        res.render('home', { user, allProducts, title: "Chanel One" });
+        res.render('home', { user, allProducts, title: "Chanel One", cart: cart || { items: [] } });
     } catch (error) {
         console.log('Home Page not found');
         res.status(500).send('Server Error');
     }
-}
+};
 
 const loadShopping = async (req, res) => {
     try {
         const userSession = req.session.user;
         const user = userSession ? await User.findById(userSession._id) : null;
+        const cart =user? await Cart.findOne({ userId: user._id }).populate('items.productId'):null;
         const allProducts = await getAllProducts()
-        return res.render('shop', { user, allProducts, title: "Shop" });
+        return res.render('shop', { user, allProducts, title: "Shop", cart: cart || { items: [] } });
     } catch (error) {
         console.log('Shopping page not loading:', error);
         res.status(500).send('Server Error');
     }
-}
+};
 
 const loadProductPage = async (req, res) => {
     try {
         const user = req.session.user;
         const id = req.params.id;
         const product = await Product.findById(id)
-
-        return res.render('product', { user, product, title: product.productName })
+        const cart = user? await Cart.findOne({ userId: user._id }).populate('items.productId'):null;
+        return res.render('product', { user, product, title: null, cart: cart || { items: [] } })
     } catch (error) {
 
     }
-}
+};
 
 const loadProfile = async (req, res) => {
     try {
         const userSession = req.session.user;
         const user = userSession ? await User.findById(userSession._id) : null;
-        res.render('profile', { user, title: "Profile" })
+        const cart = user ? await Cart.findOne({ userId: user._id }).populate('items.productId') : null;
+        res.render('profile', { user, title: "Profile",cart:cart||{items:[]} })
     } catch (error) {
         console.log('Failed to Load Profile', error)
     }
-}
-
-const loadCart = async (req, res) => {
-    try {
-        const userSession = req.session.user;
-        const user = userSession ? await User.findById(userSession._id) : null;
-        res.render('cart', { user, title: 'Cart' })
-    } catch (error) {
-        console.log('Failed to load Cart', error)
-    }
-}
+};
 
 const loadWishlist = async (req, res) => {
     try {
         const userSession = req.session.user;
         const user = userSession ? await User.findById(userSession._id) : null;
-        res.render('wishlist', { user, title: 'Wishlist' })
+        const cart = user ? await Cart.findOne({ userId: user._id }).populate('items.productId') : null;
+        res.render('wishlist', { user, title: 'Wishlist',cart:cart|| {items:[]} })
     } catch (error) {
         console.log('Failed to load Wishlist', error)
     }
-}
+};
 
 const logout = async (req, res) => {
     try {
@@ -332,15 +325,15 @@ const logout = async (req, res) => {
         console.log('Logout Error'.error);
         res.redirect('/pageNotFound');
     }
-}
+};
 
 const pageNotFound = async (req, res) => {
     try {
-        res.render('page-404', { title: "404" ,user:null})
+        res.render('page-404', { title: "404", user: null })
     } catch (error) {
         res.redirect('/pageNotFound')
     }
-}
+};
 
 module.exports = {
     loadHomepage,
@@ -355,7 +348,6 @@ module.exports = {
     logout,
     loadProductPage,
     loadProfile,
-    loadCart,
     loadWishlist,
     loadForgotPassword,
     forgotPassword,

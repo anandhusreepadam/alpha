@@ -81,6 +81,7 @@ body, h1, p {
     cursor: pointer;
     margin-bottom: 10px;
   }
+
   
   .signup-btn {
     background-color: #ff6b6b;
@@ -120,3 +121,4 @@ body, h1, p {
     position: relative;
    bottom: 20px;
   }
+

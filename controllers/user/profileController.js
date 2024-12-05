@@ -1,6 +1,7 @@
 const Address = require('../../models/addressSchema');
 const User = require('../../models/userSchema');
-const nodemailer = require('nodemailer')
+const Cart = require('../../models/cartSchema');
+const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt');
 
 
@@ -61,7 +62,8 @@ async function securePassword(password) {
 const loadConfirmPassword = async (req, res) => {
     try {
         const user = await getUser(req);
-        res.render('confirmPassword', { title: "Update Email", user: user });
+        const cart = user ? await Cart.findOne({ userId: user._id }).populate('items.productId') : null;
+        res.render('confirmPassword', { title: "Update Email", user: user ,cart:cart||{items:[]}});
     } catch (error) {
         res.redirect('/pageNotFound');
     }
@@ -72,8 +74,9 @@ const confirmPassword = async (req, res) => {
         const { password } = req.body;
         const user = await getUser(req);
         const passwordMatch = await bcrypt.compare(password, user.password);
+        const cart = user ? await Cart.findOne({ userId: user._id }).populate('items.productId') : null;
         if (!passwordMatch) {
-            res.render('confirmPassword', { message: "Wrong Password. Please Try again!", title: "Verify Password", user: user })
+            res.render('confirmPassword', { message: "Wrong Password. Please Try again!", title: "Verify Password", user: user ,cart:cart||{items:[]}})
         } else {
             res.redirect('/newEmail')
         }
@@ -93,7 +96,8 @@ const newEmail = async (req, res) => {
             req.session.userData = req.body;
             req.session.email = email;
             const user = getUser(req);
-            res.render('verifyChangePassword', { title: "Verify OTP", user: user });
+            const cart = user ? await Cart.findOne({ userId: user._id }).populate('items.productId') : null;
+            res.render('verifyChangePassword', { title: "Verify OTP", user: user,cart:cart||{items:[]} });
             console.log("OTP:", otp);
 
         } else {
@@ -110,11 +114,12 @@ const verifyChangeOtp = async (req, res) => {
         const enteredOtp = req.body.otp;
         const otp = req.session.userOtp
         const user = req.session.user
+        const cart = user ? await Cart.findOne({ userId: user._id }).populate('items.productId') : null;
         if (enteredOtp == otp) {
             await User.updateOne({ _id: user._id }, { $set: { email: req.session.email } })
             res.redirect('/profile')
         } else {
-            res.render('newEmail', { message: "Invalid OTP", user: req.session.userData, title: "Update Email" });
+            res.render('newEmail', { message: "Invalid OTP", user: req.session.userData, title: "Update Email",cart:cart||{items:[]} });
         }
     } catch (error) {
         res.redirect('/pageNotFound')
@@ -124,7 +129,8 @@ const verifyChangeOtp = async (req, res) => {
 const loadNewEmail = async (req, res) => {
     try {
         const user = await getUser(req);
-        res.render('newEmail', { user, title: "New Email" })
+        const cart = user ? await Cart.findOne({ userId: user._id }).populate('items.productId') : null;
+        res.render('newEmail', { user, title: "New Email",cart:cart||{items:[]} })
     } catch (error) {
 
     }
@@ -133,7 +139,8 @@ const loadNewEmail = async (req, res) => {
 const loadChangePassword = async (req, res) => {
     try {
         const user = await getUser(req);
-        res.render('changePassword', { user, title: "Update Password" });
+        const cart = user ? await Cart.findOne({ userId: user._id }).populate('items.productId') : null;
+        res.render('changePassword', { user, title: "Update Password" ,cart:cart||{items:[]}});
     } catch (error) {
         res.redirect('/pageNotFound');
     }
@@ -144,17 +151,16 @@ const changePassword = async (req, res) => {
         const user = await getUser(req);
         const { currentPassword, newPassword } = req.body;
         const passwordMatch = await bcrypt.compare(currentPassword, user.password);
-        console.log(currentPassword)
+        const cart = user ? await Cart.findOne({ userId: user._id }) : null;
         if (passwordMatch) {
             if (currentPassword == newPassword) {
-                return res.render('changePassword', { message: "New password cannot be the same as the current password.", user, title: "Update Password" });
+                return res.render('changePassword', { message: "New password cannot be the same as the current password.", user, title: "Update Password" ,cart:cart||{items:[]}});
             }
             const passwordHash = await securePassword(newPassword);
             await User.updateOne({ _id: user._id }, { $set: { password: passwordHash } });
-            console.log('password updated Successfully');
             return res.redirect('/profile');
         } else {
-            return res.render('changePassword', { message: "Wrong Password", user, title: "Update Password" });
+            return res.render('changePassword', { message: "Wrong Password", user, title: "Update Password",cart:cart||{items:[]} });
         }
 
     } catch (error) {
@@ -168,7 +174,8 @@ const loadAddress = async (req, res) => {
         const user = await getUser(req);
         const addressData = await Address.findOne({ userId: user._id })
         const addresses = addressData ? addressData.address : [];
-        res.render('address', { title: "Address", user, addressData: addresses });
+        const cart = user ? await Cart.findOne({ userId: user._id }) : null;
+        res.render('address', { title: "Address", user, addressData: addresses ,cart:cart||{items:[]}});
     } catch (error) {
         console.log(error);
         res.redirect('/pageNotFound');
@@ -221,6 +228,7 @@ const loadEditAddress = async (req, res) => {
     try {
         const addressId = req.query.id;
         const user = req.session.user;
+        const cart = user ? await Cart.findOne({ userId: user._id }) : null;
         const currAddress = await Address.findOne({
             'address._id': addressId,
         });
@@ -236,7 +244,7 @@ const loadEditAddress = async (req, res) => {
             return res.redirect('/pageNotFound')
         }
 
-        res.render('editAddress', { address: addressData, user, title: 'Edit Address' });
+        res.render('editAddress', { address: addressData, user, title: 'Edit Address',cart:cart||{items:[]} });
 
     } catch (error) {
         console.log(error);

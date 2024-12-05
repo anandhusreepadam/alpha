@@ -288,6 +288,7 @@
                     const data = await response.json();
                     if (response.ok && data.status === true) {
                         Swal.fire(
+                            "Offer Removed",
                             "Offer has been removed ",
                             "success",
                         ).then(() => {

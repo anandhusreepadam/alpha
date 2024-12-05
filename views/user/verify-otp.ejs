@@ -24,10 +24,10 @@
                 <form id="otp-form" onsubmit="return validateOTPForm()">
                     <label for="otp">One-Time Password (OTP)</label>
                     <input type="text" id="otp" name="otp" placeholder="Enter OTP" required maxlength="6" pattern="\d{6}">
-                    <button type="submit" class="btn verify-btn">Verify</button>
+                    <button type="submit" class="google-auth-btn btn verify-btn">Verify</button>
                 </form>
 
-                <p id="timer">Time remaining: 1:00</p>
+                <p id="timer">Time remaining: 00:30</p>
                 <p>Didn't receive an OTP? <button id="resend-btn" class="resend-btn" onclick="resendOtp()" disabled>Resend OTP</button></p>
                 <p>Go back to <a href="/login">Log In</a> or <a href="/signup">Sign Up</a></p>
             </div>
@@ -35,29 +35,35 @@
 
         <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
         <script>
+
             let timer;
-            let timeLeft = 60; // 1 minute in seconds
+            let timeLeft = 30; 
             const timerElement = document.getElementById('timer');
             const resendButton = document.getElementById('resend-btn');
             const input =document.getElementById('otp')
 
             // Start Timer
             function startTimer() {
-                timerElement.textContent = "Time remaining: 1:00"; // Reset the timer text
+                timerElement.textContent = "Time remaining: 00:30"; // Reset the timer text
                 input.disabled=false;
                 resendButton.disabled = true; // Disable resend button during countdown
 
                 timer = setInterval(() => {
                     if (timeLeft <= 0) {
                         clearInterval(timer);
+                        Swal.fire({
+                                icon: 'error',
+                                title: 'OTP Expired ! Please Request New One',
+                                showConfirmButton: false,
+                                timer: 1500,
+                            });
                         timerElement.textContent = "OTP expired. Please request a new one.";
                         input.disabled=true;
                         resendButton.disabled = false; // Enable resend button when timer expires
                     } else {
                         const minutes = Math.floor(timeLeft / 60);
-                        const seconds = timeLeft % 60;
+                        const seconds = timeLeft % 30;
                         timerElement.textContent = `Time remaining: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
                         timeLeft--;
                     }
@@ -67,7 +73,7 @@
             // Resend OTP
             function resendOtp() {
                 clearInterval(timer); // Clear the existing timer
-                timeLeft = 60; // Reset timer
+                timeLeft = 30; // Reset timer
                 startTimer(); // Restart the timer
 
                 // Simulate an AJAX call to resend OTP
@@ -105,7 +111,6 @@
             // Validate OTP Form
             function validateOTPForm() {
                 const otpInput = document.getElementById('otp').value.trim();
-
                 if (!/^\d{6}$/.test(otpInput)) {
                     Swal.fire({
                         icon: 'error',
@@ -154,6 +159,7 @@
             document.addEventListener('DOMContentLoaded', () => {
                 startTimer();
             });
+        
         </script>
     </body>
 

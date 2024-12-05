@@ -198,15 +198,15 @@
         </div>
     </section>
     <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
+    
+    <%- include("../../views/partials/admin/footer") %>
+
     <script>
 
         async function submitForm(event) {
             event.preventDefault();
             if (validateForm()) {
-                console.log('validated');/////////////////////////////////////
-
                 const formData = new FormData(document.getElementById('productForm'))
-
                 try {
                     const response = await fetch('/admin/addProducts', {
                         method: 'POST',
@@ -234,7 +234,6 @@
 
         function viewImage1(event) {
             document.getElementById('imgView1').src = URL.createObjectURL(event.target.files[0])
-            console.log('in  view image 1');////////////////////////////////////
         }
         function viewImage2(event) {
             document.getElementById('imgView2').src = URL.createObjectURL(event.target.files[0])
@@ -247,7 +246,6 @@
         }
 
         function viewImage(event, index) {
-            console.log('in view image function');////////////////////////////////////
             let input = event.target;
             let reader = new FileReader();
             reader.onload = function () {
@@ -262,7 +260,6 @@
                     autoCropArea: 1,
                     zoomable: true
                 });
-                console.log('just before cropper parentNode');/////////////////////////////////
 
                 let cropperContainer = document.querySelector('#croppedImg' + index).parentNode;
                 cropperContainer.style.display = 'block';
@@ -294,7 +291,6 @@
         }
 
         function validateForm() {
-            console.log('inside validate form');//////////////////////////
             clearErrorMessages();
             const name = document.getElementsByName('productName')[0].value;
             const description = document.getElementById('descriptionid').value;
@@ -354,14 +350,12 @@
         }
 
         function displayErrorMessage(elementId, message) {
-            console.log('inside display error msg');///////////////////////////
             var errorElement = document.getElementById(elementId);
             errorElement.innerText = message;
             errorElement.style.display = "block";
         }
 
         function clearErrorMessages() {
-            console.log('inside clear wrror')/////////////////////////
             const errorElements = document.getElementsByClassName('error-message');
             Array.from(errorElements).forEach(element => {
                 element.innerText = '';
@@ -369,6 +363,4 @@
             const errorMessage = document.getElementById('errorMessage');
         }
 
-        
     </script>
-    <%- include("../../views/partials/admin/footer") %>

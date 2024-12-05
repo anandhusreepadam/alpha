@@ -124,7 +124,6 @@
 </html>
 <%-include("../../views/partials/user/footer")%>
 
-
 <script>
 
 async function submitForm(event) {
@@ -213,7 +212,6 @@ function validateForm() {
 }
 
 async function deleteAddress(addressId){
-    console.log('hello')
     const confirmation = await Swal.fire({
                 title: 'Are you sure?',
                 text: "You won't be able to recover this Address!",
@@ -249,8 +247,5 @@ async function deleteAddress(addressId){
         }
     }
 }
-
-
-
 
 </script>

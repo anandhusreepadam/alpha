@@ -135,7 +135,6 @@ const getEditCategory = async (req,res)=>{
         const error = req.session?.editCategoryError;
         req.session.editCategoryError=null
         const category = await Category.findOne({_id:id});
-        console.log(category.id)
         res.render('edit-category',{category:category,error:error});
     } catch (error) {
         console.log(error)
