@@ -45,6 +45,7 @@
                                         <th class="column-3">Price</th>
                                         <th class="column-4">Quantity</th>
                                         <th class="column-5">Total</th>
+                                        <th class="column-2"></th>
                                     </tr>
                                 <% cart.items.forEach(item=>{ %>
                                         <tr class="table_row">
@@ -61,23 +62,26 @@
                                                 <%= item.productId.salePrice %>
                                             </td>
                                             <td class="column-4">
-                                                <div class="wrap-num-product flex-w m-l-auto m-r-0">
-                                                    <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
-                                                        <i class="fs-16 zmdi zmdi-minus"></i>
+                                                <div  class="wrap-num-product flex-w m-l-auto m-r-0">
+                                                    <div onclick="minus('<%=item.productId._id%>','<%=item.quantity%>')" class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
+                                                        <i  class="fs-16 zmdi zmdi-minus"></i>
                                                     </div>
 
-                                                    <input class="mtext-104 cl3 txt-center num-product" type="number"
-                                                        name="num-product-<%= item.productId._id %>"
+                                                    <input oninput="updateQuantity('<%=item.productId._id%>',this.value)"  id="item" class="mtext-104 cl3 txt-center num-product" type="number"
+                                                        name="<%= item.productId._id %>"
                                                         value="<%= item.quantity %>">
 
 
-                                                    <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
-                                                        <i class="fs-16 zmdi zmdi-plus"></i>
+                                                    <div onclick="plus('<%=item.productId._id%>','<%=item.quantity%>')" class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
+                                                        <i  class="fs-16 zmdi zmdi-plus"></i>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td class="column-5">₹<%= (item.productId.salePrice *
                                                     item.quantity).toFixed(2) %>
+                                            </td>
+                                            <td>
+                                                <button onclick="removeItem(event,'<%=item.productId._id%>')" class="btn btn-danger">Remove</button>
                                             </td>
                                         </tr>
                                         <% }) %>
@@ -90,7 +94,6 @@
                                     <button
                                         class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
                                         <a href="/shop">
-
                                             Start Shopping
                                         </a>
                                     </button>
@@ -128,7 +131,20 @@
                             </div>
                             <div class="size-209">
                                 <span class="mtext-110 cl2">
-                                    ₹49
+                                    +₹49
+                                </span>
+                            </div>
+
+                        </div>
+                        <div class="flex-w flex-t bor12 p-t-15 p-b-30">
+                            <div class="size-208 w-full-ssm">
+                                <span class="stext-110 cl2">
+                                    Offer:
+                                </span>
+                            </div>
+                            <div class="size-209">
+                                <span class="mtext-110 cl2">
+                                    -₹49
                                 </span>
                             </div>
 
@@ -158,6 +174,77 @@
     </form>
 
     <%-include("../../views/partials/user/footer")%>
-        <script>
 
-        </script>
+    <script>
+
+        function minus(id,quantity){
+                updateQuantity(id,--quantity) 
+            }
+        function plus(id,quantity){
+                updateQuantity(id,++quantity)   
+            }
+
+        async function updateQuantity(id,quantity) {
+            try {
+                const response = await fetch('/cart',{
+                    method:'POST',
+                    headers:{'content-Type':'application/json'},
+                    body:JSON.stringify({id,quantity})
+                })
+                const result = response.json()
+              if(!response.ok){
+                Swal.fire({
+                            icon: 'error',
+                            title: 'Oops',
+                            text: result.error || 'Something went wrong!'
+                        })
+                    }else{
+                        location.reload();
+                    }
+            } catch (error) {
+                Swal.fire({
+                        icon: 'error',
+                        title: "Oops",
+                        text: 'An error occured while Updating quantity'
+                })
+                console.log('error while updating category', error)
+            }
+          }
+
+        async function removeItem(event,id){
+            event.preventDefault();
+            try {
+                const response = await fetch('/removeCartItem',{
+                    method:'POST',
+                    headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify({id})
+                })
+                const result =  response.json();
+                if(response.ok){
+                    swal({
+                            icon: 'success',
+                            title: 'Deleted',
+                            text:'Item has been successfully removed'
+                        }).then(()=>{
+                            location.reload();
+                        })
+                }else{
+                    swal({
+                        icon: 'error',
+                        title: "Oops",
+                        text: 'An error occured while removing item'
+                })
+                }
+            } catch (error) {
+                swal({
+                        icon: 'error',
+                        title: "Oops",
+                        text: 'An error occured while removing item'
+                })
+                console.log('error while removing item', error)
+            }
+        }
+
+
+
+    </script>

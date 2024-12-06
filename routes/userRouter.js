@@ -68,8 +68,9 @@ router.post('/deleteAddress',profileController.deleteAddress)
 
 //Cart Management
 router.get('/cart',profileAuth,userAuth,cartController.loadCart);
+router.post('/cart',cartController.updateCart);
 router.post('/addToCart',cartController.addToCart);
-router.delete('/cart',cartController.deleteCart);
+router.post('/removeCartItem',cartController.deleteCart);
 
 
 
@@ -77,7 +78,7 @@ router.delete('/cart',cartController.deleteCart);
 
 
 router.get('/test',(req,res)=>{
-    res.render('test',{user:null,title:'test',product:{}})
+    res.render('test',{addresses:[],title:'test',user:null,cart:{items:[]},orderSummary:[]})
 })
 
 

@@ -1,0 +1,164 @@
+<div class="modal fade" id="imageUploadModal" tabindex="-1" aria-labelledby="imageUploadModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageUploadModalLabel">Manage Images and Variants</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Image Upload Fields -->
+                    <div class="row mb-3">
+                        <!-- Image 1 -->
+                        <div class="col-md-6">
+                            <label for="image1" class="form-label">Upload Image 1</label>
+                            <input type="file" class="form-control" id="image1" accept="image/*"
+                                onchange="previewImage(this, 'preview1')">
+                            <div id="preview1" class="image-preview mt-2"
+                                style="border: 1px dashed #ccc; padding: 10px; text-align: center;">
+                                <img id="imgDiv1" src="" alt="No image uploaded">
+                            </div>
+                        </div>
+                        <!-- Image 2 -->
+                        <div class="col-md-6">
+                            <label for="image2" class="form-label">Upload Image 2</label>
+                            <input type="file" class="form-control" id="image2" accept="image/*"
+                                onchange="previewImage(this, 'preview2')">
+                            <div id="preview2" class="image-preview mt-2"
+                                style="border: 1px dashed #ccc; padding: 10px; text-align: center;">
+                                <img id="imgDiv2" src="" alt="No image uploaded">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <!-- Image 3 -->
+                        <div class="col-md-6">
+                            <label for="image3" class="form-label">Upload Image 3</label>
+                            <input type="file" class="form-control" id="image3" accept="image/*"
+                                onchange="previewImage(this, 'preview3')">
+                            <div id="preview3" class="image-preview mt-2"
+                                style="border: 1px dashed #ccc; padding: 10px; text-align: center;">
+                                <img id="imgDiv3" src="" alt="">
+                            </div>
+                        </div>
+                        <!-- Image 4 -->
+                        <div class="col-md-6">
+                            <label for="image4" class="form-label">Upload Image 4</label>
+                            <input type="file" class="form-control" id="image4" accept="image/*"
+                                onchange="previewImage(this, 'preview4')">
+                            <div id="preview4" class="image-preview mt-2"
+                                style="border: 1px dashed #ccc; padding: 10px; text-align: center;">
+                                <img id="imgDiv4" src="" alt="">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Status Change Dropdown -->
+                    <!-- <div class="mb-3">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-select" id="status">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="archived">Archived</option>
+                        </select>
+                    </div> -->
+
+                    <!-- Variant Change Button -->
+                    <!-- <div class="mb-3 text-end">
+                        <button type="button" class="btn btn-warning" id="variantChangeButton">Change Variant</button>
+                    </div>
+                </div> -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="updateImageId">Update Images</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<script>
+    function imageEdit(id,images){
+    const imgArr = JSON.parse(images)
+    for(let i=0;i<imgArr.length;i++){
+        document.getElementById(`imgDiv${i+1}`).src = imgArr[i]
+    }
+    var modal = new bootstrap.Modal(document.getElementById('imageUploadModal'));
+    modal.show();
+    const updateBtn = document.getElementById('updateImageId')
+    updateBtn.addEventListener('click',(e)=>{
+        e.preventDefault()
+        const formData = new FormData();
+        const imageInputs = [
+                    document.getElementById('image1'),
+                    document.getElementById('image2'),
+                    document.getElementById('image3'),
+                    document.getElementById('image4'),
+                ];
+                imageInputs.forEach((input, index) => {
+                    const files = input.files;
+                    for (let i = 0; i < files.length; i++) {
+                        formData.append(`images`, files[i]);
+                    }
+                });
+
+                //Console form data
+                for (let [key, value] of formData.entries()) {
+                    console.log(key + ': ', value);
+                }
+                console.log("id is..",id)
+                fetch(`/admin/updateImages/${id}`,{
+                    method:'POST',
+                    body:formData
+                })
+                .then(res => res.json())
+            .then(data => {
+                console.log("inside swal")
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Product Image Updated successfully!',
+                    icon: 'success',
+                    confirmButtonText: 'Okay'
+                }).then(() => {
+                    console.log('reloading page....')
+                    window.location.reload(); // Reload the page after success
+                });
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Failed to Update Images.',
+                    icon: 'error',
+                    confirmButtonText: 'Okay'
+                });
+            });
+    })
+  
+
+    
+}
+</script>
+
+
+
+
+<script>
+    function previewImage(input, previewId) {
+        const previewDiv = document.getElementById(previewId);
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                // Replace the contents of the preview div with the image
+                previewDiv.innerHTML = `<img src="${e.target.result}" alt="Preview" style="max-width: 100%; height: auto;">`;
+            };
+
+            reader.readAsDataURL(input.files[0]); // Read the file as a data URL
+        } else {
+            // Reset the preview div if no file is selected
+            previewDiv.innerHTML = "No image uploaded";
+        }
+    }
+</script>

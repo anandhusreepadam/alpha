@@ -1,37 +1,84 @@
-
 <%- include("../../views/partials/admin/header") %>
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6 mt-60">
-            <form method="post" action="/admin/editCategory">
-                <div class="d-grid text-end mt-30 col-md-5">
-                    <button class="btn btn-primary" type="submit">Update category</button>
-                </div>
-                <div class="mb-4 mt-30">
-                    <label for="product_name" class="form-label">Name</label>
-                    <input type="text" name="categoryName" value="<%=category.name%>" class="form-control border" />
-                    <!-- //////category id input hidden -->
-                    <input type="text" hidden name="id" value="<%=category._id%>">
-                </div>
-                
-                <div class="mb-4">
-                    <label class="form-label">Description</label>
-                    <textarea name="description" class="form-control border"><%=category.description%></textarea>
-                </div>
-                <%if(error && error.length>0){%>
-          <div class="alert alert-danger text-center">
-              <%=error%>
-          </div>
-        <%}%>
-            </form>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 mt-60">
+                <form onsubmit="editCategory(event)">
+                    <div class="d-grid text-end mt-30 col-md-5">
+                        <button class="btn btn-primary" type="submit">Update category</button>
+                    </div>
+                    <div class="mb-4 mt-30">
+                        <label for="product_name" class="form-label">Name</label>
+                        <input id="categoryName" type="text" name="categoryName" value="<%=category.name%>"
+                            class="form-control border" />
+                        <!-- //////category id input hidden -->
+                        <input type="text" id="id" hidden name="id" value="<%=category._id%>">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Description</label>
+                        <textarea id="description" name="description"
+                            class="form-control border"><%=category.description%></textarea>
+                    </div>
+                    <%if(error && error.length>0){%>
+                        <div class="alert alert-danger text-center">
+                            <%=error%>
+                        </div>
+                        <%}%>
+                </form>
+            </div>
         </div>
     </div>
-</div>
-<%- include("../../views/partials/admin/footer") %>
+    <%- include("../../views/partials/admin/footer") %>
 
 
-<script>
-    async function editCategory(params) {
-        
-    }
-</script>
+        <script>
+            async function editCategory(event) {
+                event.preventDefault();
+                const categoryName = document.getElementById('categoryName').value;
+                const description = document.getElementById('description').value;
+                const id = document.getElementById('id').value;
+
+                if (!categoryName.trim() || !description.trim()) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        text: 'Category name and description are required!'
+                    });
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/admin/editCategory', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ categoryName, description, id })
+                    })
+                    const result = await response.json();
+                    if (response.ok) {
+                        Swal.fire(
+                            'Updated!',
+                            'Category Updated Successfully .',
+                            'success'
+                        ).then(()=> {
+                            location.href = result.redirect;
+                        })
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops',
+                            text: result.error || 'Something went wrong!'
+                        })
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: "Oops",
+                        text: 'An error occured while Updating the category'
+                    })
+                        .then(result => {
+                            location.reload();
+                        })
+                    console.log('error while updating category', error)
+                }
+            }
+        </script>

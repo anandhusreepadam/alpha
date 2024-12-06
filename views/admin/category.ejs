@@ -147,7 +147,7 @@
 
         <script>
 
-          async  function createCategory(event) {
+          async function createCategory(event) {
                 event.preventDefault();
                 if (!validateForm()) {
                     return 
@@ -155,44 +155,42 @@
                 const name = document.getElementById("name").value;
                 const description = document.getElementById('descriptionId').value;
 
-                fetch('/admin/category', {
-                    method: 'POST',
-                    headers: {
-                        'content-type': 'application/json'
-                    },
-                    body: JSON.stringify({ name, description })
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            return response.json().then(err => {
-                                throw new Error(err.error);
-                            })
-                        }
-                        return response.json();
+                try {
+                    const response = await fetch('/admin/category', {
+                        method: 'POST',
+                        headers: {
+                            'content-type': 'application/json'
+                        },
+                        body: JSON.stringify({ name, description })
                     })
-                    Swal.fire(
-                        'Added!',
-                        'Category added Successfully .',
-                        'success'
-                    )
-                    .then(data => {
-                        location.reload();
+                        const result = await response.json()
+    
+                            if (response.ok) {
+                       
+                                Swal.fire(
+                                    'Added!',
+                                    'Category added Successfully .',
+                                    'success'
+                                ).then(result=>{
+                                    location.reload();
+                                })
+                            }else{
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops',
+                                    text: 'Category already exists'
+                                }).then(result=>{
+                                    console.log(result);
+                                })
+                            }
+                } catch (error) {                    
+                    Swal.fire({
+                        icon: 'error',
+                        title: "Oops",
+                        text: 'An error occured while adding the category'
                     })
-                    .catch(error => {
-                        if (error.message === 'Category already exists') {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Oops',
-                                text: 'Category already exists'
-                            })
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: "Oops",
-                                text: 'An error occured while adding the category'
-                            })
-                        }
-                    })
+                    console.log('error while adding category',error)
+                }                     
             }
 
             function validateForm() {

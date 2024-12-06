@@ -225,10 +225,8 @@ async function deleteAddress(addressId){
         try {
             const response = await fetch(`/deleteAddress?id=${addressId}`,{
                 method:'POST',
-
             });
             const result = await response.json();
-
             if(response.ok){
                     swal(
                                 'Deleted',
@@ -240,7 +238,6 @@ async function deleteAddress(addressId){
                 }else{
                     swal('Error',result.message||"Failed to delete Address",'error');
                 }
-    
         } catch (error) {
             console.log('Error deleting Address',error);
             swal("Error",'An unexpected error occured while deleting Address','error');
