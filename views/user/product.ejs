@@ -152,19 +152,19 @@
                     <!-- Thumbnails Section -->
                     <div class="col-md-2 thumbnails-container d-flex flex-column">
                         <div class="thumbnail">
-                            <img src="/uploads/product-images/<%=product.productImage[0]%>" alt="Image 1"
+                            <img src="/uploads/re-image/<%=product.productImage[0]%>" alt="Image 1"
                                 class="img-thumbnail" onclick="changeMainImage(this)">
                         </div>
                         <div class="thumbnail">
-                            <img src="/uploads/product-images/<%=product.productImage[1]%>" alt="Image 2"
+                            <img src="/uploads/re-image/<%=product.productImage[1]%>" alt="Image 2"
                                 class="img-thumbnail" onclick="changeMainImage(this)">
                         </div>
                         <div class="thumbnail">
-                            <img src="/uploads/product-images/<%=product.productImage[2]%>" alt="Image 3"
+                            <img src="/uploads/re-image/<%=product.productImage[2]%>" alt="Image 3"
                                 class="img-thumbnail" onclick="changeMainImage(this)">
                         </div>
                         <div class="thumbnail">
-                            <img src="/uploads/product-images/<%=product.productImage[3]%>" alt="Image 4"
+                            <img src="/uploads/re-image/<%=product.productImage[3]%>" alt="Image 4"
                                 class="img-thumbnail" onclick="changeMainImage(this)">
                         </div>
                     </div>
@@ -172,7 +172,7 @@
                     <!-- Main Image Section -->
                     <div class="col-md-6">
                         <div class="main-image-container" id="mainImageContainer">
-                            <img src="/uploads/product-images/<%=product.productImage[0]%>" class="main-image"
+                            <img src="/uploads/re-image/<%=product.productImage[0]%>" class="main-image"
                                 id="mainProductImage" alt="Product">
                         </div>
                     </div>
@@ -249,14 +249,21 @@ async function addToCart(productId) {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                redirect: 'manual',
                 body: JSON.stringify({productId, quantity }),
             });
 
             const result = await response.json();
             if (result.success) {
-                swal('success', "Added to cart !", "success");
+                swal('success', "Added to cart !", "success")
+                .then(()=>{
+                    location.reload();
+                })
             } else {
-                swal('error', "error while adding !", "error");
+                swal('error', result.message, "error")
+                .then(()=>{
+                    location.href = result.redirect;
+                })
             }
         } catch (error) {
             console.error('Error adding to cart:', error);

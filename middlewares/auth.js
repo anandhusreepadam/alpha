@@ -26,7 +26,7 @@ const profileAuth = (req, res, next) => {
         next();
     } else {
         req.session.msg="Please Login First";
-        res.redirect('/login');
+        return res.redirect('/login');
     }
 }
 

@@ -1,6 +1,7 @@
 const userController = require('../controllers/user/userController');
 const profileController = require('../controllers/user/profileController');
 const cartController = require ('../controllers/user/cartController');
+const orderController = require('../controllers/user/orderController');
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
@@ -48,11 +49,6 @@ router.get('/wishlist',userAuth,userController.loadWishlist);
 
 //Profile Management
 router.get('/profile',profileAuth,userAuth,userController.loadProfile);
-router.get('/confirmPassword',profileAuth,userAuth,profileController.loadConfirmPassword);
-router.post('/confirmPassword',profileAuth,userAuth,profileController.confirmPassword);
-router.post('/verifyChangeOtp',profileAuth,userAuth,profileController.verifyChangeOtp);
-router.get('/newEmail',profileAuth,userAuth,profileController.loadNewEmail);
-router.post('/newEmail',profileAuth,userAuth,profileController.newEmail);
 router.get('/changePassword',profileAuth,userAuth,profileController.loadChangePassword);
 router.post('/changePassword',profileAuth,userAuth,profileController.changePassword);
 
@@ -61,7 +57,7 @@ router.post('/changePassword',profileAuth,userAuth,profileController.changePassw
 router.get('/address',profileAuth,userAuth,profileController.loadAddress);
 router.post('/saveUserData',upload.none(),profileController.saveUserData)
 router.post('/addAddress',upload.none(),profileController.addAddress);
-router.get('/editAddress',profileController.loadEditAddress);
+router.get('/editAddress',profileAuth,userAuth,profileController.loadEditAddress);
 router.post('/editAddress',upload.none(),profileController.editAddress);
 router.post('/deleteAddress',profileController.deleteAddress)
 
@@ -73,10 +69,21 @@ router.post('/addToCart',cartController.addToCart);
 router.post('/removeCartItem',cartController.deleteCart);
 
 
+//Order Management
+router.get('/checkout',profileAuth,userAuth,orderController.loadCheckout);
+router.post('/placeOrder',orderController.placeOrder);
+router.get('/orderPlaced',profileAuth,userAuth,orderController.orderPlaced)
+router.get('/orders',profileAuth,userAuth,orderController.loadOrders)
+router.post('/cancelOrder/:id',orderController.cancelOrder);
 
 
 
 
+
+
+
+
+//For testing only
 router.get('/test',(req,res)=>{
     res.render('test',{addresses:[],title:'test',user:null,cart:{items:[]},orderSummary:[]})
 })

@@ -64,6 +64,7 @@ const loadLogin = async (req, res) => {
         if (!req.session.user) {
             const msg = req.session.msg;
             req.session.msg = null;
+            console.log('here')
             return res.render('login', { message: msg })
         } else {
             res.redirect('/')
@@ -85,7 +86,7 @@ const login = async (req, res) => {
             return res.render('login', { message: "User is blocked by admin" });
         }
 
-        const passwordMatch = bcrypt.compare(password, findUser.password)
+        const passwordMatch = await bcrypt.compare(password, findUser.password)
 
         if (!passwordMatch) {
             return res.render('login', { message: 'Incorrect Password' });
@@ -267,11 +268,24 @@ const loadHomepage = async (req, res) => {
 
 const loadShopping = async (req, res) => {
     try {
+        const search  = req.query.search || '';
+        const page = req.query.page || 1;
+        const limit = 8;
         const userSession = req.session.user;
         const user = userSession ? await User.findById(userSession._id) : null;
-        const cart =user? await Cart.findOne({ userId: user._id }).populate('items.productId'):null;
-        const allProducts = await getAllProducts()
-        return res.render('shop', { user, allProducts, title: "Shop", cart: cart || { items: [] } });
+        const cart =user? await Cart.findOne({ userId: user._id }):null;
+
+        const allProducts = await Product.find({isBlocked:false,isDeleted:false,
+            productName:{$regex: new RegExp('.*'+ search + '.*','i')}
+        }).limit(limit*1).skip((page-1)*limit).populate('category').exec();
+
+        const count = await Product.find({isBlocked:false,isDeleted:false,
+             productName: { $regex: new RegExp('.*' + search + '.*', 'i') } 
+        }).countDocuments();
+
+        const totalPages = Math.ceil(count/limit)
+        return res.render('shop', { user, allProducts, title: "Shop", cart: cart || { items: [] } ,currentPage: page,
+            totalPages: totalPages,});
     } catch (error) {
         console.log('Shopping page not loading:', error);
         res.status(500).send('Server Error');

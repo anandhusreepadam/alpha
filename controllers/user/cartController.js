@@ -25,17 +25,13 @@ const updateCart = async(req,res) =>{
         const cartItem = cart.items.find(item => item.productId.toString() === id);
 
         if (cartItem) {
-            // Update the quantity
            
             cartItem.quantity = quantity;
 
-            // Recalculate the cart total
             await cart.save();
 
-            // Calculate the new total price for the cart item
             const updatedPrice = (cartItem.productId.salePrice * cartItem.quantity).toFixed(2);
 
-            // Recalculate total cart price
             const cartTotal = cart.items.reduce((total, item) => total + (item.productId.salePrice * item.quantity), 0).toFixed(2);
 
             return res.status(200).json({ updatedPrice, cartTotal });
@@ -51,7 +47,9 @@ const updateCart = async(req,res) =>{
 const addToCart = async (req, res) => {
     const { productId, quantity } = req.body;
     try {
-     
+        if(!req.session.user){
+            return  res.status(400).json({redirect:'/login',message:'Please Login First'})
+        }
         const userId =  req.session.user._id;
         let cart = await Cart.findOne({ userId })
         const product = await Product.findOne({ _id:productId });

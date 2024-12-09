@@ -16,37 +16,6 @@ async function getUser(req) {
     }
 }
 
-function generateOtp() {
-    return Math.floor(100000 + Math.random() * 900000).toString();
-}
-
-async function sendVerificationEmail(email, otp) {
-    try {
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            port: 587,
-            secure: false,
-            requireTLS: true,
-            auth: {
-                user: process.env.NODEMAILER_EMAIL,
-                pass: process.env.NODEMAILER_PASSWORD
-            }
-        })
-        const info = await transporter.sendMail({
-            from: process.env.NODEMAILER_EMAIL,
-            to: email,
-            subject: "Your One Time Password for Resetting Chanel One Account",
-            text: `Your OTP is ${otp}`,
-            html: `<b>Your OTP: ${otp}</b>`
-        })
-        return info.accepted.length > 0
-
-    } catch (error) {
-        console.log("Error sending Email", error)
-        return false;
-    }
-}
-
 async function securePassword(password) {
     try {
         const passwordHash = await bcrypt.hash(password, 10)
@@ -59,73 +28,6 @@ async function securePassword(password) {
 
 
 //routes
-const loadConfirmPassword = async (req, res) => {
-    try {
-        const user = await getUser(req);
-        const cart = user ? await Cart.findOne({ userId: user._id }).populate('items.productId') : null;
-        res.render('confirmPassword', { title: "Update Email", user: user ,cart:cart||{items:[]}});
-    } catch (error) {
-        res.redirect('/pageNotFound');
-    }
-}
-
-const confirmPassword = async (req, res) => {
-    try {
-        const { password } = req.body;
-        const user = await getUser(req);
-        const passwordMatch = await bcrypt.compare(password, user.password);
-        const cart = user ? await Cart.findOne({ userId: user._id }).populate('items.productId') : null;
-        if (!passwordMatch) {
-            res.render('confirmPassword', { message: "Wrong Password. Please Try again!", title: "Verify Password", user: user ,cart:cart||{items:[]}})
-        } else {
-            res.redirect('/newEmail')
-        }
-    } catch (error) {
-        console.log(error)
-        res.redirect('/pageNotFound')
-    }
-}
-
-const newEmail = async (req, res) => {
-    try {
-        const { email } = req.body;
-        const otp = generateOtp();
-        const emailSent = await sendVerificationEmail(email, otp);
-        if (emailSent) {
-            req.session.userOtp = otp;
-            req.session.userData = req.body;
-            req.session.email = email;
-            const user = getUser(req);
-            const cart = user ? await Cart.findOne({ userId: user._id }).populate('items.productId') : null;
-            res.render('verifyChangePassword', { title: "Verify OTP", user: user,cart:cart||{items:[]} });
-            console.log("OTP:", otp);
-
-        } else {
-            res.json("email Error")
-        }
-    }
-    catch (error) {
-        res.redirect('/pageNotFound')
-    }
-}
-
-const verifyChangeOtp = async (req, res) => {
-    try {
-        const enteredOtp = req.body.otp;
-        const otp = req.session.userOtp
-        const user = req.session.user
-        const cart = user ? await Cart.findOne({ userId: user._id }).populate('items.productId') : null;
-        if (enteredOtp == otp) {
-            await User.updateOne({ _id: user._id }, { $set: { email: req.session.email } })
-            res.redirect('/profile')
-        } else {
-            res.render('newEmail', { message: "Invalid OTP", user: req.session.userData, title: "Update Email",cart:cart||{items:[]} });
-        }
-    } catch (error) {
-        res.redirect('/pageNotFound')
-    }
-}
-
 const loadNewEmail = async (req, res) => {
     try {
         const user = await getUser(req);
@@ -150,22 +52,23 @@ const changePassword = async (req, res) => {
     try {
         const user = await getUser(req);
         const { currentPassword, newPassword } = req.body;
+ 
         const passwordMatch = await bcrypt.compare(currentPassword, user.password);
         const cart = user ? await Cart.findOne({ userId: user._id }) : null;
         if (passwordMatch) {
             if (currentPassword == newPassword) {
-                return res.render('changePassword', { message: "New password cannot be the same as the current password.", user, title: "Update Password" ,cart:cart||{items:[]}});
+                return res.status(400).json({ message: "New password cannot be the same as the current password."});
             }
             const passwordHash = await securePassword(newPassword);
             await User.updateOne({ _id: user._id }, { $set: { password: passwordHash } });
-            return res.redirect('/profile');
+            return res.status(200).json({redirect:'/profile'});
         } else {
-            return res.render('changePassword', { message: "Wrong Password", user, title: "Update Password",cart:cart||{items:[]} });
+            return res.status(400).json({ message: "Wrong Password"});
         }
 
     } catch (error) {
         console.log(error);
-        res.redirect('/pageNotfound');
+        res.status(500).json({message:'server error',redirect:'/pageNotfound'});
     }
 }
 
@@ -309,11 +212,7 @@ const deleteAddress = async (req,res) =>{
 
 
 module.exports = {
-    verifyChangeOtp,
     loadNewEmail,
-    newEmail,
-    loadConfirmPassword,
-    confirmPassword,
     loadChangePassword,
     changePassword,
     loadAddress,

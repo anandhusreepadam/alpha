@@ -201,7 +201,6 @@ const editProduct = async (req, res) => {
         const updateFields = {
             productName: data.productName,
             description: data.description,
-            brand: data.brand,
             category: data.category,
             regularPrice: data.regularPrice,
             salePrice: data.salePrice,
@@ -245,9 +244,9 @@ const deleteSingleImage = async (req, res) => {
         } else {
             console.log(`image ${imageNameToServer} not found`);
         }
-        res.send({ status: true });
+        res.status(200).json({success:true})
     } catch (error) {
-        res.redirect('/pageError')
+        res.status(500).json({redirect:'/pageError'})
     }
 }
 
