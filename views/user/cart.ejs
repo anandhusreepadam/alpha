@@ -197,12 +197,14 @@
                         headers: { 'content-Type': 'application/json' },
                         body: JSON.stringify({ id, quantity })
                     })
-                    const result = response.json()
+                    const result = await response.json()
                     if (!response.ok) {
                         Swal.fire({
                             icon: 'error',
                             title: 'Oops',
                             text: result.error || 'Something went wrong!'
+                        }).then(()=>{
+                            location.reload();
                         })
                     } else {
                         location.reload();

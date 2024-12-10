@@ -64,7 +64,6 @@ const loadLogin = async (req, res) => {
         if (!req.session.user) {
             const msg = req.session.msg;
             req.session.msg = null;
-            console.log('here')
             return res.render('login', { message: msg })
         } else {
             res.redirect('/')

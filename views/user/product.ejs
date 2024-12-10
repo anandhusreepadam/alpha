@@ -259,11 +259,13 @@ async function addToCart(productId) {
                 .then(()=>{
                     location.reload();
                 })
-            } else {
-                swal('error', result.message, "error")
+            } else if(result.message =='Please Login First') {
+                swal('Oops', result.message, "error")
                 .then(()=>{
                     location.href = result.redirect;
                 })
+            }else{
+                swal('Oops', result.message, "error")
             }
         } catch (error) {
             console.error('Error adding to cart:', error);

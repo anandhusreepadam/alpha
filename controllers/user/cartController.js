@@ -25,6 +25,9 @@ const updateCart = async(req,res) =>{
         const cartItem = cart.items.find(item => item.productId.toString() === id);
 
         if (cartItem) {
+            if(quantity>5){
+                return res.status(400).json({error:'Item limit Exceeded. You can only choose upto 5 quantity'})
+            }
            
             cartItem.quantity = quantity;
 
@@ -62,6 +65,9 @@ const addToCart = async (req, res) => {
 
         const existingItem = cart.items.find(item => item.productId.toString() === productId);
         if (existingItem){
+            if(existingItem.quantity+quantity>5){
+                return res.status(400).json({success:false,message:'Item limit Exceeded. You can only choose upto 5 quantity'})
+            }
             existingItem.quantity+=quantity;
         }else{
             cart.items.push({

@@ -1,0 +1,150 @@
+<%-include("../../views/partials/admin/header")%>
+<section class="content-main">
+    <div class="content-header">
+        <h2 class="content-title">Order Management</h2>
+    </div>
+
+    <div class="card mb-4">
+        <header class="card-header">
+            <div class="row gx-3">
+                <div class="col-lg-4 col-md-6 me-auto">
+                    <input type="text" placeholder="Search Orders..." class="form-control" oninput="searchOrders(this.value)" />
+                </div>
+                <div class="col-lg-2 col-md-3 col-6">
+                    <select class="form-select" onchange="filterOrderStatus(this.value)">
+                        <option value="">Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+            </div>
+        </header>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Order Date</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (orders.length === 0) { %>
+                        <tr>
+                            <td colspan="6" class="text-center">No orders found</td>
+                        </tr>
+                        <% } %>
+                        <% for (let i = 0; i < orders.length; i++) { %>
+                        <tr>
+                            <td><%= orders[i].orderId %></td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="/assets/imgs/people/avatar-1.png" class="img-sm img-avatar me-3" alt="Customer" />
+                                    <div>
+                                        <h6 class="mb-0"><%= orders[i].customerName %></h6>
+                                        <small class="text-muted"><%= orders[i].customerEmail %></small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>$<%= orders[i].total.toFixed(2) %></td>
+                            <td>
+                                <% if (orders[i].status === 'pending') { %>
+                                <span class="badge rounded-pill alert-warning">Pending</span>
+                                <% } else if (orders[i].status === 'processing') { %>
+                                <span class="badge rounded-pill alert-info">Processing</span>
+                                <% } else if (orders[i].status === 'shipped') { %>
+                                <span class="badge rounded-pill alert-primary">Shipped</span>
+                                <% } else if (orders[i].status === 'delivered') { %>
+                                <span class="badge rounded-pill alert-success">Delivered</span>
+                                <% } else if (orders[i].status === 'cancelled') { %>
+                                <span class="badge rounded-pill alert-danger">Cancelled</span>
+                                <% } %>
+                            </td>
+                            <td><%= new Date(orders[i].orderDate).toLocaleDateString() %></td>
+                            <td class="text-end">
+                                <a href="/admin/viewOrder?id=<%= orders[i].orderId %>" class="btn btn-sm btn-light">View</a>
+                                <% if (orders[i].status !== 'cancelled' && orders[i].status !== 'delivered') { %>
+                                <a href="javascript:void(0)" 
+                                   onclick="updateOrderStatus('<%= orders[i].orderId %>')" 
+                                   class="btn btn-sm btn-brand">Update</a>
+                                <% } %>
+                            </td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="pagination-area mt-15 mb-50">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-start">
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                <li class="page-item <%=(i === currentPage) ? 'active' : '' %>">
+                    <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                </li>
+                <% } %>
+            </ul>
+        </nav>
+    </div>
+</section>
+<%-include("../../views/partials/admin/footer")%>
+
+<script>
+    function searchOrders(query) {
+        window.location.href = `/admin/orders?search=${encodeURIComponent(query)}`;
+    }
+
+    function filterOrderStatus(status) {
+        window.location.href = `/admin/orders?status=${status}`;
+    }
+
+    function updateOrderStatus(orderId) {
+        Swal.fire({
+            title: 'Update Order Status',
+            input: 'select',
+            inputOptions: {
+                pending: 'Pending',
+                processing: 'Processing',
+                shipped: 'Shipped',
+                delivered: 'Delivered',
+                cancelled: 'Cancelled'
+            },
+            inputPlaceholder: 'Select status',
+            showCancelButton: true,
+            confirmButtonText: 'Update',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/admin/updateOrderStatus`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ orderId, status: result.value })
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        Swal.fire('Success', 'Order status updated successfully', 'success').then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire('Error', 'Failed to update order status', 'error');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error updating order status:', error);
+                    Swal.fire('Error', 'An error occurred while updating the order status', 'error');
+                });
+            }
+        });
+    }
+</script>
