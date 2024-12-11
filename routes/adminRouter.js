@@ -19,6 +19,7 @@ const customerController= require('../controllers/admin/customerController');
 const categoryController= require('../controllers/admin/categoryController');
 const productController = require('../controllers/admin/productController');
 const orderController = require('../controllers/admin/orderController');
+const stockController = require('../controllers/admin/stockController');
 
 
 //Admin Routes
@@ -61,8 +62,12 @@ router.post('/deleteProduct/:id',working,adminAuth,productController.deleteProdu
 
 //Order Management
 router.get('/orders',adminAuth,orderController.loadOrders);
+router.get('/viewOrder',adminAuth,orderController.orderDetails);
 
 
+//Stock Management
+router.get('/stock',adminAuth,stockController.loadStock);
+router.post('/updateStock',adminAuth,stockController.updateStock)
 
 
 

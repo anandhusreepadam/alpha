@@ -1,0 +1,263 @@
+<%- include("../../views/partials/user/header") %>
+<div class="container-fluid py-4">
+    <section class="order-details-section">
+        <!-- Action Buttons -->
+        
+        <h2 class="section-title text-center mb-4">Order Details</h2>
+        
+        <!-- Order Summary -->
+        <div class="order-summary mb-3">
+            <h5>Order ID: <%= order.orderId %></h5>
+            <p><strong>Date:</strong> <%= new Date(order.createdAt).toLocaleDateString() %></p>
+            <p><strong>Status:</strong> <%= order.status %></p>
+            <p><strong>Total Amount:</strong> ₹<%= order.totalAmount %></p>
+            <p><strong>Final Amount:</strong> ₹<%= order.finalAmount %></p>
+            <div class="order-actions d-flex justify-content-end mb-3">
+                <% if (order.status === 'Delivered') { %>
+                    <button id="return-btn" class="btn btn-primary me-2" onclick="returnOrder('<%= order._id %>')">
+                        Return
+                    </button>
+                <% } else if (order.status !== 'Cancelled' && order.status !== 'Returned') { %>
+                    <button id="cancel-btn" class="btn btn-danger me-2" onclick="cancelOrder('<%= order._id %>')">
+                        Cancel
+                    </button>
+                <% } %>
+                <button onclick="window.history.back()" class="btn btn-secondary">Back</button>
+            </div>
+        </div>
+
+        <!-- Shipping Address -->
+        <div class="shipping-address mb-3">
+            <h5>Shipping Address:</h5>
+            <p>
+                Name: <%= order.address.name %> <br>
+                Address: <%= order.address.address %>, <br>
+                City: <%= order.address.city %>, State: <%= order.address.state %>, 
+                Pincode: <%= order.address.pincode %><br>
+                Phone: <%= order.address.phone %>
+            </p>
+        </div>
+
+        <!-- Product List -->
+        <div class="product-list mb-3">
+            <h5>Ordered Products:</h5>
+            <% order.items.forEach((item) => { %>
+                <div class="product-card d-flex align-items-center mb-2 p-2 border rounded">
+                    <div class="product-image me-3">
+                        <img src="/uploads/re-image/<%= item.productId.productImage[0] %>" 
+                             alt="<%= item.productId.productName %>" 
+                             onerror="this.src='/uploads/placeholder.png'" 
+                             style="width: 80px; height: auto; border-radius: 5px;" />
+                    </div>
+                    <div class="product-details">
+                        <p><strong>Product:</strong> <%= item.productId.productName %></p>
+                        <p><strong>Price:</strong> ₹<%= item.productId.salePrice %></p>
+                        <p><strong>Quantity:</strong> <%= item.quantity %></p>
+                        <p><strong>Subtotal:</strong> ₹<%= item.productId.salePrice * item.quantity %></p>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </section>
+</div>
+
+<%- include("../../views/partials/user/footer") %>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+    .order-details-section {
+        padding: 20px;
+    }
+
+    .section-title {
+        font-size: 28px;
+        margin-bottom: 20px;
+        font-weight: bold;
+        text-align: center;
+        color: #333;
+    }
+
+    .order-summary,
+    .shipping-address,
+    .product-list {
+        margin-bottom: 20px;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .order-summary h5,
+    .shipping-address h5 {
+        font-size: 20px;
+        margin-bottom: 10px;
+        color: #555;
+    }
+
+    .product-card {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #ffffff;
+    }
+
+    .product-image img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 5px;
+        margin-right: 20px;
+    }
+
+    .product-details p {
+        margin: 0;
+        font-size: 14px;
+        color: #555;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        text-align: center;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+        border: none;
+    }
+
+    .btn-secondary:hover {
+        background-color: #5a6268;
+    }
+
+    .order-actions {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .back-button {
+        text-align: center;
+        margin-top: 20px;
+    }
+</style>
+
+<script>
+
+    function goBack() {
+        window.history.back();
+    }
+
+    async function cancelOrder(orderId) {
+        try {
+            const confirmation = await Swal.fire({
+                title: "Are you sure?",
+                text: "Do you really want to cancel this order?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, Cancel",
+                cancelButtonText: "No"
+            });
+
+            if (confirmation.isConfirmed) {
+                const response = await fetch(`/cancelOrder/${orderId}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    await Swal.fire({
+                        title: "Order Cancelled",
+                        text: "Your order status has been changed to 'Cancelled'.",
+                        icon: "success"
+                    });
+                    document.getElementById(`cancel-btn-${orderId}`).disabled = true;
+                    document.getElementById(`return-btn-${orderId}`).disabled = true;
+
+
+
+                    window.location.reload();
+
+                } else {
+                    throw new Error(result.message);
+                }
+            }
+        } catch (err) {
+            console.error('Error canceling order:', err.message);
+            await Swal.fire("Oops!", "Internal server error occurred.", "error");
+        }
+    }
+
+    async function returnOrder(orderId) {
+        try {
+            const confirmation = await Swal.fire({
+                title: "Are you sure?",
+                text: "Do you want to mark this order as 'Returned'?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#28a745",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, Return",
+                cancelButtonText: "No"
+            });
+
+            if (confirmation.isConfirmed) {
+                const response = await fetch(`/returnOrder/${orderId}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    await Swal.fire({
+                        title: "Order Returned",
+                        text: "Your order status has been changed to 'Returned'.",
+                        icon: "success"
+                    });
+                    document.getElementById(`cancel-btn-${orderId}`).disabled = true;
+                    document.getElementById(`return-btn-${orderId}`).disabled = true;
+
+
+
+                    window.location.reload();
+
+                } else {
+                    throw new Error(result.message);
+                }
+            }
+        } catch (err) {
+            console.error('Error returning order:', err.message);
+            await Swal.fire("Oops!", "Internal server error occurred.", "error");
+        }
+    }
+
+</script>

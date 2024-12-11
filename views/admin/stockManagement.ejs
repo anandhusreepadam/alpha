@@ -1,0 +1,107 @@
+<%-include("../../views/partials/admin/header")%>
+<section class="content-main">
+    <div class="content-header">
+        <h2 class="content-title">Stock Management</h2>
+    </div>
+
+    <div class="card mb-4">
+        <header class="card-header">
+            <h4>Manage Product Stock</h4>
+        </header>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (products.length === 0) { %>
+                            <tr>
+                                <td colspan="4" class="text-center">No products available</td>
+                            </tr>
+                        <% } %>
+                        <% products.forEach(product => { %>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="/uploads/re-image/<%=product.productImage[0]%>" 
+                                             alt="<%= product.name %>" 
+                                             class="img-thumbnail" 
+                                             style="width: 50px; height: 50px; object-fit: cover;" />
+                                        <span class="ms-2"><%= product.productName %></span>
+                                    </div>
+                                </td>
+                                <td>₹<%= product.salePrice %></td>
+                                <td>
+                                    <input 
+                                        type="number" 
+                                        class="form-control stock-input" 
+                                        data-id="<%= product._id %>" 
+                                        value="<%= product.quantity %>" 
+                                        min="0" 
+                                    />
+                                </td>
+                                <td class="text-end">
+                                    <button 
+                                        class="btn btn-sm btn-primary update-stock-btn"
+                                        data-id="<%= product._id %>">
+                                        Update
+                                    </button>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="pagination-area mt-15 mb-50">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-start">
+                <%for(let i=1;i<=totalPages;i++){%>
+                    <li class="page-item <%=(i===currentPage) ? 'active': '' %>">
+                        <a class="page-link" href="?page=<%=i%>">
+                            <%=i%>
+                        </a>
+                    </li>
+                    <%}%>
+            </ul>
+        </nav>
+    </div>
+</section>
+
+<%-include("../../views/partials/admin/footer")%>
+
+<script>
+    document.querySelectorAll('.update-stock-btn').forEach(button => {
+        button.addEventListener('click', async (e) => {
+            const productId = button.getAttribute('data-id');
+            const stockInput = document.querySelector(`.stock-input[data-id="${productId}"]`);
+            const stockValue = stockInput.value;
+
+            try {
+                const response = await fetch('/admin/updateStock', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId, stock: stockValue })
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    Swal.fire('success',result.message,'success');
+                } else {
+                    Swal.fire('error','Error updating stock','error');
+                }
+            } catch (error) {
+                console.error('Error updating stock:', error);
+                Swal.fire('error','Failed to update stock. Please try again.','error');
+            }
+        });
+    });
+</script>

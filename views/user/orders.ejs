@@ -78,7 +78,7 @@
         </div>
         <section class="content-main">
             <div class="content-header">
-                <h2 class="content-title">Profile setting</h2>
+                <h2 class="content-title">Manage Orders</h2>
             </div>
             <div class="card">
                 <div class="card-body">
@@ -94,64 +94,115 @@
                         <div class="col-lg-9">
                             <section class="content-body">
                                 <h2 class="section-title">Your Orders</h2>
-                                <% if (orders && orders.length> 0) { %>
-                                    <% orders.forEach(order=> { %>
+                                <% if (orders && orders.length > 0) { %>
+                                    <% orders.forEach(order => { %>
                                         <div class="order-card">
-                                            <h5>Order #<%= order._id %>
-                                            </h5>
-                                            <p><strong>Date:</strong>
-                                                <%= new Date(order.createdAt).toLocaleDateString() %>
-                                            </p>
-                                            <p><strong>Status:</strong>
-                                                <%= order.status %>
-                                            </p>
-                                            <p><strong>Total:</strong> ₹ <%= order.finalAmount %>
-                                            </p>
-
+                                            <!-- Order Header -->
+                                            <div class="order-header">
+                                                <h5>Order ID: <%= order.orderId %></h5>
+                                                <p>Date: <%= new Date(order.createdAt).toLocaleDateString() %></p>
+                                            </div>
+                        
+                                            <!-- Order Details -->
+                                            <div class="order-details">
+                                                <p>Status: <span class="order-status"><%= order.status %></span></p>
+                                                <p>Total: ₹<%= order.finalAmount %></p>
+                                            </div>
+                        
+                                            <!-- Shipping Address -->
                                             <div class="order-address">
                                                 <p><strong>Shipping Address:</strong></p>
-                                                <p>Name : <%= order.address.name %>, <br> Address : <%=order.address.address %>
-                                                            <br>
-                                                            <%= order.address.city %>, <%= order.address.state %> - <%=order.address.pincode %>
+                                                <p>
+                                                    <%= order.address.name %>, <%= order.address.address %>, 
+                                                    <%= order.address.city %>, <%= order.address.state %> - 
+                                                    <%= order.address.pincode %>
                                                 </p>
-                                                <p>Phone : <%= order.address.phone %>
-                                                </p>
+                                                <p>Phone: <%= order.address.phone %></p>
                                             </div>
-
-                                            <button id="cancel-btn-<%= order._id %>" class="btn btn-danger"
-                                                onclick="cancelOrder('<%= order._id %>')" <%=order.status==='Cancelled' || order.status==='Returned' || order.status==='Delivered' ? 'disabled': '' %>>
-                                                Cancel
-                                            </button>
-
-                                            
-                                            <button id="return-btn-<%= order._id %>" class="btn btn-primary"
-                                                onclick="returnOrder('<%= order._id %>')" <%=order.status==='Delivered'? '' : 'disabled' %>>
-                                                Return
-                                            </button>
-                                        </div>
-                                        <% }) %>
-                                            <% } else { %>
-                                                <p>No orders found.</p>
+                        
+                                            <!-- Action Buttons -->
+                                            <div class="order-actions">
+                                                <% if (order.status === 'Delivered') { %>
+                                                    <!-- Return Button -->
+                                                    <button 
+                                                        class="btn btn-primary" 
+                                                        onclick="returnOrder('<%= order._id %>')">
+                                                        Return
+                                                    </button>
+                                                <% } else { %>
+                                                    <!-- Cancel Button -->
+                                                    <button 
+                                                        class="btn btn-danger" 
+                                                        onclick="cancelOrder('<%= order._id %>')" 
+                                                        <%= order.status === 'Cancelled'? 'disabled' : '' %>>
+                                                        Cancel
+                                                    </button>
                                                 <% } %>
+                        
+                                                <!-- View Details Button -->
+                                                <button 
+                                                    class="btn btn-secondary" 
+                                                    onclick="viewOrderDetails('<%= order._id %>')">
+                                                    View Details
+                                                </button>
+                                            </div>
+                                        </div>
+                                    <% }) %>
+                                <% } else { %>
+                                    <p>No orders found.</p>
+                                <% } %>
                             </section>
-                           
                         </div>
-                 
-                    </div>
-         
-                </div>
-       
-            </div>
-     
+                        
+                        <style>
+                        
+                            .btn-danger {
+                                background-color: #dc3545;
+                                color: #fff;
+                                border: none;
+                            }
+                        
+                            .btn-danger:disabled {
+                                background-color: #f5c6cb;
+                                cursor: not-allowed;
+                            }
+                        
+                            .btn-primary {
+                                background-color: #007bff;
+                                color: #fff;
+                                border: none;
+                            }
+                        
+                            .btn-primary:disabled {
+                                background-color: #cce5ff;
+                                cursor: not-allowed;
+                            }
+                        
+                            .btn-secondary {
+                                background-color: #6c757d;
+                                color: #fff;
+                                border: none;
+                            }
+                        
+                            .btn-secondary:hover {
+                                background-color: #5a6268;
+                            }
+                        
+                            .order-status {
+                                font-weight: bold;
+                                color: #333;
+                            }
+                        </style>
+                    </div>         
+                </div>       
+            </div>     
         </section>
-
 
         <script src="assets/js/vendors/jquery-3.6.0.min.js"></script>
         <script src="assets/js/vendors/bootstrap.bundle.min.js"></script>
         <script src="assets/js/vendors/select2.min.js"></script>
         <script src="assets/js/vendors/perfect-scrollbar.js"></script>
         <script src="assets/js/vendors/jquery.fullscreen.min.js"></script>
-
         <script src="assets/js/main.js?v=1.1" type="text/javascript"></script>
 
     </body>
@@ -249,5 +300,9 @@
                 await Swal.fire("Oops!", "Internal server error occurred.", "error");
             }
         }
-    
+               
+        function viewOrderDetails(orderId) {
+             window.location.href = `/orderDetails?id=${orderId}`;
+         }
+     
     </script>

@@ -75,7 +75,7 @@ router.post('/placeOrder',orderController.placeOrder);
 router.get('/orderPlaced',profileAuth,userAuth,orderController.orderPlaced)
 router.get('/orders',profileAuth,userAuth,orderController.loadOrders)
 router.post('/cancelOrder/:id',orderController.cancelOrder);
-
+router.get('/orderDetails',profileAuth,userAuth,orderController.loadOrderDetails)
 
 
 

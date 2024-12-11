@@ -7,12 +7,10 @@ const mongoose = require('mongoose');
 
 
 const loadCheckout = async (req, res) => {
-    console.log('hii')
     try {
         const user = req.session.user
         const cart = await Cart.findOne({ userId: user._id }).populate('items.productId');
         const addressData = await Address.findOne({ userId: user._id });
-        console.log(cart);
         if (!cart || cart.items.length === 0) {
             console.log('Nothing in cart');
             return res.redirect('/cart');
@@ -95,7 +93,6 @@ const orderPlaced=async(req,res)=>{
 const loadOrders = async(req,res)=>{
     try {
         const user = req.session.user;
-        console.log(user)
         const orders = await Order.find({ userId: user._id }).sort({ createdAt: -1 });
         const cart = user ? await Cart.findOne({ userId: user._id }).populate('items.productId') : null;
         res.render('orders',{orders,title:"Orders",user,cart:cart||{items:[]}})
@@ -123,11 +120,31 @@ const cancelOrder = async (req, res) => {
     }
 };
 
+const loadOrderDetails = async (req,res) =>{
+    try {
+        const user = req.session.user;
+        const orderId = req.query.id;
+        const order = await Order.findById(orderId)
+            .populate('items.productId')
+            .populate('userId');
+
+        if (!order) {
+            return res.status(404).send('Order not found');
+        }
+
+        res.render('orderDetails', { order ,title:'Order Details',user,cart:{items:[]}});
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Something went wrong');
+    }
+}
+
 module.exports={
     loadCheckout,
     placeOrder,
     orderPlaced,
     loadOrders,
-    cancelOrder
+    cancelOrder,
+    loadOrderDetails
 
 }

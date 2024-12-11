@@ -38,48 +38,62 @@
                     </thead>
                     <tbody>
                         <% if (orders.length === 0) { %>
-                        <tr>
-                            <td colspan="6" class="text-center">No orders found</td>
-                        </tr>
-                        <% } %>
-                        <% for (let i = 0; i < orders.length; i++) { %>
-                        <tr>
-                            <td><%= orders[i].orderId %></td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <img src="/assets/imgs/people/avatar-1.png" class="img-sm img-avatar me-3" alt="Customer" />
-                                    <div>
-                                        <h6 class="mb-0"><%= orders[i].customerName %></h6>
-                                        <small class="text-muted"><%= orders[i].customerEmail %></small>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>$<%= orders[i].total.toFixed(2) %></td>
-                            <td>
-                                <% if (orders[i].status === 'pending') { %>
-                                <span class="badge rounded-pill alert-warning">Pending</span>
-                                <% } else if (orders[i].status === 'processing') { %>
-                                <span class="badge rounded-pill alert-info">Processing</span>
-                                <% } else if (orders[i].status === 'shipped') { %>
-                                <span class="badge rounded-pill alert-primary">Shipped</span>
-                                <% } else if (orders[i].status === 'delivered') { %>
-                                <span class="badge rounded-pill alert-success">Delivered</span>
-                                <% } else if (orders[i].status === 'cancelled') { %>
-                                <span class="badge rounded-pill alert-danger">Cancelled</span>
-                                <% } %>
-                            </td>
-                            <td><%= new Date(orders[i].orderDate).toLocaleDateString() %></td>
-                            <td class="text-end">
-                                <a href="/admin/viewOrder?id=<%= orders[i].orderId %>" class="btn btn-sm btn-light">View</a>
-                                <% if (orders[i].status !== 'cancelled' && orders[i].status !== 'delivered') { %>
-                                <a href="javascript:void(0)" 
-                                   onclick="updateOrderStatus('<%= orders[i].orderId %>')" 
-                                   class="btn btn-sm btn-brand">Update</a>
-                                <% } %>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td colspan="6" class="text-center">No orders found</td>
+                            </tr>
+                        <% } else { %>
+                            <% for (let i = 0; i < orders.length; i++) { %>
+                                <tr>
+                                    <!-- Order ID -->
+                                    <td><%= orders[i].orderId %></td>
+                                    
+                                    <!-- Customer Info -->
+                                    <td>
+                                        <% const user = orders[i].userId; %>
+                                        <div class="d-flex align-items-center">
+                                            
+                                            <div>
+                                                <h6 class="mb-0"><%= user.name || 'Unknown User' %></h6>
+                                                <small class="text-muted"><%= user.email || 'N/A' %></small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    
+                                    <!-- Total Amount -->
+                                    <td>₹<%= orders[i].finalAmount.toFixed(2) %></td>
+                                    
+                                    <!-- Status -->
+                                    <td>
+                                        <% if (orders[i].status === 'Pending') { %>
+                                            <span class="badge rounded-pill alert-warning">Pending</span>
+                                        <% } else if (orders[i].status === 'Cancelled') { %>
+                                            <span class="badge rounded-pill alert-danger">Cancelled</span>
+                                        <% } else if (orders[i].status === 'Shipped') { %>
+                                            <span class="badge rounded-pill alert-primary">Shipped</span>
+                                        <% } else if (orders[i].status === 'Delivered') { %>
+                                            <span class="badge rounded-pill alert-success">Delivered</span>
+                                        <% } else { %>
+                                            <span class="badge rounded-pill alert-secondary"><%= orders[i].status %></span>
+                                        <% } %>
+                                    </td>
+                                    
+                                    <!-- Order Date -->
+                                    <td><%= new Date(orders[i].createdAt).toLocaleDateString() %></td>
+                                    
+                                    <!-- Action Buttons -->
+                                    <td class="text-end">
+                                        <a href="/admin/viewOrder?id=<%= orders[i]._id %>" class="btn btn-sm btn-light">View</a>
+                                        <% if (orders[i].status !== 'Cancelled' && orders[i].status !== 'Delivered') { %>
+                                            <a href="javascript:void(0)" 
+                                               onclick="updateOrderStatus('<%= orders[i]._id %>')" 
+                                               class="btn btn-sm btn-brand">Update</a>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                            <% } %>
                         <% } %>
                     </tbody>
+                    
                 </table>
             </div>
         </div>
