@@ -74,9 +74,9 @@ router.get('/checkout',profileAuth,userAuth,orderController.loadCheckout);
 router.post('/placeOrder',orderController.placeOrder);
 router.get('/orderPlaced',profileAuth,userAuth,orderController.orderPlaced)
 router.get('/orders',profileAuth,userAuth,orderController.loadOrders)
-router.post('/cancelOrder/:id',orderController.cancelOrder);
 router.get('/orderDetails',profileAuth,userAuth,orderController.loadOrderDetails)
-
+router.post('/cancelOrder/:id',orderController.cancelOrder);
+router.post('/returnOrder/:id',orderController.returnOrder);
 
 
 

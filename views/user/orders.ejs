@@ -237,16 +237,10 @@
                     if (result.success) {
                         await Swal.fire({
                             title: "Order Cancelled",
-                            text: "Your order status has been changed to 'Cancelled'.",
+                            text: "Your order has been Cancelled.",
                             icon: "success"
-                        });
-                        document.getElementById(`cancel-btn-${orderId}`).disabled = true;
-                        document.getElementById(`return-btn-${orderId}`).disabled = true;
-    
-    
-    
-                        window.location.reload();
-    
+                        });    
+                        window.location.reload();    
                     } else {
                         throw new Error(result.message);
                     }
@@ -260,37 +254,36 @@
         async function returnOrder(orderId) {
             try {
                 const confirmation = await Swal.fire({
-                    title: "Are you sure?",
-                    text: "Do you want to mark this order as 'Returned'?",
-                    icon: "question",
-                    showCancelButton: true,
-                    confirmButtonColor: "#28a745",
-                    cancelButtonColor: "#3085d6",
-                    confirmButtonText: "Yes, Return",
-                    cancelButtonText: "No"
-                });
-    
+            title: "Return Order",
+            text: "Please provide a reason for returning this item:",
+            input: "textarea",
+            inputPlaceholder: "Enter your reason here...",
+            showCancelButton: true,
+            confirmButtonColor: "#28a745",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Submit",
+            cancelButtonText: "Cancel",
+            inputValidator: (value) => {
+                if (!value) {
+                    return "You need to provide a reason!";
+                }
+            }
+        });   
                 if (confirmation.isConfirmed) {
+                    const reason = confirmation.value;
                     const response = await fetch(`/returnOrder/${orderId}`, {
                         method: "POST",
-                        headers: { "Content-Type": "application/json" }
-                    });
-    
-                    const result = await response.json();
-    
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ reason })
+                    });    
+                    const result = await response.json();    
                     if (result.success) {
                         await Swal.fire({
-                            title: "Order Returned",
-                            text: "Your order status has been changed to 'Returned'.",
+                            title: "Requested",
+                            text: "Your Return Order Requested" ,
                             icon: "success"
                         });
-                        document.getElementById(`cancel-btn-${orderId}`).disabled = true;
-                        document.getElementById(`return-btn-${orderId}`).disabled = true;
-    
-    
-    
-                        window.location.reload();
-    
+                        window.location.reload();    
                     } else {
                         throw new Error(result.message);
                     }

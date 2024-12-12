@@ -1,0 +1,144 @@
+<%-include("../../views/partials/admin/header")%>
+
+<section class="content-main">
+    <div class="content-header">
+        <h2 class="content-title">Order Details</h2>
+        <a href="/admin/orders" class="btn btn-secondary">Back to Orders</a>
+    </div>
+
+    <div class="card mb-4">
+        <header class="card-header">
+            <h4>Order: <%= order.orderId %></h4>
+            <small>Placed on: <%= new Date(order.createdAt).toLocaleString() %></small>
+        </header>
+
+        <div class="card-body d-flex flex-wrap">
+            <!-- Left Section -->
+            <div class="left-section" style="flex: 1; margin-right: 20px;">
+                <!-- Customer Details -->
+                <h5>Customer Details</h5>
+                <ul>
+                    <li><strong>Name:</strong> <%= order.userId.name %></li>
+                    <li><strong>Email:</strong> <%= order.userId.email %></li>
+                    <li><strong>Phone:</strong> <%= order.userId.phone %></li>
+                </ul>
+                <!-- Payment and Address -->
+                <h5>Payment & Address</h5>
+                <ul>
+                    <li><strong>Payment Method:</strong> <%= order.paymentMethod %></li>
+                    <li><strong>Address:</strong> <%= order.address.fullAddress || 'Not provided' %></li>
+                </ul>
+            </div>
+
+            <!-- Right Section -->
+            <div class="right-section" style="flex: 0.4; border-left: 1px solid #ccc; padding-left: 20px;">
+                
+                <h5>Order Status</h5>
+                <p>
+                    <span class="badge rounded-pill 
+                        <%= order.status === 'Delivered' ? 'alert-success' : order.status === 'Cancelled' ? 'alert-danger' : 'alert-warning' %>">
+                        <%= order.status %>
+                    </span>
+                </p>
+                <!-- Return Reason -->
+                <% if (order.message) { %>
+                    <h5>Return Reason</h5>
+                    <p style="white-space: pre-wrap; word-break: break-word;"><%= order.message %></p>
+                <% } %>
+                <% if (order.status !== 'Cancelled' && order.status !== 'Delivered') { %>
+                    <a href="javascript:void(0)" 
+                       onclick="updateOrderStatus('<%= order._id %>')" 
+                       class="btn btn-sm btn-brand">Update</a>
+                <% } %>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <!-- Order Items -->
+            <h5>Items Ordered</h5>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% order.items.forEach(item => { %>
+                            <tr>
+                                <td>
+                                    <img src="/uploads/re-image/<%=item.productId.productImage[0]%>" 
+                                         alt="<%= item.productId.productName %>"
+                                         class="img-thumbnail" 
+                                         style="width: 50px; height: 50px; object-fit: cover;" />
+                                    <%= item.productId.productName %>
+                                </td>
+                                <td><%= item.quantity %></td>
+                                <td>₹<%= item.productId.salePrice%></td>
+                                <td>₹<%= (item.quantity * item.productId.salePrice) %></td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="3" class="text-end">Total Amount</th>
+                            <th>₹<%= order.totalAmount.toFixed(2) %></th>
+                        </tr>
+                        <tr>
+                            <th colspan="3" class="text-end">Final Amount (incl. taxes/discounts)</th>
+                            <th>₹<%= order.finalAmount.toFixed(2) %></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%-include("../../views/partials/admin/footer")%>
+
+<script>
+    function updateOrderStatus(orderId) {
+        Swal.fire({
+            title: 'Update Order Status',
+            input: 'select',
+            inputOptions: {
+                Pending: 'Pending',
+                Shipped: 'Shipped',
+                Delivered: 'Delivered',
+                'Return Request': 'Return Request',
+                Returning:'Returning',
+                Cancelled: 'Cancelled'
+            },
+            inputPlaceholder: 'Select status',
+            showCancelButton: true,
+            confirmButtonText: 'Update',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/admin/updateStatus`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ orderId, status: result.value })
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        Swal.fire('Success', 'Order status updated successfully', 'success').then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire('Error', 'Failed to update order status', 'error');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error updating order status:', error);
+                    Swal.fire('Error', 'An error occurred while updating the order status', 'error');
+                });
+            }
+        });
+    }
+</script>

@@ -49,7 +49,6 @@ const orderDetails = async(req,res)=>{
     try {
         const orderId = req.query.id;
 
-        // Fetch the order and populate user and product details
         const order = await Order.findById(orderId)
             .populate('userId')
             .populate('items.productId')
@@ -58,18 +57,36 @@ const orderDetails = async(req,res)=>{
         if (!order) {
             return res.status(404).send('Order not found');
         }
-
-        // Render the order details page
-        res.render('orderDetails', { order,title:'Order Details' });
+        res.render('order-details', { order,title:'Order Details' });
     } catch (error) {
         console.error('Error fetching order details:', error);
         res.status(500).send('Internal Server Error');
     }
 }
 
-
+const updateStatus = async(req,res) =>{
+    const {orderId,status} = req.body;
+    try {
+        if (!orderId || !status) {
+            return res.status(400).json({ success: false, message: 'Invalid data' });
+        }
+        const updatedOrder = await Order.findByIdAndUpdate(
+            orderId,
+            { status },
+            { new: true, runValidators: true }
+        );
+        if (!updatedOrder) {
+            return res.status(404).json({ success: false, message: 'Order not found' });
+        }
+        res.status(200).json({ success: true, message: 'Order status updated successfully' });
+    } catch (error) {
+        console.error('Error updating order status:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+}
 
 module.exports = {
     loadOrders,
     orderDetails,
+    updateStatus
 };

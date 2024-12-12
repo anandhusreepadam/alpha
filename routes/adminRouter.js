@@ -63,7 +63,7 @@ router.post('/deleteProduct/:id',working,adminAuth,productController.deleteProdu
 //Order Management
 router.get('/orders',adminAuth,orderController.loadOrders);
 router.get('/viewOrder',adminAuth,orderController.orderDetails);
-
+router.post('/updateStatus',adminAuth,orderController.updateStatus)
 
 //Stock Management
 router.get('/stock',adminAuth,stockController.loadStock);

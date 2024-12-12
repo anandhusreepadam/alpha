@@ -102,24 +102,6 @@ const loadOrders = async(req,res)=>{
     }
 }
 
-const cancelOrder = async (req, res) => {
-    try {
-        const orderId = req.params.id;
-        const updatedOrder = await Order.findByIdAndUpdate(
-            orderId,
-            { status: 'Cancelled' },
-            { new: true }
-        );
-        if (!updatedOrder) {
-            return res.status(404).json({ success: false, message: 'Order not found' });
-        }
-        res.json({ success: true });
-    } catch (error) {
-        console.error("Server Error while canceling order:", error.message);
-        res.status(500).json({ success: false, message: 'Internal server error', error });
-    }
-};
-
 const loadOrderDetails = async (req,res) =>{
     try {
         const user = req.session.user;
@@ -139,12 +121,52 @@ const loadOrderDetails = async (req,res) =>{
     }
 }
 
+const cancelOrder = async (req, res) => {
+    try {
+        const orderId = req.params.id;
+        const updatedOrder = await Order.findByIdAndUpdate(
+            orderId,
+            { status: 'Cancelled' },
+            { new: true }
+        );
+        if (!updatedOrder) {
+            return res.status(404).json({ success: false, message: 'Order not found' });
+        }
+        res.json({ success: true });
+    } catch (error) {
+        console.error("Server Error while canceling order:", error.message);
+        res.status(500).json({ success: false, message: 'Internal server error', error });
+    }
+};
+
+const returnOrder = async (req, res) => {
+    try {
+        const orderId = req.params.id;
+        const {reason}  = req.body
+        const updatedOrder = await Order.findByIdAndUpdate(
+            orderId,
+            { status: 'Return Request',message:reason },
+            { new: true }
+        );
+        if (!updatedOrder) {
+            return res.status(404).json({ success: false, message: 'Order not found' });
+        }
+        res.json({ success: true });
+    } catch (error) {
+        console.error("Server Error while Returning order:", error.message);
+        res.status(500).json({ success: false, message: 'Internal server error', error });
+    }
+};
+
+
+
 module.exports={
     loadCheckout,
     placeOrder,
     orderPlaced,
     loadOrders,
+    loadOrderDetails,
     cancelOrder,
-    loadOrderDetails
+    returnOrder
 
 }

@@ -1,4 +1,5 @@
-<%- include("../../views/partials/user/header") %>
+<%- include("../../views/partials/user/header") %>]
+<div class="spacer"></div>
 <div class="container-fluid py-4">
     <section class="order-details-section">
         <!-- Action Buttons -->
@@ -12,18 +13,7 @@
             <p><strong>Status:</strong> <%= order.status %></p>
             <p><strong>Total Amount:</strong> ₹<%= order.totalAmount %></p>
             <p><strong>Final Amount:</strong> ₹<%= order.finalAmount %></p>
-            <div class="order-actions d-flex justify-content-end mb-3">
-                <% if (order.status === 'Delivered') { %>
-                    <button id="return-btn" class="btn btn-primary me-2" onclick="returnOrder('<%= order._id %>')">
-                        Return
-                    </button>
-                <% } else if (order.status !== 'Cancelled' && order.status !== 'Returned') { %>
-                    <button id="cancel-btn" class="btn btn-danger me-2" onclick="cancelOrder('<%= order._id %>')">
-                        Cancel
-                    </button>
-                <% } %>
-                <button onclick="window.history.back()" class="btn btn-secondary">Back</button>
-            </div>
+          
         </div>
 
         <!-- Shipping Address -->
@@ -57,6 +47,18 @@
                     </div>
                 </div>
             <% }) %>
+        </div>
+        <div class="order-actions d-flex justify-content-end mb-3">
+            <% if (order.status === 'Delivered') { %>
+                <button id="return-btn" class="btn btn-primary me-2" onclick="returnOrder('<%= order._id %>')">
+                    Return
+                </button>
+            <% } else if (order.status !== 'Cancelled' && order.status !== 'Returned') { %>
+                <button id="cancel-btn" class="btn btn-danger me-2" onclick="cancelOrder('<%= order._id %>')">
+                    Cancel
+                </button>
+            <% } %>
+            <button onclick="window.history.back()" class="btn btn-secondary">Back</button>
         </div>
     </section>
 </div>
@@ -199,9 +201,6 @@
                         text: "Your order status has been changed to 'Cancelled'.",
                         icon: "success"
                     });
-                    document.getElementById(`cancel-btn-${orderId}`).disabled = true;
-                    document.getElementById(`return-btn-${orderId}`).disabled = true;
-
 
 
                     window.location.reload();
@@ -219,37 +218,36 @@
     async function returnOrder(orderId) {
         try {
             const confirmation = await Swal.fire({
-                title: "Are you sure?",
-                text: "Do you want to mark this order as 'Returned'?",
-                icon: "question",
-                showCancelButton: true,
-                confirmButtonColor: "#28a745",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "Yes, Return",
-                cancelButtonText: "No"
-            });
-
+            title: "Return Order",
+            text: "Please provide a reason for returning this item:",
+            input: "textarea",
+            inputPlaceholder: "Enter your reason here...",
+            showCancelButton: true,
+            confirmButtonColor: "#28a745",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Submit",
+            cancelButtonText: "Cancel",
+            inputValidator: (value) => {
+                if (!value) {
+                    return "You need to provide a reason!";
+                }
+            }
+        });
             if (confirmation.isConfirmed) {
+                const reason = confirmation.value;
                 const response = await fetch(`/returnOrder/${orderId}`, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" }
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ reason })
                 });
-
                 const result = await response.json();
-
                 if (result.success) {
                     await Swal.fire({
-                        title: "Order Returned",
-                        text: "Your order status has been changed to 'Returned'.",
-                        icon: "success"
+                            title: "Requested",
+                            text: "Your Return Order Requested",
+                            icon: "success"
                     });
-                    document.getElementById(`cancel-btn-${orderId}`).disabled = true;
-                    document.getElementById(`return-btn-${orderId}`).disabled = true;
-
-
-
                     window.location.reload();
-
                 } else {
                     throw new Error(result.message);
                 }

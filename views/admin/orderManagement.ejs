@@ -64,7 +64,11 @@
                                     
                                     <!-- Status -->
                                     <td>
-                                        <% if (orders[i].status === 'Pending') { %>
+                                        <% if (orders[i].status === 'Returning') { %>
+                                            <span class="badge rounded-pill alert-warning">Returning</span>
+                                        <% }else if (orders[i].status === 'Return Request') { %>
+                                            <span class="badge rounded-pill alert-warning">Return Request</span>
+                                        <% }else if (orders[i].status === 'Pending') { %>
                                             <span class="badge rounded-pill alert-warning">Pending</span>
                                         <% } else if (orders[i].status === 'Cancelled') { %>
                                             <span class="badge rounded-pill alert-danger">Cancelled</span>
@@ -114,6 +118,7 @@
 <%-include("../../views/partials/admin/footer")%>
 
 <script>
+    
     function searchOrders(query) {
         window.location.href = `/admin/orders?search=${encodeURIComponent(query)}`;
     }
@@ -127,11 +132,12 @@
             title: 'Update Order Status',
             input: 'select',
             inputOptions: {
-                pending: 'Pending',
-                processing: 'Processing',
-                shipped: 'Shipped',
-                delivered: 'Delivered',
-                cancelled: 'Cancelled'
+                Pending: 'Pending',
+                Shipped: 'Shipped',
+                Delivered: 'Delivered',
+                'Return Request': 'Return Request',
+                Returning:'Returning',
+                Cancelled: 'Cancelled'
             },
             inputPlaceholder: 'Select status',
             showCancelButton: true,
@@ -139,7 +145,7 @@
             cancelButtonText: 'Cancel'
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`/admin/updateOrderStatus`, {
+                fetch(`/admin/updateStatus`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ orderId, status: result.value })
@@ -161,4 +167,5 @@
             }
         });
     }
+
 </script>
