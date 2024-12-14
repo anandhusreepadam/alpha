@@ -7,16 +7,18 @@
         <div class="card mb-4">
             <header class="card-header">
                 <div class="row gx-3">
-                    <div class="col-lg-4 col-md-6 me-auto">
-                        <input type="text" placeholder="Search..." class="form-control" />
-                    </div>
+                    <!-- <div class="col-lg-4 col-md-6 me-auto">
+                        <input type="text" placeholder="Search..." class="form-control" value="<%= search %>"
+                            onkeypress="if(event.key === 'Enter') applyFilter()" />
+                    </div> -->
                     <div class="col-lg-2 col-md-3 col-6">
-                        <select class="form-select">
-                            <option>Status</option>
-                            <option>Active</option>
-                            <option>Blocked</option>
-                            <option>Show all</option>
+                        <select class="form-select" onchange="applyFilter()">
+                            <option value="all" <%=filter==='all' ? 'selected' : '' %>>Show all</option>
+                            <option value="active" <%=filter==='active' ? 'selected' : '' %>>Active</option>
+                            <option value="blocked" <%=filter==='blocked' ? 'selected' : '' %>>Blocked</option>
                         </select>
+
+
                     </div>
 
                 </div>
@@ -69,15 +71,16 @@
                                                         <%}%>
                                             </td>
                                             <td class="text-end">
-                                                <%if(data[i].isBlocked===false){%>
+                                                <% if (data[i].isBlocked===false) { %>
                                                     <a href="javascript:void(0)"
-                                                        onclick="confirmAction('/admin/blockCustomer?id=<%=data[i].id%>', 'Block this user?')"
+                                                        onclick="confirmAction('/admin/blockCustomer?id=<%= data[i].id %>&page=<%= currentPage %>', 'Block this user?')"
                                                         class="btn btn-sm btn-brand rounded font-sm mt-15">Block</a>
-                                                    <%}else{%>
-                                                        <a href="/admin/unblockCustomer?id=<%=data[i].id%>"
+                                                    <% } else { %>
+                                                        <a href="/admin/unblockCustomer?id=<%= data[i].id %>&page=<%= currentPage %>"
                                                             class="btn btn-sm btn-brand rounded font-sm mt-15">Unblock</a>
-                                                        <%}%>
+                                                        <% } %>
                                             </td>
+
                                         </tr>
                                         <%}%>
                         </tbody>
@@ -90,14 +93,15 @@
         <div class="pagination-area mt-15 mb-50">
             <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-start">
-                    <%for(let i=1;i<=totalPages;i++){%>
-                        <li class="page-item <%=(i===currentPage) ? 'active': '' %>">
-                            <a class="page-link" href="?page=<%=i%>">
-                                <%=i%>
+                    <% for (let i=1; i <=totalPages; i++) { %>
+                        <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                            <a class="page-link" href="?page=<%= i %>&search=<%= search %>&filter=<%= filter %>">
+                                <%= i %>
                             </a>
                         </li>
-                        <%}%>
+                        <% } %>
                 </ul>
+
             </nav>
         </div>
         <!-- card end// -->
@@ -107,6 +111,15 @@
     <%-include("../../views/partials/admin/footer")%>
 
         <script>
+
+            function applyFilter() {
+                const filter = document.querySelector('.form-select').value;
+                const search = document.querySelector('input[type="text"]').value;
+                console.log(search)
+                const currentPage = 1;
+                window.location.href = `?page=${currentPage}&search=${encodeURIComponent(search)}&filter=${encodeURIComponent(filter)}`;
+            }
+
             function confirmAction(url, message) {
                 Swal.fire({
                     title: message,
@@ -120,4 +133,5 @@
                     }
                 });
             }
+        
         </script>

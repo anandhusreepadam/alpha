@@ -4,16 +4,12 @@ const User = require('../../models/userSchema');
 
 const loadOrders = async(req,res)=>{
     try {
-        // Pagination Setup
+
         const page = parseInt(req.query.page) || 1;
         const limit = 10;
         const skip = (page - 1) * limit;
-
-        // Filters
         const search = req.query.search || '';
         const statusFilter = req.query.status || '';
-
-        // Query Database
         const query = {};
         if (search) {
             query.orderId = { $regex: search, $options: 'i' };
@@ -21,19 +17,14 @@ const loadOrders = async(req,res)=>{
         if (statusFilter) {
             query.status = statusFilter;
         }
-
-        // Fetch Orders and Total Count
         const orders = await Order.find(query)
-            .populate('userId', 'name email') // Populate user details
+            .populate('userId', 'name email')
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit)
             .lean();
-
         const totalOrders = await Order.countDocuments(query);
         const totalPages = Math.ceil(totalOrders / limit);
-
-        // Render the Template
         res.render('orderManagement', {
             orders,
             currentPage: page,

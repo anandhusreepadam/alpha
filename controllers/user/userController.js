@@ -268,23 +268,30 @@ const loadHomepage = async (req, res) => {
 const loadShopping = async (req, res) => {
     try {
         const search  = req.query.search || '';
+        const escapedSearch = search.replace(/[.*+?^=!:${}()|\[\]\/\\]/g, "\\$&");
         const page = req.query.page || 1;
         const limit = 8;
         const userSession = req.session.user;
         const user = userSession ? await User.findById(userSession._id) : null;
         const cart =user? await Cart.findOne({ userId: user._id }):null;
 
-        const allProducts = await Product.find({isBlocked:false,isDeleted:false,
-            productName:{$regex: new RegExp('.*'+ search + '.*','i')}
-        }).limit(limit*1).skip((page-1)*limit).populate('category').exec();
+        const allProducts = await Product.find({
+            isBlocked: false,
+            isDeleted: false,
+            quantity: { $gt: 0 },
+            productName: { $regex: new RegExp('.*' + escapedSearch + '.*', 'i') }
+        })  .limit(limit * 1)
+            .skip((page - 1) * limit)
+            .populate('category')
+            .exec();
 
         const count = await Product.find({isBlocked:false,isDeleted:false,
-             productName: { $regex: new RegExp('.*' + search + '.*', 'i') } 
+             productName: { $regex: new RegExp('.*' + escapedSearch + '.*', 'i') } 
         }).countDocuments();
 
         const totalPages = Math.ceil(count/limit)
         return res.render('shop', { user, allProducts, title: "Shop", cart: cart || { items: [] } ,currentPage: page,
-            totalPages: totalPages,});
+            totalPages: totalPages,search:search});
     } catch (error) {
         console.log('Shopping page not loading:', error);
         res.status(500).send('Server Error');
@@ -296,7 +303,7 @@ const loadProductPage = async (req, res) => {
         const user = req.session.user;
         const id = req.params.id;
         const product = await Product.findById(id)
-        const cart = user? await Cart.findOne({ userId: user._id }).populate('items.productId'):null;
+        const cart = user? await Cart.findOne({ userId: user._id }):null;
         return res.render('product', { user, product, title: null, cart: cart || { items: [] } })
     } catch (error) {
 

@@ -75,7 +75,7 @@ const addProducts = async (req, res) => {
 const getAllProducts = async (req, res) => {
     try {
         const search = req.query.search || "";
-        const page = req.query.page || 1;
+        const page = parseInt(req.query.page) || 1;
         const limit = 4;
         const productData = await Product.find({
             $or: [
@@ -157,9 +157,9 @@ const blockProduct = async (req, res) => {
 
 const unblockProduct = async (req, res) => {
     try {
-        let id = req.query.id;
+        let {id,page} = req.query;
         await Product.updateOne({ _id: id }, { $set: { isBlocked: false } });
-        res.redirect('/admin/products');
+        res.redirect(`/admin/products?page=${page}`);
     } catch (error) {
         res.redirect('/pageError')
     }

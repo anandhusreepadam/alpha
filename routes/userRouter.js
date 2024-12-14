@@ -67,6 +67,7 @@ router.get('/cart',profileAuth,userAuth,cartController.loadCart);
 router.post('/cart',cartController.updateCart);
 router.post('/addToCart',cartController.addToCart);
 router.post('/removeCartItem',cartController.deleteCart);
+router.post('/checkStock',cartController.checkStock); 
 
 
 //Order Management

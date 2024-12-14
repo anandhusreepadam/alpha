@@ -17,40 +17,43 @@
                 <h4 class="mtext-109 cl2 p-b-30">Shipping Address</h4>
 
                 <!-- Add Address Form -->
-                <form form id="addressForm">
+                <form id="addressForm">
                     <div class="row gx-3 mb-3">
                         <div class="col-lg-6">
                             <label class="form-label">Name</label>
-                            <input class="form-control" value="<%=user.name%>" name="name" type="text"
-                                placeholder="Full Name" />
+                            <input class="form-control" value="<%=user.name%>" name="name" type="text" placeholder="Full Name" />
+                            <span class="error-message text-danger"></span>
                         </div>
                         <div class="col-lg-6">
                             <label class="form-label">Phone Number</label>
-                            <input class="form-control" value="<%=user.phone%>" name="phone" type="tel"
-                                placeholder="1234567890" />
+                            <input class="form-control" value="<%=user.phone%>" name="phone" type="tel" placeholder="1234567890" />
+                            <span class="error-message text-danger"></span>
                         </div>
                     </div>
                     <div class="row gx-3 mb-3">
                         <div class="col-lg-12">
                             <label class="form-label">Address</label>
-                            <textarea class="form-control" rows="3" name="fullAddress"
-                                placeholder="Full Address"></textarea>
+                            <textarea class="form-control" rows="3" name="fullAddress" placeholder="Full Address"></textarea>
+                            <span class="error-message text-danger"></span>
                         </div>
                     </div>
                     <div class="row gx-3 mb-3">
                         <div class="col-lg-6">
                             <label class="form-label">City</label>
                             <input class="form-control" name="city" type="text" placeholder="City" />
+                            <span class="error-message text-danger"></span>
                         </div>
                         <div class="col-lg-6">
                             <label class="form-label">State</label>
                             <input class="form-control" name="state" type="text" placeholder="State" />
+                            <span class="error-message text-danger"></span>
                         </div>
                     </div>
                     <div class="row gx-3 mb-3">
                         <div class="col-lg-6">
                             <label class="form-label">Pin Code</label>
                             <input class="form-control" name="pincode" type="text" placeholder="123456" />
+                            <span class="error-message text-danger"></span>
                         </div>
                         <div class="col-lg-6">
                             <label class="form-label">Address Type</label>
@@ -58,10 +61,12 @@
                                 <option value="home" selected>Home</option>
                                 <option value="office">Office</option>
                             </select>
+                            <span class="error-message text-danger"></span>
                         </div>
                     </div>
                     <button class="btn btn-primary" type="submit" id="submitAddress">Save Address</button>
                 </form>
+                
 
                 <hr>
 
@@ -114,13 +119,9 @@
                                 <input class="form-check-input" type="radio" name="paymentMethod" id="wallet"
                                     value="Wallet" required>
                                 <label class="form-check-label" for="wallet">Wallet Payment</label>
-                            </div>
-
-                              
-
+                            </div>                            
             </div>
 
-            <!-- Right Section: Cart Totals -->
             <div class="col-lg-5">
                 <div class="bor10 p-lr-40 p-t-30 p-b-40">
                     <h4 class="mtext-109 cl2 p-b-30">Cart Totals</h4>
@@ -151,57 +152,112 @@
         </div>
     </div>
     <script>
-        document.getElementById('addressForm').addEventListener('submit', async function (event) {
-            event.preventDefault();
+       
+    document.getElementById('addressForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
+   
+        const errorMessages = this.querySelectorAll('.error-message');
+        errorMessages.forEach((span) => (span.textContent = ''));
 
-            const formData = new FormData(this);
+        const nameField = this.querySelector('input[name="name"]');
+        const phoneField = this.querySelector('input[name="phone"]');
+        const addressField = this.querySelector('textarea[name="fullAddress"]');
+        const cityField = this.querySelector('input[name="city"]');
+        const stateField = this.querySelector('input[name="state"]');
+        const pincodeField = this.querySelector('input[name="pincode"]');
 
-            const data = {
-                addressType: formData.get('addressType'),
-                name: formData.get('name'),
-                address: formData.get('address'),
-                city: formData.get('city'),
-                fullAddress: formData.get('fullAddress'),
-                state: formData.get('state'),
-                pincode: formData.get('pincode'),
-                phone: formData.get('phone'),
-                altPhone: formData.get('altPhone') || null,
-            };
+        const name = nameField.value.trim();
+        const phone = phoneField.value.trim();
+        const fullAddress = addressField.value.trim();
+        const city = cityField.value.trim();
+        const state = stateField.value.trim();
+        const pincode = pincodeField.value.trim();
 
-            try {
-                const response = await fetch('/addAddress', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
+        const phoneRegex = /^[6-9]\d{9}$/;
+        const pincodeRegex = /^\d{6}$/;
+
+        let isValid = true;
+
+        if (!name) {
+            nameField.nextElementSibling.textContent = 'Name is required.';
+            isValid = false;
+        }
+
+        if (!phone || !phoneRegex.test(phone)) {
+            phoneField.nextElementSibling.textContent = 'Enter a valid 10-digit phone number starting with 6-9.';
+            isValid = false;
+        }
+
+        if (!fullAddress) {
+            addressField.nextElementSibling.textContent = 'Address is required.';
+            isValid = false;
+        }
+
+        if (!city) {
+            cityField.nextElementSibling.textContent = 'City is required.';
+            isValid = false;
+        }
+
+        if (!state) {
+            stateField.nextElementSibling.textContent = 'State is required.';
+            isValid = false;
+        }
+
+        if (!pincode || !pincodeRegex.test(pincode)) {
+            pincodeField.nextElementSibling.textContent = 'Enter a valid 6-digit pin code.';
+            isValid = false;
+        }
+
+        if (!isValid) return;
+
+        const formData = new FormData(this);
+        const data = {
+            addressType: formData.get('addressType'),
+            name: name,
+            phone: phone,
+            address: formData.get('address'),
+            city: city,
+            fullAddress: fullAddress,
+            state: state,
+            pincode: pincode,
+        };
+
+        try {
+            const response = await fetch('/addAddress', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                swal({
+                    icon: 'success',
+                    title: 'Added',
+                    text: 'Address has been successfully added'
+                }).then(() => {
+                    location.reload();
                 });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    swal({
-                        icon: 'success',
-                        title: 'Added',
-                        text: 'Address has been successfully added'
-                    }).then(() => {
-                        location.reload();
-                    })
-                } else {
-                    swal({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'An error occured while adding address'
-                    })
-                }
-            } catch (error) {
-                console.error('Error adding address:', error);
-                alert('Something went wrong. Please try again.');
+            } else {
+                swal({
+                    icon: 'error',
+                    title: 'Error',
+                    text: result.message || 'An error occurred while adding address.'
+                });
             }
-        });
-    </script>
+        } catch (error) {
+            console.error('Error adding address:', error);
+            swal({
+                icon: 'error',
+                title: 'Error',
+                text: 'Something went wrong. Please try again.'
+            });
+        }
+    });
 
-    <script>
         document.getElementById('placeOrderBtn').addEventListener('click', async function (event) {
             event.preventDefault();
 
@@ -209,14 +265,17 @@
             const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
 
             if (!selectedAddress || !paymentMethod) {
-                alert('Please select an address and a payment method.');
+                swal({
+                        icon: 'error',
+                        title: 'Required Field',
+                        text: 'Please Select Address and Payment Method'
+                    })
                 return;
             }
 
             const orderData = {
                 addressId: selectedAddress.value,
                 paymentMethod: paymentMethod.value,
-
             };
 
             try {
@@ -241,7 +300,7 @@
                     swal({
                         icon: 'error',
                         title: 'Error',
-                        text: 'An error occured while placing order'
+                        text: result.message||'An error occured while placing order'
                     })
                 }
             } catch (error) {

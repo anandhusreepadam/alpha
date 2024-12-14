@@ -40,22 +40,28 @@
 						 Filter
 					</div>
 
-					<div class="flex-c-m stext-106 cl6 size-105 bor4 pointer hov-btn3 trans-04 m-tb-4 js-show-search">
-						<i class="icon-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-search"></i>
+					<div class="flex-c-m stext-106 cl6 size-105 bor4 pointer hov-btn3 trans-04 m-tb-4 js-show-search show-search">
 						<i class="icon-close-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
+						<i class="icon-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-search"></i>
 						Search
 					</div>
 				</div>
 				
 				<!-- Search product -->
-				<div class="dis-none panel-search w-full p-t-10 p-b-15">
+				<div class="dis-none panel-search w-full p-t-10 p-b-15" style="display: block;">
 					<div class="bor8 dis-flex p-l-15">
 						
 						<button class="size-113 flex-c-m fs-16 cl2 hov-cl1 trans-04">
 							<i class="zmdi zmdi-search"></i>
 						</button>
 						<form action="" method="get">
-							<input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="search" placeholder="Search">
+							<input 
+							class="mtext-107 cl2 size-114 plh2 p-r-15" 
+							type="text" 
+							name="search" 
+							placeholder="Search" 
+							value="<%= search || '' %>"
+						>
 						</form>
 					</div>	
 				</div>
@@ -106,7 +112,7 @@
 
 						</div>
 
-						<div class="filter-col2 p-r-15 p-b-27">
+						<!-- <div class="filter-col2 p-r-15 p-b-27">
 							<div class="mtext-102 cl2 p-b-15">
 								Price
 							</div>
@@ -244,7 +250,7 @@
 									Crafts
 								</a>
 							</div>
-						</div>
+						</div> -->
 					</div>
 				</div>
 			</div>
@@ -432,13 +438,6 @@
 						<img src="images/icons/icon-pay-05.png" alt="ICON-PAY">
 					</a>
 				</div>
-
-				<p class="stext-107 cl6 txt-center">
-					<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved |Made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a> &amp; distributed by <a href="https://themewagon.com" target="_blank">ThemeWagon</a>
-<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-
-				</p>
 			</div>
 		</div>
 	</footer>
@@ -606,6 +605,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 	</div>
 
 	<script>
+		
 		function sortItem(item,data){
 			const product = JSON.parse(data);
 			const shopList = document.getElementById('shopList')
@@ -708,8 +708,6 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 			`
 			shopList.innerHTML+=element
 			})
-
-			
 
 		}
 

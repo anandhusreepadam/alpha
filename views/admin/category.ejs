@@ -6,9 +6,9 @@
                 <h2 class="content-title card-title">Categories</h2>
                 <p>Add, edit or delete a category</p>
             </div>
-            <div>
+            <!-- <div>
                 <input type="text" placeholder="Search Categories" class="form-control bg-white" />
-            </div>
+            </div> -->
         </div>
         <div class="card">
             <div class="card-body">
@@ -49,7 +49,6 @@
                                 </thead>
                                 <tbody>
                                     <%cat.reverse().forEach((category,index)=>{%>
-
                                         <tr>
                                             <td><%=index+1+(currentPage-1)*6%></td>
                                             <td><b>
@@ -71,12 +70,12 @@
                                                             class="text-white" href="#"
                                                             onclick="addOffer('<%=category._id%>')">Add
                                                             Offer</a></button>
-                                                    <%}else{%>
+                                                <%}else{%>
                                                         <button class="btn btn-sm btn-danger"><a style="text-decoration:none"
                                                                 class="text-white" href="#"
                                                                 onclick="removeOffer('<%=category._id%>')">Remove
                                                                 </a></button>
-                                                        <%}%>
+                                                <%}%>
                                             </td>
                                             <!-- <td>
                                                 <%if(category.isListed){%>
@@ -95,7 +94,7 @@
                                                     <%}else{%>
                                                         <button class="btn btn-sm  btn-warning">
                                                             <a style="text-decoration:none" class="text-white"
-                                                            href="/admin/listCategory?id=<%=category._id%>">List</a>
+                                                            href="/admin/listCategory?id=<%=category._id%>&page=<%=currentPage%>">List</a>
                                                         </button>
                                                         <%}%>
                                             </td>

@@ -129,12 +129,11 @@
                                                         onclick="returnOrder('<%= order._id %>')">
                                                         Return
                                                     </button>
-                                                <% } else { %>
+                                                <% } else if (order.status === 'Shipped' || order.status === 'Pending') { %>
                                                     <!-- Cancel Button -->
                                                     <button 
                                                         class="btn btn-danger" 
-                                                        onclick="cancelOrder('<%= order._id %>')" 
-                                                        <%= order.status === 'Cancelled'? 'disabled' : '' %>>
+                                                        onclick="cancelOrder('<%= order._id %>')">
                                                         Cancel
                                                     </button>
                                                 <% } %>
