@@ -1,8 +1,10 @@
 <%- include("../../views/partials/user/header") %>
 
 
-
+    <br>
+    <br>
     <div class="container bg0 p-t-75 p-b-85">
+        <!-- Breadcrumb Navigation -->
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/">Home</a></li>
@@ -10,33 +12,42 @@
                 <li class="breadcrumb-item active" aria-current="page">Checkout</li>
             </ol>
         </nav>
-        <div class="spacer"></div>
+
+        <br>
+        <br>
+
         <div class="row">
-            <!-- Left Section: Address Form & Address Selection -->
+            <!-- Left Section: Address Form & Saved Address Selection -->
             <div class="col-lg-7">
+                <!-- Shipping Address Header -->
                 <h4 class="mtext-109 cl2 p-b-30">Shipping Address</h4>
 
-                <!-- Add Address Form -->
-                <form id="addressForm">
+                <!-- Address Form -->
+                <form id="addressForm" class="mb-4">
                     <div class="row gx-3 mb-3">
                         <div class="col-lg-6">
                             <label class="form-label">Name</label>
-                            <input class="form-control" value="<%=user.name%>" name="name" type="text" placeholder="Full Name" />
+                            <input class="form-control" value="<%= user.name %>" name="name" type="text"
+                                placeholder="Full Name" />
                             <span class="error-message text-danger"></span>
                         </div>
                         <div class="col-lg-6">
                             <label class="form-label">Phone Number</label>
-                            <input class="form-control" value="<%=user.phone%>" name="phone" type="tel" placeholder="1234567890" />
+                            <input class="form-control" value="<%= user.phone %>" name="phone" type="tel"
+                                placeholder="+91" />
                             <span class="error-message text-danger"></span>
                         </div>
                     </div>
+
                     <div class="row gx-3 mb-3">
                         <div class="col-lg-12">
                             <label class="form-label">Address</label>
-                            <textarea class="form-control" rows="3" name="fullAddress" placeholder="Full Address"></textarea>
+                            <textarea class="form-control" rows="3" name="fullAddress"
+                                placeholder="Full Address"></textarea>
                             <span class="error-message text-danger"></span>
                         </div>
                     </div>
+
                     <div class="row gx-3 mb-3">
                         <div class="col-lg-6">
                             <label class="form-label">City</label>
@@ -49,10 +60,11 @@
                             <span class="error-message text-danger"></span>
                         </div>
                     </div>
+
                     <div class="row gx-3 mb-3">
                         <div class="col-lg-6">
                             <label class="form-label">Pin Code</label>
-                            <input class="form-control" name="pincode" type="text" placeholder="123456" />
+                            <input class="form-control" name="pincode" type="text" placeholder="Pincode" />
                             <span class="error-message text-danger"></span>
                         </div>
                         <div class="col-lg-6">
@@ -66,13 +78,11 @@
                     </div>
                     <button class="btn btn-primary" type="submit" id="submitAddress">Save Address</button>
                 </form>
-                
 
                 <hr>
 
                 <!-- Select Saved Address -->
                 <h5>Or, Select Saved Address</h5>
-                <br>
                 <% if (addresses.length===0) { %>
                     <p>No saved address. Please add a new address above.</p>
                     <% } else { %>
@@ -95,9 +105,6 @@
                                                 <%= address.address %>, <%= address.city %>, <%= address.state %> - <%=
                                                                 address.pincode %>
                                             </p>
-                                            <p><strong>Address:</strong>
-                                                <%= address.fullAddress %>
-                                            </p>
                                             <p><strong>Phone:</strong>
                                                 <%= address.phone %>
                                             </p>
@@ -109,19 +116,24 @@
                         <% } %>
 
                             <h5 class="mt-4">Payment Method</h5>
-                            <br>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="COD"
                                     required>
                                 <label class="form-check-label" for="cod">Cash on Delivery</label>
                             </div>
                             <div class="form-check">
+                                <input class="form-check-input" type="radio" name="paymentMethod" id="razorpay"
+                                    value="razorpay" required>
+                                <label class="form-check-label" for="razorpay">RazorPay</label>
+                            </div>
+                            <div class="form-check">
                                 <input class="form-check-input" type="radio" name="paymentMethod" id="wallet"
-                                    value="Wallet" required>
+                                    value="wallet" required>
                                 <label class="form-check-label" for="wallet">Wallet Payment</label>
-                            </div>                            
+                            </div>
             </div>
 
+            <!-- Right Section: Cart Totals -->
             <div class="col-lg-5">
                 <div class="bor10 p-lr-40 p-t-30 p-b-40">
                     <h4 class="mtext-109 cl2 p-b-30">Cart Totals</h4>
@@ -130,146 +142,153 @@
                             <span class="stext-110 cl2">Subtotal:</span>
                         </div>
                         <div class="size-209">
-                            <span class="mtext-110 cl2">₹ <%= cart.items.reduce((total, item) => total + (item.productId.salePrice * item.quantity), 0).toFixed(2) %></span>
+                            <span class="mtext-110 cl2">₹<%= cart.items.reduce((total, item)=> total +
+                                    (item.productId.salePrice * item.quantity), 0).toFixed(2) %></span>
                         </div>
                     </div>
+
                     <div class="flex-w flex-t p-t-27 p-b-33">
                         <div class="size-208">
                             <span class="mtext-101 cl2">Total:</span>
                         </div>
                         <div class="size-209 p-t-1">
-                            <span class="mtext-110 cl2">₹ <%= cart.items.reduce((total, item) => total + (item.productId.salePrice * item.quantity), 0).toFixed(2) %></span>
+                            <span class="mtext-110 cl2">₹<%= cart.items.reduce((total, item)=> total +
+                                    (item.productId.salePrice * item.quantity), 0).toFixed(2) %></span>
                         </div>
                     </div>
 
-                        <button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer mt-4"
-                            id="placeOrderBtn">
-                            Place Order
-                        </button>
-
+                    <button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer mt-4"
+                        id="placeOrderBtn">
+                        Place Order
+                    </button>
                 </div>
             </div>
         </div>
     </div>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+
+
     <script>
-       
-    document.getElementById('addressForm').addEventListener('submit', async function (event) {
-        event.preventDefault();
-   
-        const errorMessages = this.querySelectorAll('.error-message');
-        errorMessages.forEach((span) => (span.textContent = ''));
 
-        const nameField = this.querySelector('input[name="name"]');
-        const phoneField = this.querySelector('input[name="phone"]');
-        const addressField = this.querySelector('textarea[name="fullAddress"]');
-        const cityField = this.querySelector('input[name="city"]');
-        const stateField = this.querySelector('input[name="state"]');
-        const pincodeField = this.querySelector('input[name="pincode"]');
+        document.getElementById('addressForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
 
-        const name = nameField.value.trim();
-        const phone = phoneField.value.trim();
-        const fullAddress = addressField.value.trim();
-        const city = cityField.value.trim();
-        const state = stateField.value.trim();
-        const pincode = pincodeField.value.trim();
+            const errorMessages = this.querySelectorAll('.error-message');
+            errorMessages.forEach((span) => (span.textContent = ''));
 
-        const phoneRegex = /^[6-9]\d{9}$/;
-        const pincodeRegex = /^\d{6}$/;
+            const nameField = this.querySelector('input[name="name"]');
+            const phoneField = this.querySelector('input[name="phone"]');
+            const addressField = this.querySelector('textarea[name="fullAddress"]');
+            const cityField = this.querySelector('input[name="city"]');
+            const stateField = this.querySelector('input[name="state"]');
+            const pincodeField = this.querySelector('input[name="pincode"]');
 
-        let isValid = true;
+            const name = nameField.value.trim();
+            const phone = phoneField.value.trim();
+            const fullAddress = addressField.value.trim();
+            const city = cityField.value.trim();
+            const state = stateField.value.trim();
+            const pincode = pincodeField.value.trim();
 
-        if (!name) {
-            nameField.nextElementSibling.textContent = 'Name is required.';
-            isValid = false;
-        }
+            const phoneRegex = /^[6-9]\d{9}$/;
+            const pincodeRegex = /^\d{6}$/;
 
-        if (!phone || !phoneRegex.test(phone)) {
-            phoneField.nextElementSibling.textContent = 'Enter a valid 10-digit phone number starting with 6-9.';
-            isValid = false;
-        }
+            let isValid = true;
 
-        if (!fullAddress) {
-            addressField.nextElementSibling.textContent = 'Address is required.';
-            isValid = false;
-        }
+            if (!name) {
+                nameField.nextElementSibling.textContent = 'Name is required.';
+                isValid = false;
+            }
 
-        if (!city) {
-            cityField.nextElementSibling.textContent = 'City is required.';
-            isValid = false;
-        }
+            if (!phone || !phoneRegex.test(phone)) {
+                phoneField.nextElementSibling.textContent = 'Enter a valid 10-digit phone number starting with 6-9.';
+                isValid = false;
+            }
 
-        if (!state) {
-            stateField.nextElementSibling.textContent = 'State is required.';
-            isValid = false;
-        }
+            if (!fullAddress) {
+                addressField.nextElementSibling.textContent = 'Address is required.';
+                isValid = false;
+            }
 
-        if (!pincode || !pincodeRegex.test(pincode)) {
-            pincodeField.nextElementSibling.textContent = 'Enter a valid 6-digit pin code.';
-            isValid = false;
-        }
+            if (!city) {
+                cityField.nextElementSibling.textContent = 'City is required.';
+                isValid = false;
+            }
 
-        if (!isValid) return;
+            if (!state) {
+                stateField.nextElementSibling.textContent = 'State is required.';
+                isValid = false;
+            }
 
-        const formData = new FormData(this);
-        const data = {
-            addressType: formData.get('addressType'),
-            name: name,
-            phone: phone,
-            address: formData.get('address'),
-            city: city,
-            fullAddress: fullAddress,
-            state: state,
-            pincode: pincode,
-        };
+            if (!pincode || !pincodeRegex.test(pincode)) {
+                pincodeField.nextElementSibling.textContent = 'Enter a valid 6-digit pin code.';
+                isValid = false;
+            }
 
-        try {
-            const response = await fetch('/addAddress', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            });
+            if (!isValid) return;
 
-            const result = await response.json();
+            const formData = new FormData(this);
+            const data = {
+                addressType: formData.get('addressType'),
+                name: name,
+                phone: phone,
+                address: formData.get('address'),
+                city: city,
+                fullAddress: fullAddress,
+                state: state,
+                pincode: pincode,
+            };
 
-            if (response.ok) {
-                swal({
-                    icon: 'success',
-                    title: 'Added',
-                    text: 'Address has been successfully added'
-                }).then(() => {
-                    location.reload();
+            try {
+                const response = await fetch('/addAddress', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
                 });
-            } else {
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    swal({
+                        icon: 'success',
+                        title: 'Added',
+                        text: 'Address has been successfully added'
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    swal({
+                        icon: 'error',
+                        title: 'Error',
+                        text: result.message || 'An error occurred while adding address.'
+                    });
+                }
+            } catch (error) {
+                console.error('Error adding address:', error);
                 swal({
                     icon: 'error',
                     title: 'Error',
-                    text: result.message || 'An error occurred while adding address.'
+                    text: 'Something went wrong. Please try again.'
                 });
             }
-        } catch (error) {
-            console.error('Error adding address:', error);
-            swal({
-                icon: 'error',
-                title: 'Error',
-                text: 'Something went wrong. Please try again.'
-            });
-        }
-    });
+        });
 
         document.getElementById('placeOrderBtn').addEventListener('click', async function (event) {
             event.preventDefault();
 
             const selectedAddress = document.querySelector('input[name="savedAddress"]:checked');
             const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+            console.log(paymentMethod)
 
             if (!selectedAddress || !paymentMethod) {
                 swal({
-                        icon: 'error',
-                        title: 'Required Field',
-                        text: 'Please Select Address and Payment Method'
-                    })
+                    icon: 'error',
+                    title: 'Required Field',
+                    text: 'Please Select Address and Payment Method'
+                })
                 return;
             }
 
@@ -287,20 +306,49 @@
                     body: JSON.stringify(orderData),
                 });
 
-                const result = await response.json();
-                if (result.success) {
-                    swal({
-                        icon: 'success',
-                        title: 'Order Placed',
-                        text: 'Order has been successfully placed'
-                    }).then(() => {
-                        window.location.href = '/orderPlaced';
-                    })      
+                const data = await response.json();
+
+                if (data.success) {
+                    const options = {
+                        key: data.key, // Razorpay key ID from server
+                        amount: data.amount, // Amount in paise
+                        currency: 'INR',
+                        name: 'Chanel One',
+                        description: 'Payment for your order on Chanel One',
+                        order_id: data.razorpayOrderId, // Order ID from server
+                        handler: async function (response) {
+                            // Verify payment on the server
+                            const verifyResponse = await fetch('/verify-payment', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(response),
+                            });
+
+                            const verifyResult = await verifyResponse.json();
+
+                            if (verifyResult.success) {
+                                alert('Payment Successful!');
+                                window.location.href = '/orderPlaced';
+                            } else {
+                                alert('Payment Verification Failed.');
+                            }
+                        },
+                        prefill: {
+                            name: 'Customer Name',
+                            email: 'customer@example.com',
+                            contact: '1234567890',
+                        },
+                        theme: {
+                            color: '#3399cc',
+                        },
+                    };
+                    const rzp1 = new Razorpay(options);
+                    rzp1.open();
                 } else {
                     swal({
                         icon: 'error',
                         title: 'Error',
-                        text: result.message||'An error occured while placing order'
+                        text: data.message||'An error occured while placing order'
                     })
                 }
             } catch (error) {
@@ -311,3 +359,61 @@
     </script>
 
     <%- include("../../views/partials/user/footer") %>
+
+        <button id="razorpay-button">Pay with Razorpay</button>
+
+        <!-- <script>
+    document.getElementById('razorpay-button').onclick = async function (e) {
+        e.preventDefault();
+
+        // Create Razorpay order by calling the server-side endpoint
+        const response = await fetch('/create-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: 500 }), // Amount in rupees
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            const options = {
+                key: data.key, // Razorpay key ID from server
+                amount: data.amount, // Amount in paise
+                currency: 'INR',
+                name: 'Your Company Name',
+                description: 'Payment for your order',
+                order_id: data.razorpayOrderId, // Order ID from server
+                handler: async function (response) {
+                    // Verify payment on the server
+                    const verifyResponse = await fetch('/verify-payment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(response),
+                    });
+
+                    const verifyResult = await verifyResponse.json();
+
+                    if (verifyResult.success) {
+                        alert('Payment Successful!');
+                        window.location.href = '/order-success';
+                    } else {
+                        alert('Payment Verification Failed.');
+                    }
+                },
+                prefill: {
+                    name: 'Customer Name',
+                    email: 'customer@example.com',
+                    contact: '1234567890',
+                },
+                theme: {
+                    color: '#3399cc',
+                },
+            };
+
+            const rzp1 = new Razorpay(options);
+            rzp1.open();
+        } else {
+            alert('Failed to create Razorpay order. Please try again.');
+        }
+    };
+</script> -->

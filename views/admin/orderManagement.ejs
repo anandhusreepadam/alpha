@@ -88,7 +88,7 @@
                                     <!-- Action Buttons -->
                                     <td class="text-end">
                                         <a href="/admin/viewOrder?id=<%= orders[i]._id %>" class="btn btn-sm btn-light">View</a>
-                                        <% if (orders[i].status !== 'Cancelled' && orders[i].status !== 'Delivered') { %>
+                                        <% if (orders[i].status !== 'Cancelled' && orders[i].status !== 'Delivered' && orders[i].status !=='Returned') { %>
                                             <a href="javascript:void(0)" 
                                                onclick="updateOrderStatus('<%= orders[i]._id %>')" 
                                                class="btn btn-sm btn-brand">Update</a>

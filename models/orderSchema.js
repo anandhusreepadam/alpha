@@ -7,13 +7,16 @@ const orderSchema = new Schema({
         required: true,
         unique: true,
         default: function () {
-            return `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+            return `ORD-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
         },
     },
     userId: {
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true,
+    },
+    razorpayOrderId:{
+        type:String,
     },
     items: [
         {
@@ -43,8 +46,13 @@ const orderSchema = new Schema({
     },
     paymentMethod: {
         type: String,
-        enum: ['COD', 'Wallet','RazorPay'],
+        enum: ['COD', 'wallet','razorpay'],
         required: true,
+    },
+    paymentStatus: {
+        type: String,
+        enum: ['Pending', 'Paid', 'Refunded'],
+        default: 'Pending',
     },
     status: {
         type: String,
@@ -55,24 +63,9 @@ const orderSchema = new Schema({
         type:String,
         required:false
     },
-    createdAt: {
-        type: Date,
-        default: Date.now,
-    },
-    updatedAt: {
-        type: Date,
-        default: Date.now,
-    },
-});
 
+},{timestamps:true});
 
-orderSchema.pre('save', function (next) {
-    if (!this.orderId) {
-        this.orderId = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-    }
-    this.updatedAt = Date.now();
-    next();
-});
 
 const Order = mongoose.model('Order', orderSchema);
 

@@ -71,6 +71,78 @@
             .btn-view:hover {
                 background-color: #0056b3;
             }
+            /* Style for displaying product images horizontally */
+            .order-card {
+    position: relative;
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: #f9f9f9;
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.order-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.order-status {
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 18px;
+    text-align: center;
+}
+
+.order-details {
+    margin-top: 15px;
+}
+
+.order-total {
+    font-size: 16px;
+    font-weight: bold;
+    margin-left: 0;
+    text-align: left;
+    margin-top: 10px;
+}
+
+.order-products {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 20px;
+}
+
+.product-item {
+    text-align: center;
+    margin-right: 15px;
+}
+
+.product-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 5%;
+}
+
+.order-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.order-actions .btn {
+    margin-left: 10px;
+}
+
+
+
+
         </style>
     </head>
     <body>
@@ -99,51 +171,66 @@
                                         <div class="order-card">
                                             <!-- Order Header -->
                                             <div class="order-header">
-                                                <h5>Order ID: <%= order.orderId %></h5>
-                                                <p>Date: <%= new Date(order.createdAt).toLocaleDateString() %></p>
+                                                <div class="order-info">
+                                                    <h5>Order ID: <%= order.orderId %></h5>
+                                                    <p>Date: <%= new Date(order.createdAt).toLocaleDateString() %></p>
+                                                </div>
+                                                <div class="order-status">
+                                                    <% if (order.status === 'Returned') { %>
+                                                        <span class="badge rounded-pill alert-warning">Returned</span>
+                                                    <% }else if (order.status === 'Return Request') { %>
+                                                        <span class="badge rounded-pill alert-warning">Return Request</span>
+                                                    <% }else if (order.status === 'Pending') { %>
+                                                        <span class="badge rounded-pill alert-warning">Pending</span>
+                                                    <% } else if (order.status === 'Cancelled') { %>
+                                                        <span class="badge rounded-pill alert-danger">Cancelled</span>
+                                                    <% } else if (order.status === 'Shipped') { %>
+                                                        <span class="badge rounded-pill alert-primary">Shipped</span>
+                                                    <% } else if (order.status === 'Delivered') { %>
+                                                        <span class="badge rounded-pill alert-success">Delivered</span>
+                                                    <% } else { %>
+                                                        <span class="badge rounded-pill alert-secondary"><%= order.status %></span>
+                                                    <% } %>
+                                                </div>
+                                            </div>                               
+                    
+                                            <!-- Products Section (Images aligned at start) -->
+                                            <div class="order-products">
+                                                <% order.items.forEach(item => { %>
+                                                    <div class="product-item">
+                                                        <img src="/uploads/re-image/<%= item.productId.productImage[0] %>" alt="<%= item.productId.productName %>" class="product-image">
+                                                        <p><%= item.productId.productName %></p>
+                                                    </div>
+                                                <% }) %>
                                             </div>
-                        
-                                            <!-- Order Details -->
-                                            <div class="order-details">
-                                                <p>Status: <span class="order-status"><%= order.status %></span></p>
-                                                <p>Total: ₹<%= order.finalAmount %></p>
-                                            </div>
-                        
-                                            <!-- Shipping Address -->
-                                            <div class="order-address">
-                                                <p><strong>Shipping Address:</strong></p>
-                                                <p>
-                                                    <%= order.address.name %>, <%= order.address.address %>, 
-                                                    <%= order.address.city %>, <%= order.address.state %> - 
-                                                    <%= order.address.pincode %>
-                                                </p>
-                                                <p>Phone: <%= order.address.phone %></p>
-                                            </div>
-                        
+                            
                                             <!-- Action Buttons -->
                                             <div class="order-actions">
+                                                <div class="order-details">
+                                                    <div class="order-total">
+                                                        <p>Total: ₹<%= order.finalAmount %></p>
+                                                    </div>
+                                                </div>
+                                                <div>
                                                 <% if (order.status === 'Delivered') { %>
                                                     <!-- Return Button -->
-                                                    <button 
-                                                        class="btn btn-primary" 
-                                                        onclick="returnOrder('<%= order._id %>')">
+                                                    <button class="btn btn-primary" onclick="returnOrder('<%= order._id %>')">
                                                         Return
                                                     </button>
                                                 <% } else if (order.status === 'Shipped' || order.status === 'Pending') { %>
+                                                     <!-- Order Details (Total Amount at bottom left) -->
+                                            
                                                     <!-- Cancel Button -->
-                                                    <button 
-                                                        class="btn btn-danger" 
-                                                        onclick="cancelOrder('<%= order._id %>')">
+                                                    <button class="btn btn-danger" onclick="cancelOrder('<%= order._id %>')">
                                                         Cancel
                                                     </button>
                                                 <% } %>
-                        
+                            
                                                 <!-- View Details Button -->
-                                                <button 
-                                                    class="btn btn-secondary" 
-                                                    onclick="viewOrderDetails('<%= order._id %>')">
+                                                <button class="btn btn-secondary" onclick="viewOrderDetails('<%= order._id %>')">
                                                     View Details
                                                 </button>
+                                            </div>
                                             </div>
                                         </div>
                                     <% }) %>
@@ -151,6 +238,9 @@
                                     <p>No orders found.</p>
                                 <% } %>
                             </section>
+                            
+                            
+                            
                         </div>
                         
                         <style>

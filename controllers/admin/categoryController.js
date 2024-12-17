@@ -30,8 +30,6 @@ const categoryInfo = async (req, res) => {
         console.log(error)
         res.redirect('/pageError')
     }
-
-
 }
 
 const addCategory = async (req, res) => {

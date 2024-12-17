@@ -1,261 +1,303 @@
 <%- include("../../views/partials/user/header") %>]
-<div class="spacer"></div>
-<div class="container-fluid py-4">
-    <section class="order-details-section">
-        <!-- Action Buttons -->
-        
-        <h2 class="section-title text-center mb-4">Order Details</h2>
-        
-        <!-- Order Summary -->
-        <div class="order-summary mb-3">
-            <h5>Order ID: <%= order.orderId %></h5>
-            <p><strong>Date:</strong> <%= new Date(order.createdAt).toLocaleDateString() %></p>
-            <p><strong>Status:</strong> <%= order.status %></p>
-            <p><strong>Total Amount:</strong> ₹<%= order.totalAmount %></p>
-            <p><strong>Final Amount:</strong> ₹<%= order.finalAmount %></p>
-          
-        </div>
 
-        <!-- Shipping Address -->
-        <div class="shipping-address mb-3">
-            <h5>Shipping Address:</h5>
-            <p>
-                Name: <%= order.address.name %> <br>
-                Address: <%= order.address.address %>, <br>
-                City: <%= order.address.city %>, State: <%= order.address.state %>, 
-                Pincode: <%= order.address.pincode %><br>
-                Phone: <%= order.address.phone %>
-            </p>
-        </div>
-
-        <!-- Product List -->
-        <div class="product-list mb-3">
-            <h5>Ordered Products:</h5>
-            <% order.items.forEach((item) => { %>
-                <div class="product-card d-flex align-items-center mb-2 p-2 border rounded">
-                    <div class="product-image me-3">
-                        <img src="/uploads/re-image/<%= item.productId.productImage[0] %>" 
-                             alt="<%= item.productId.productName %>" 
-                             onerror="this.src='/uploads/placeholder.png'" 
-                             style="width: 80px; height: auto; border-radius: 5px;" />
+    <style>
+        .order-tab {
+            display: flex;
+            justify-content: space-between;
+        }
+        .order-status {
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 18px;
+    text-align: center;
+}
+    </style>
+    <div class="spacer"></div>
+    <div class="container-fluid py-4">
+        <section class="order-details-section">
+            <!-- Header Section -->
+            <h2 class="section-title text-center mb-4">Order Details</h2>
+        
+            <!-- Order Summary -->
+            <div class="order-summary mb-4">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5>Order ID: <%= order.orderId %></h5>
+                        <p><strong>Date:</strong> <%= new Date(order.createdAt).toLocaleDateString() %></p>
                     </div>
-                    <div class="product-details">
-                        <p><strong>Product:</strong> <%= item.productId.productName %></p>
-                        <p><strong>Price:</strong> ₹<%= item.productId.salePrice %></p>
-                        <p><strong>Quantity:</strong> <%= item.quantity %></p>
-                        <p><strong>Subtotal:</strong> ₹<%= item.productId.salePrice * item.quantity %></p>
+                    <div>
+                        <p><strong>Total Amount:</strong> ₹<%= order.totalAmount %></p>
+                        <p><strong>Final Amount:</strong> ₹<%= order.finalAmount %></p>
                     </div>
                 </div>
-            <% }) %>
-        </div>
-        <div class="order-actions d-flex justify-content-end mb-3">
-            <% if (order.status === 'Delivered') { %>
-                <button id="return-btn" class="btn btn-primary me-2" onclick="returnOrder('<%= order._id %>')">
-                    Return
-                </button>
-            <% } else if (order.status === 'Shipped' || order.status === 'Pending') { %>
-                <button id="cancel-btn" class="btn btn-danger me-2" onclick="cancelOrder('<%= order._id %>')">
-                    Cancel
-                </button>
-            <% } %>
-            <button onclick="window.history.back()" class="btn btn-secondary">Back</button>
-        </div>
-    </section>
-</div>
+            </div>
+        
+            <!-- Shipping Address Section -->
+            <div class="shipping-address mb-4">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h5>Shipping Address:</h5>
+                        <p>
+                            <strong>Name:</strong> <%= order.address.name %><br>
+                            <strong>Address:</strong> <%= order.address.address %>,<br>
+                            <strong>City:</strong> <%= order.address.city %>,<br>
+                            <strong>State:</strong> <%= order.address.state %>, 
+                            <strong>Pincode:</strong> <%= order.address.pincode %><br>
+                            <strong>Phone:</strong> <%= order.address.phone %>
+                        </p>
+                    </div>
+                    <div class="order-status">
+                        <% if (order.status === 'Returned') { %>
+                            <span class=" rounded-pill alert-warning">Returned</span>
+                        <% }else if (order.status === 'Return Request') { %>
+                            <span class=" rounded-pill alert-warning">Return Request</span>
+                        <% }else if (order.status === 'Pending') { %>
+                            <span class=" rounded-pill alert-warning">Pending</span>
+                        <% } else if (order.status === 'Cancelled') { %>
+                            <span class=" rounded-pill alert-danger">Cancelled</span>
+                        <% } else if (order.status === 'Shipped') { %>
+                            <span class=" rounded-pill alert-primary">Shipped</span>
+                        <% } else if (order.status === 'Delivered') { %>
+                            <span class=" rounded-pill alert-success">Delivered</span>
+                        <% } else { %>
+                            <span class=" rounded-pill alert-secondary"><%= order.status %></span>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Product List Section -->
+            <div class="product-list mb-4">
+                <h5>Ordered Products:</h5>
+                <% order.items.forEach((item) => { %>
+                    <div class="product-card d-flex align-items-center mb-3 p-3 border rounded">
+                        <div class="product-image me-3">
+                            <img src="/uploads/re-image/<%= item.productId.productImage[0] %>"
+                                alt="<%= item.productId.productName %>" onerror="this.src='/uploads/placeholder.png'"
+                                style="width: 80px; height: auto; border-radius: 5px;" />
+                        </div>
+                        <div class="product-details w-100">
+                            <div class="d-flex justify-content-between">
+                                <p><strong>Product:</strong> <%= item.productId.productName %></p>
+                                <p><strong>Price:</strong> ₹<%= item.productId.salePrice %></p>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <p><strong>Quantity:</strong> <%= item.quantity %></p>
+                                <p><strong>Subtotal:</strong> ₹<%= item.productId.salePrice * item.quantity %></p>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        
+            <!-- Action Buttons -->
+            <div class="order-actions d-flex justify-content-end mb-3">
+                <% if (order.status === 'Delivered') { %>
+                    <button id="return-btn" class="btn btn-primary me-2" onclick="returnOrder('<%= order._id %>')">Return</button>
+                <% } else if (order.status === 'Shipped' || order.status === 'Pending') { %>
+                    <button id="cancel-btn" class="btn btn-danger me-2" onclick="cancelOrder('<%= order._id %>')">Cancel</button>
+                <% } %>
+                <button onclick="window.history.back()" class="btn btn-secondary">Back</button>
+            </div>
+        </section>
+        
+        
+    </div>
 
-<%- include("../../views/partials/user/footer") %>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<style>
-    .order-details-section {
-        padding: 20px;
-    }
+    <%- include("../../views/partials/user/footer") %>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <style>
+            .order-details-section {
+                padding: 20px;
+            }
 
-    .section-title {
-        font-size: 28px;
-        margin-bottom: 20px;
-        font-weight: bold;
-        text-align: center;
-        color: #333;
-    }
+            .section-title {
+                font-size: 28px;
+                margin-bottom: 20px;
+                font-weight: bold;
+                text-align: center;
+                color: #333;
+            }
 
-    .order-summary,
-    .shipping-address,
-    .product-list {
-        margin-bottom: 20px;
-        padding: 20px;
-        background-color: #ffffff;
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
+            .order-summary,
+            .shipping-address,
+            .product-list {
+                margin-bottom: 20px;
+                padding: 20px;
+                background-color: #ffffff;
+                border-radius: 10px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
 
-    .order-summary h5,
-    .shipping-address h5 {
-        font-size: 20px;
-        margin-bottom: 10px;
-        color: #555;
-    }
+            .order-summary h5,
+            .shipping-address h5 {
+                font-size: 20px;
+                margin-bottom: 10px;
+                color: #555;
+            }
 
-    .product-card {
-        display: flex;
-        align-items: center;
-        margin-bottom: 15px;
-        padding: 15px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        background-color: #ffffff;
-    }
+            .product-card {
+                display: flex;
+                align-items: center;
+                margin-bottom: 15px;
+                padding: 15px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                background-color: #ffffff;
+            }
 
-    .product-image img {
-        width: 100px;
-        height: 100px;
-        object-fit: cover;
-        border-radius: 5px;
-        margin-right: 20px;
-    }
+            .product-image img {
+                width: 100px;
+                height: 100px;
+                object-fit: cover;
+                border-radius: 5px;
+                margin-right: 20px;
+            }
 
-    .product-details p {
-        margin: 0;
-        font-size: 14px;
-        color: #555;
-    }
+            .product-details p {
+                margin: 0;
+                font-size: 14px;
+                color: #555;
+            }
 
-    .btn {
-        padding: 10px 20px;
-        font-size: 16px;
-        border-radius: 5px;
-        cursor: pointer;
-        text-align: center;
-    }
+            .btn {
+                padding: 10px 20px;
+                font-size: 16px;
+                border-radius: 5px;
+                cursor: pointer;
+                text-align: center;
+            }
 
-    .btn-primary {
-        background-color: #007bff;
-        color: white;
-        border: none;
-    }
+            .btn-primary {
+                background-color: #007bff;
+                color: white;
+                border: none;
+            }
 
-    .btn-primary:hover {
-        background-color: #0056b3;
-    }
+            .btn-primary:hover {
+                background-color: #0056b3;
+            }
 
-    .btn-danger {
-        background-color: #dc3545;
-        color: white;
-        border: none;
-    }
+            .btn-danger {
+                background-color: #dc3545;
+                color: white;
+                border: none;
+            }
 
-    .btn-danger:hover {
-        background-color: #c82333;
-    }
+            .btn-danger:hover {
+                background-color: #c82333;
+            }
 
-    .btn-secondary {
-        background-color: #6c757d;
-        color: white;
-        border: none;
-    }
+            .btn-secondary {
+                background-color: #6c757d;
+                color: white;
+                border: none;
+            }
 
-    .btn-secondary:hover {
-        background-color: #5a6268;
-    }
+            .btn-secondary:hover {
+                background-color: #5a6268;
+            }
 
-    .order-actions {
-        text-align: center;
-        margin-top: 20px;
-    }
+            .order-actions {
+                text-align: center;
+                margin-top: 20px;
+            }
 
-    .back-button {
-        text-align: center;
-        margin-top: 20px;
-    }
-</style>
+            .back-button {
+                text-align: center;
+                margin-top: 20px;
+            }
+        </style>
 
-<script>
+        <script>
 
-    function goBack() {
-        window.history.back();
-    }
+            function goBack() {
+                window.history.back();
+            }
 
-    async function cancelOrder(orderId) {
-        try {
-            const confirmation = await Swal.fire({
-                title: "Are you sure?",
-                text: "Do you really want to cancel this order?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "Yes, Cancel",
-                cancelButtonText: "No"
-            });
-
-            if (confirmation.isConfirmed) {
-                const response = await fetch(`/cancelOrder/${orderId}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" }
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    await Swal.fire({
-                        title: "Order Cancelled",
-                        text: "Your order status has been changed to 'Cancelled'.",
-                        icon: "success"
+            async function cancelOrder(orderId) {
+                try {
+                    const confirmation = await Swal.fire({
+                        title: "Are you sure?",
+                        text: "Do you really want to cancel this order?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: "Yes, Cancel",
+                        cancelButtonText: "No"
                     });
 
+                    if (confirmation.isConfirmed) {
+                        const response = await fetch(`/cancelOrder/${orderId}`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" }
+                        });
 
-                    window.location.reload();
+                        const result = await response.json();
 
-                } else {
-                    throw new Error(result.message);
+                        if (result.success) {
+                            await Swal.fire({
+                                title: "Order Cancelled",
+                                text: "Your order status has been changed to 'Cancelled'.",
+                                icon: "success"
+                            });
+
+
+                            window.location.reload();
+
+                        } else {
+                            throw new Error(result.message);
+                        }
+                    }
+                } catch (err) {
+                    console.error('Error canceling order:', err.message);
+                    await Swal.fire("Oops!", "Internal server error occurred.", "error");
                 }
             }
-        } catch (err) {
-            console.error('Error canceling order:', err.message);
-            await Swal.fire("Oops!", "Internal server error occurred.", "error");
-        }
-    }
 
-    async function returnOrder(orderId) {
-        try {
-            const confirmation = await Swal.fire({
-            title: "Return Order",
-            text: "Please provide a reason for returning this item:",
-            input: "textarea",
-            inputPlaceholder: "Enter your reason here...",
-            showCancelButton: true,
-            confirmButtonColor: "#28a745",
-            cancelButtonColor: "#3085d6",
-            confirmButtonText: "Submit",
-            cancelButtonText: "Cancel",
-            inputValidator: (value) => {
-                if (!value) {
-                    return "You need to provide a reason!";
-                }
-            }
-        });
-            if (confirmation.isConfirmed) {
-                const reason = confirmation.value;
-                const response = await fetch(`/returnOrder/${orderId}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ reason })
-                });
-                const result = await response.json();
-                if (result.success) {
-                    await Swal.fire({
-                            title: "Requested",
-                            text: "Your Return Order Requested",
-                            icon: "success"
+            async function returnOrder(orderId) {
+                try {
+                    const confirmation = await Swal.fire({
+                        title: "Return Order",
+                        text: "Please provide a reason for returning this item:",
+                        input: "textarea",
+                        inputPlaceholder: "Enter your reason here...",
+                        showCancelButton: true,
+                        confirmButtonColor: "#28a745",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: "Submit",
+                        cancelButtonText: "Cancel",
+                        inputValidator: (value) => {
+                            if (!value) {
+                                return "You need to provide a reason!";
+                            }
+                        }
                     });
-                    window.location.reload();
-                } else {
-                    throw new Error(result.message);
+                    if (confirmation.isConfirmed) {
+                        const reason = confirmation.value;
+                        const response = await fetch(`/returnOrder/${orderId}`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ reason })
+                        });
+                        const result = await response.json();
+                        if (result.success) {
+                            await Swal.fire({
+                                title: "Requested",
+                                text: "Your Return Order Requested",
+                                icon: "success"
+                            });
+                            window.location.reload();
+                        } else {
+                            throw new Error(result.message);
+                        }
+                    }
+                } catch (err) {
+                    console.error('Error returning order:', err.message);
+                    await Swal.fire("Oops!", "Internal server error occurred.", "error");
                 }
             }
-        } catch (err) {
-            console.error('Error returning order:', err.message);
-            await Swal.fire("Oops!", "Internal server error occurred.", "error");
-        }
-    }
 
-</script>
+        </script>

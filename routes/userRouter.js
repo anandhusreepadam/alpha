@@ -2,6 +2,7 @@ const userController = require('../controllers/user/userController');
 const profileController = require('../controllers/user/profileController');
 const cartController = require ('../controllers/user/cartController');
 const orderController = require('../controllers/user/orderController');
+const paymentController = require('../controllers/user/paymentController');
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
@@ -78,7 +79,8 @@ router.get('/orders',profileAuth,userAuth,orderController.loadOrders)
 router.get('/orderDetails',profileAuth,userAuth,orderController.loadOrderDetails)
 router.post('/cancelOrder/:id',orderController.cancelOrder);
 router.post('/returnOrder/:id',orderController.returnOrder);
-
+// router.post('/create-order', paymentController.createOrder);
+router.post('/verify-payment', paymentController.verifyPayment);
 
 
 

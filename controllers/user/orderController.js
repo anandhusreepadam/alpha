@@ -1,9 +1,9 @@
-const User = require('../../models/userSchema');
 const Cart = require('../../models/cartSchema');
 const Address = require('../../models/addressSchema');
 const Order = require('../../models/orderSchema');
 const Product = require('../../models/productSchema');
 const mongoose = require('mongoose');
+const razorpay = require('../../config/razorpay')
 
 
 
@@ -34,6 +34,7 @@ const placeOrder = async (req, res) => {
         const { addressId, paymentMethod } = req.body;
         const userId = new mongoose.Types.ObjectId(user._id);
         const objectAddressId = new mongoose.Types.ObjectId(addressId);
+
         const address = await Address.aggregate([
             { $match: { userId } },
             { $unwind: "$address" },
@@ -49,7 +50,7 @@ const placeOrder = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Cart is empty' });
         }
         for (const item of cartItems.items) {
-            if (item.productId.quantity< item.quantity) {
+            if (item.productId.quantity < item.quantity) {
                 return res.status(400).json({
                     success: false,
                     message: `Insufficient stock for ${item.name}.`
@@ -66,6 +67,29 @@ const placeOrder = async (req, res) => {
             }
         }));
         await Product.bulkWrite(bulkOps);
+
+        if (paymentMethod == 'razorpay') {
+            try {
+                const razorpayOrder = await razorpay.orders.create({
+                    currency: 'INR',
+                    receipt: `${user._id}_${Date.now()}`,
+                    amount: finalAmount * 100,
+                })
+                res.status(200).json({
+                    success: true,
+                    razorpayOrderId: razorpayOrder.id,
+                    amount: razorpayOrder.amount,
+                    key: process.env.RAZORPAY_KEY_ID,
+                });
+            } catch (error) {
+                console.error('Error creating Razorpay order:', error);
+                res.status(500).json({ success: false, message: 'Failed to create order.' });
+            }
+        } else if (paymentMethod == 'COD') {
+
+        } else if (paymentMethod == 'Wallet') {
+
+        }
         const newOrder = new Order({
             userId: user._id,
             address: selectedAddress,
@@ -73,15 +97,16 @@ const placeOrder = async (req, res) => {
             paymentMethod,
             totalAmount,
             finalAmount,
+
         });
         console.log('Generated Order ID:', newOrder.orderId);
         await newOrder.save();
         await Cart.findOneAndUpdate({ userId: user._id }, { $set: { items: [] } });
-        return res.status(200).json({
-                success: true,
-                message: 'Order placed successfully',
-                orderId: newOrder.orderId
-            });
+        // return res.status(200).json({
+        //     success: true,
+        //     message: 'Order placed successfully',
+        //     orderId: newOrder.orderId
+        // });
     } catch (error) {
         console.error('Error placing order:', error);
         res.status(500).json({ success: false, message: 'Failed to place order' });
@@ -100,9 +125,9 @@ const orderPlaced = async (req, res) => {
 const loadOrders = async (req, res) => {
     try {
         const user = req.session.user;
-        const orders = await Order.find({ userId: user._id }).sort({ createdAt: -1 });
-        const cart = user ? await Cart.findOne({ userId: user._id }).populate('items.productId') : null;
-        res.render('orders', { orders, title: "Orders", user, cart: cart || { items: [] } })
+        const orders = await Order.find({ userId: user._id }).sort({ createdAt: -1 }).populate('items.productId');
+        const cart = user ? await Cart.findOne({ userId: user._id }) : { items: [] };
+        res.render('orders', { orders, title: "Orders", user, cart: cart })
     } catch (error) {
         console.error('Error fetching orders:', error);
         res.status(500).render('pageerror');
@@ -146,7 +171,7 @@ const cancelOrder = async (req, res) => {
             },
         }));
         await Product.bulkWrite(bulkOps);
-        
+
         res.json({ success: true });
     } catch (error) {
         console.error("Server Error while canceling order:", error.message);

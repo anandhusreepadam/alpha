@@ -123,7 +123,6 @@
     </body>
 </html>
 <%-include("../../views/partials/user/footer")%>
-
 <script>
 
 async function submitForm(event) {
@@ -138,9 +137,9 @@ async function submitForm(event) {
             const result = await response.json();
             if(response.ok){
                 swal(
-                            'Saved!',
-                            'The address have been saved successfully',
-                            'success'
+                    'Saved!',
+                    'The address have been saved successfully',
+                    'success'
                 ).then(()=>{
                     location.reload();
                 });
@@ -156,11 +155,8 @@ async function submitForm(event) {
 
 function validateForm() {
 
-
-    // Clearing previous error messages
     const errorElements = document.querySelectorAll('.error-message');
     errorElements.forEach(el => el.remove());
-
 
     const nameInput = document.querySelector('input[placeholder="Full Name"]');
     const phoneInput = document.querySelector('input[placeholder="1234567890"]');

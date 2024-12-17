@@ -7,3 +7,7 @@ for (val of a){
 }
 
 console.log(freq)
+
+let i;
+
+console.log(i)
