@@ -1,8 +1,3 @@
-const userController = require('../controllers/user/userController');
-const profileController = require('../controllers/user/profileController');
-const cartController = require ('../controllers/user/cartController');
-const orderController = require('../controllers/user/orderController');
-const paymentController = require('../controllers/user/paymentController');
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
@@ -10,12 +5,21 @@ const { userAuth, profileAuth } = require('../middlewares/auth');
 const multer = require('multer');
 const upload = multer();
 
+
+//Controllers
+const userController = require('../controllers/user/userController');
+const profileController = require('../controllers/user/profileController');
+const cartController = require ('../controllers/user/cartController');
+const orderController = require('../controllers/user/orderController');
+const paymentController = require('../controllers/user/paymentController');
+const walletController = require('../controllers/user/walletController');
+
+
 ////Route Tester
 const working = (req,res,next)=>{
 console.log('Route is working fine');
 next();
 }
-
 
 
 ////404
@@ -82,7 +86,9 @@ router.post('/returnOrder/:id',orderController.returnOrder);
 // router.post('/create-order', paymentController.createOrder);
 router.post('/verify-payment', paymentController.verifyPayment);
 
-
+//Wallet Management
+router.get('/wallet',profileAuth,userAuth,walletController.loadWallet);
+router.post('/wallet/add',walletController.addToWallet);
 
 
 

@@ -30,15 +30,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row gx-5">
-                        <aside class="col-lg-3 border-end">
-                            <nav class="nav nav-pills flex-lg-column mb-4">
-                                <a class="nav-link active" aria-current="page" href="/profile">General</a>
-                                <a class="nav-link" href="/address">Address</a>
-                                <a class="nav-link" href="/orders">Orders</a>
-                                <a class="nav-link" href="#">Wallet</a>
-
-                            </nav>
-                        </aside>
+                        <%-include("../../views/partials/user/profileAside")%>
                         <div class="col-lg-9">
                             <section class="content-body p-xl-4">
                                 <form id="userForm" enctype="multipart/form-data" onsubmit="submitForm(event)">
@@ -123,7 +115,7 @@
 
     </body>
 
-    </html>
+
 
     <%-include("../../views/partials/user/footer")%>
 

@@ -47,7 +47,7 @@
                 <% } %>
                 <% if (order.status !== 'Cancelled' && order.status !== 'Delivered' && order.status !=='Returned') { %>
                     <a href="javascript:void(0)" 
-                       onclick="updateOrderStatus('<%= order._id %>')" 
+                       onclick="updateOrderStatus('<%= order._id %>','<%=order.userId._id%>')" 
                        class="btn btn-sm btn-brand">Update</a>
                 <% } %>
             </div>
@@ -101,7 +101,7 @@
 <%-include("../../views/partials/admin/footer")%>
 
 <script>
-    function updateOrderStatus(orderId) {
+    function updateOrderStatus(orderId,userId) {
         Swal.fire({
             title: 'Update Order Status',
             input: 'select',
@@ -122,7 +122,7 @@
                 fetch(`/admin/updateStatus`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ orderId, status: result.value })
+                    body: JSON.stringify({ orderId, status: result.value,userId })
                 })
                 .then((response) => response.json())
                 .then((data) => {

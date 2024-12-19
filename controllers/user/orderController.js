@@ -1,9 +1,13 @@
+//Database Schemas
 const Cart = require('../../models/cartSchema');
 const Address = require('../../models/addressSchema');
 const Order = require('../../models/orderSchema');
 const Product = require('../../models/productSchema');
+const Wallet = require('../../models/walletSchema');
 const mongoose = require('mongoose');
-const razorpay = require('../../config/razorpay')
+
+//RazorPay Instance
+const razorpay = require('../../config/razorpay');
 
 
 
@@ -75,8 +79,21 @@ const placeOrder = async (req, res) => {
                     receipt: `${user._id}_${Date.now()}`,
                     amount: finalAmount * 100,
                 })
+                const newOrder = new Order({
+                    userId: user._id,
+                    razorpayOrderId: razorpayOrder.id,
+                    address: selectedAddress,
+                    items: cartItems.items,
+                    paymentMethod,
+                    totalAmount,
+                    finalAmount,
+                });
+                console.log('Generated Order ID:', newOrder.orderId);
+                console.log('RazorPay ID:', razorpayOrder.id);
+                await newOrder.save();
                 res.status(200).json({
                     success: true,
+                    user: user,
                     razorpayOrderId: razorpayOrder.id,
                     amount: razorpayOrder.amount,
                     key: process.env.RAZORPAY_KEY_ID,
@@ -86,27 +103,65 @@ const placeOrder = async (req, res) => {
                 res.status(500).json({ success: false, message: 'Failed to create order.' });
             }
         } else if (paymentMethod == 'COD') {
+            const newOrder = new Order({
+                userId: user._id,
+                address: selectedAddress,
+                items: cartItems.items,
+                paymentMethod,
+                totalAmount,
+                finalAmount,
+            });
+            console.log('Generated Order ID:', newOrder.orderId);
+            await newOrder.save();
+            return res.status(200).json({
+                success: true,
+                message: 'Order placed successfully',
+                orderId: newOrder.orderId
+            });
 
-        } else if (paymentMethod == 'Wallet') {
+        } else if (paymentMethod == 'wallet') {
 
+            const wallet = await Wallet.findOne({ userId: user._id });
+
+            if (!wallet || wallet.balance < finalAmount) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Insufficient wallet balance.',
+                });
+            }
+
+            wallet.balance -= finalAmount;
+
+            const newOrder = new Order({
+                userId: user._id,
+                address: selectedAddress,
+                items: cartItems.items,
+                paymentMethod,
+                totalAmount,
+                finalAmount,
+                paymentStatus: 'Paid',
+            });
+
+            console.log('Generated Order ID:', newOrder.orderId);
+            await newOrder.save();
+
+            wallet.transactions.unshift({
+                orderId: newOrder.orderId,
+                type: 'debit',
+                amount: finalAmount,
+                date: new Date(),
+            })
+            await wallet.save();
+
+            res.status(200).json({
+                success: true,
+                message: 'Order placed successfully using wallet.',
+                orderId: newOrder.orderId,
+                walletBalance: wallet.balance,
+            });
         }
-        const newOrder = new Order({
-            userId: user._id,
-            address: selectedAddress,
-            items: cartItems.items,
-            paymentMethod,
-            totalAmount,
-            finalAmount,
-
-        });
-        console.log('Generated Order ID:', newOrder.orderId);
-        await newOrder.save();
         await Cart.findOneAndUpdate({ userId: user._id }, { $set: { items: [] } });
-        // return res.status(200).json({
-        //     success: true,
-        //     message: 'Order placed successfully',
-        //     orderId: newOrder.orderId
-        // });
+
     } catch (error) {
         console.error('Error placing order:', error);
         res.status(500).json({ success: false, message: 'Failed to place order' });
@@ -127,7 +182,7 @@ const loadOrders = async (req, res) => {
         const user = req.session.user;
         const orders = await Order.find({ userId: user._id }).sort({ createdAt: -1 }).populate('items.productId');
         const cart = user ? await Cart.findOne({ userId: user._id }) : { items: [] };
-        res.render('orders', { orders, title: "Orders", user, cart: cart })
+        res.render('orders', { orders, title: "Orders", user, cart: cart, currentPage: 'orders' })
     } catch (error) {
         console.error('Error fetching orders:', error);
         res.status(500).render('pageerror');
@@ -155,6 +210,7 @@ const loadOrderDetails = async (req, res) => {
 
 const cancelOrder = async (req, res) => {
     try {
+        const user = req.session.user;
         const orderId = req.params.id;
         const updatedOrder = await Order.findByIdAndUpdate(
             orderId,
@@ -171,8 +227,32 @@ const cancelOrder = async (req, res) => {
             },
         }));
         await Product.bulkWrite(bulkOps);
-
-        res.json({ success: true });
+        if (updatedOrder.paymentMethod != 'COD') {
+            const wallet = await Wallet.findOne({ userId: user._id });
+            if (!wallet) {
+                const wallet = new Wallet({
+                    userId: user._id,
+                    balance: 0,
+                    transactions: [],
+                });
+            }
+            const refundAmount = updatedOrder.finalAmount;
+            wallet.balance += refundAmount;
+            wallet.transactions.unshift({
+                orderId: updatedOrder.orderId,
+                type: 'refund',
+                amount: refundAmount,
+                description: `Refund for cancelled order #${updatedOrder._id}`,
+                date: new Date(),
+            });
+            await wallet.save();
+            return res.status(200).json({
+                success: true,
+                message: 'Order cancelled and amount refunded to wallet.',
+                walletBalance: wallet.balance,
+            });
+        }
+        res.status(200).json({ success: true, message: 'Order successfully Cancelled' });
     } catch (error) {
         console.error("Server Error while canceling order:", error.message);
         res.status(500).json({ success: false, message: 'Internal server error', error });

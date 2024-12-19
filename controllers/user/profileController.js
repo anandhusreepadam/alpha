@@ -77,8 +77,8 @@ const loadAddress = async (req, res) => {
         const user = await getUser(req);
         const addressData = await Address.findOne({ userId: user._id })
         const addresses = addressData ? addressData.address : [];
-        const cart = user ? await Cart.findOne({ userId: user._id }) : null;
-        res.render('address', { title: "Address", user, addressData: addresses ,cart:cart||{items:[]}});
+        const cart = user ? await Cart.findOne({ userId: user._id }) : {items:[]};
+        res.render('address', { title: "Address", user, addressData: addresses ,cart:cart,currentPage: 'address'});
     } catch (error) {
         console.log(error);
         res.redirect('/pageNotFound');

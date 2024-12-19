@@ -314,8 +314,8 @@ const loadProfile = async (req, res) => {
     try {
         const userSession = req.session.user;
         const user = userSession ? await User.findById(userSession._id) : null;
-        const cart = user ? await Cart.findOne({ userId: user._id }).populate('items.productId') : null;
-        res.render('profile', { user, title: "Profile",cart:cart||{items:[]} })
+        const cart = user ? await Cart.findOne({ userId: user._id }).populate('items.productId') : {items:[]} ;
+        res.render('profile', { user, title: "Profile",cart:cart,currentPage: 'profile'})
     } catch (error) {
         console.log('Failed to Load Profile', error)
     }

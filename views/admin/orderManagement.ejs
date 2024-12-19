@@ -61,8 +61,7 @@
                                     </td>
                                     
                                     <!-- Total Amount -->
-                                    <td>₹<%= orders[i].finalAmount.toFixed(2) %></td>
-                                    
+                                    <td>₹<%= orders[i].finalAmount.toFixed(2) %></td>                                
                                     <!-- Status -->
                                     <td>
                                         <% if (orders[i].status === 'Returned') { %>
@@ -90,9 +89,9 @@
                                         <a href="/admin/viewOrder?id=<%= orders[i]._id %>" class="btn btn-sm btn-light">View</a>
                                         <% if (orders[i].status !== 'Cancelled' && orders[i].status !== 'Delivered' && orders[i].status !=='Returned') { %>
                                             <a href="javascript:void(0)" 
-                                               onclick="updateOrderStatus('<%= orders[i]._id %>')" 
+                                               onclick="updateOrderStatus('<%= orders[i]._id %>','<%= user._id%>')" 
                                                class="btn btn-sm btn-brand">Update</a>
-                                        <% } %>
+                                               <% } %>                                               
                                     </td>
                                 </tr>
                             <% } %>
@@ -128,7 +127,7 @@
         window.location.href = `/admin/orders?status=${status}`;
     }
 
-    function updateOrderStatus(orderId) {
+    function updateOrderStatus(orderId,userId) {
         Swal.fire({
             title: 'Update Order Status',
             input: 'select',
@@ -149,7 +148,7 @@
                 fetch(`/admin/updateStatus`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ orderId, status: result.value })
+                    body: JSON.stringify({ orderId, status: result.value,userId })
                 })
                 .then((response) => response.json())
                 .then((data) => {

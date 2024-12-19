@@ -1,8 +1,9 @@
 const Order = require('../../models/orderSchema');
-const User = require('../../models/userSchema');
+const Wallet = require('../../models/walletSchema');
+const Product = require('../../models/productSchema');
 
 
-const loadOrders = async(req,res)=>{
+const loadOrders = async (req, res) => {
     try {
 
         const page = parseInt(req.query.page) || 1;
@@ -36,7 +37,7 @@ const loadOrders = async(req,res)=>{
     }
 };
 
-const orderDetails = async(req,res)=>{
+const orderDetails = async (req, res) => {
     try {
         const orderId = req.query.id;
 
@@ -48,15 +49,15 @@ const orderDetails = async(req,res)=>{
         if (!order) {
             return res.status(404).send('Order not found');
         }
-        res.render('order-details', { order,title:'Order Details' });
+        res.render('order-details', { order, title: 'Order Details' });
     } catch (error) {
         console.error('Error fetching order details:', error);
         res.status(500).send('Internal Server Error');
     }
 }
 
-const updateStatus = async(req,res) =>{
-    const {orderId,status} = req.body;
+const updateStatus = async (req, res) => {
+    const { orderId, status,userId } = req.body;
     try {
         if (!orderId || !status) {
             return res.status(400).json({ success: false, message: 'Invalid data' });
@@ -68,6 +69,42 @@ const updateStatus = async(req,res) =>{
         );
         if (!updatedOrder) {
             return res.status(404).json({ success: false, message: 'Order not found' });
+        }
+
+        if (status == 'Cancelled' || status == 'Returned') {
+            const bulkOps = updatedOrder.items.map((item) => ({
+                updateOne: {
+                    filter: { _id: item.productId._id },
+                    update: { $inc: { quantity: item.quantity } },
+                },
+            }));
+            await Product.bulkWrite(bulkOps);
+            if (updatedOrder.paymentMethod != 'COD') {
+                const wallet = await Wallet.findOne({ userId: userId });
+                if (!wallet) {
+                    const wallet = new Wallet({
+                        userId,
+                        balance: 0,
+                        transactions: [],
+                    });
+                }
+                const refundAmount = updatedOrder.finalAmount;
+                wallet.balance += refundAmount;
+                wallet.transactions.unshift({
+                    orderId: updatedOrder.orderId,
+                    type: 'refund',
+                    amount: refundAmount,
+                    description: `Refund for cancelled order #${updatedOrder._id}`,
+                    date: new Date(),
+                });
+                await wallet.save();
+                return res.status(200).json({
+                    success: true,
+                    message: 'Order cancelled and amount refunded to wallet.',
+                    walletBalance: wallet.balance,
+                });
+            }
+            res.status(200).json({ success: true, message: 'Order successfully Cancelled' });
         }
         res.status(200).json({ success: true, message: 'Order status updated successfully' });
     } catch (error) {

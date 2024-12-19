@@ -279,11 +279,10 @@
         document.getElementById('placeOrderBtn').addEventListener('click', async function (event) {
             event.preventDefault();
 
-            const selectedAddress = document.querySelector('input[name="savedAddress"]:checked');
-            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
-            console.log(paymentMethod)
+            const selectedAddress = document.querySelector('input[name="savedAddress"]:checked').value;
+            const paymentMethods = document.querySelector('input[name="paymentMethod"]:checked').value;
 
-            if (!selectedAddress || !paymentMethod) {
+            if (!selectedAddress || !paymentMethods) {
                 swal({
                     icon: 'error',
                     title: 'Required Field',
@@ -293,8 +292,8 @@
             }
 
             const orderData = {
-                addressId: selectedAddress.value,
-                paymentMethod: paymentMethod.value,
+                addressId: selectedAddress,
+                paymentMethod: paymentMethods
             };
 
             try {
@@ -309,46 +308,47 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    const options = {
-                        key: data.key, // Razorpay key ID from server
-                        amount: data.amount, // Amount in paise
-                        currency: 'INR',
-                        name: 'Chanel One',
-                        description: 'Payment for your order on Chanel One',
-                        order_id: data.razorpayOrderId, // Order ID from server
-                        handler: async function (response) {
-                            // Verify payment on the server
-                            const verifyResponse = await fetch('/verify-payment', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify(response),
-                            });
-
-                            const verifyResult = await verifyResponse.json();
-
-                            if (verifyResult.success) {
-                                alert('Payment Successful!');
-                                window.location.href = '/orderPlaced';
-                            } else {
-                                alert('Payment Verification Failed.');
-                            }
-                        },
-                        prefill: {
-                            name: 'Customer Name',
-                            email: 'customer@example.com',
-                            contact: '1234567890',
-                        },
-                        theme: {
-                            color: '#3399cc',
-                        },
-                    };
-                    const rzp1 = new Razorpay(options);
-                    rzp1.open();
+                    if (paymentMethods == 'razorpay') {
+                        const options = {
+                            key: data.key, // Razorpay key ID from server
+                            amount: data.amount, // Amount in paise
+                            currency: 'INR',
+                            name: 'Chanel One',
+                            description: 'Payment for your order on Chanel One',
+                            order_id: data.razorpayOrderId, // Order ID from server
+                            handler: async function (response) {
+                                // Verify payment on the server
+                                const verifyResponse = await fetch('/verify-payment', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify(response),
+                                });
+                                const verifyResult = await verifyResponse.json();
+                                if (verifyResult.success) {
+                                    window.location.href = '/orderPlaced';
+                                } else {
+                                    alert('Payment Verification Failed.');
+                                }
+                            },
+                            prefill: {
+                                name: data.user?.name || 'Guest',
+                                email: data.user?.email || 'guest@example.com',
+                                contact: data.user?.phone || '0000000000',
+                            },
+                            theme: {
+                                color: '#3399cc',
+                            },
+                        };
+                        const rzp1 = new Razorpay(options);
+                        rzp1.open();
+                    }else{
+                        window.location.href = '/orderPlaced';
+                    }
                 } else {
                     swal({
                         icon: 'error',
                         title: 'Error',
-                        text: data.message||'An error occured while placing order'
+                        text: data.message || 'An error occured while placing order'
                     })
                 }
             } catch (error) {
@@ -359,61 +359,3 @@
     </script>
 
     <%- include("../../views/partials/user/footer") %>
-
-        <button id="razorpay-button">Pay with Razorpay</button>
-
-        <!-- <script>
-    document.getElementById('razorpay-button').onclick = async function (e) {
-        e.preventDefault();
-
-        // Create Razorpay order by calling the server-side endpoint
-        const response = await fetch('/create-order', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amount: 500 }), // Amount in rupees
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            const options = {
-                key: data.key, // Razorpay key ID from server
-                amount: data.amount, // Amount in paise
-                currency: 'INR',
-                name: 'Your Company Name',
-                description: 'Payment for your order',
-                order_id: data.razorpayOrderId, // Order ID from server
-                handler: async function (response) {
-                    // Verify payment on the server
-                    const verifyResponse = await fetch('/verify-payment', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(response),
-                    });
-
-                    const verifyResult = await verifyResponse.json();
-
-                    if (verifyResult.success) {
-                        alert('Payment Successful!');
-                        window.location.href = '/order-success';
-                    } else {
-                        alert('Payment Verification Failed.');
-                    }
-                },
-                prefill: {
-                    name: 'Customer Name',
-                    email: 'customer@example.com',
-                    contact: '1234567890',
-                },
-                theme: {
-                    color: '#3399cc',
-                },
-            };
-
-            const rzp1 = new Razorpay(options);
-            rzp1.open();
-        } else {
-            alert('Failed to create Razorpay order. Please try again.');
-        }
-    };
-</script> -->

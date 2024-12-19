@@ -1,6 +1,7 @@
 const Cart = require('../../models/cartSchema');
 const User = require('../../models/userSchema');
 const Product = require('../../models/productSchema');
+const Wallet = require('../../models/walletSchema');
 
 
 const addToCart = async (req, res) => {
@@ -62,15 +63,20 @@ const loadCart = async (req, res) => {
                     return null;
                 }
                 if (item.quantity > product.quantity) {
-                    messages.push(
-                        `Not enough stock for product "${product.productName}". Available: ${product.quantity}, Requested: ${item.quantity}`
-                    );
+                    if (product.quantity == 0) {
+                        messages.push(`Oops! ${product.productName} is currently out of stock`)
+                    } else {
+                        messages.push(
+                            `Oops! We currently have only ${product.quantity} unit of '${product.productName}' available, but you requested ${item.quantity}. Please adjust the quantity in your cart or explore other options.`
+                        );
+                    }
                     item.quantity = product.quantity;
                 }
                 cartTotal += product.salePrice * item.quantity;
                 return item;
             });
             cartItems = cartItems.filter((item) => item !== null);
+            await cart.save();
         }
         res.render('cart', {
             user,
@@ -84,7 +90,6 @@ const loadCart = async (req, res) => {
         res.redirect('/pageError');
     }
 };
-
 
 const updateCart = async (req, res) => {
     const user = req.session.user;
@@ -142,7 +147,6 @@ const checkStock = async (req, res) => {
     }
     res.status(200).json({ success: true });
 };
-
 
 const deleteCart = async (req, res) => {
     const user = req.session.user;
