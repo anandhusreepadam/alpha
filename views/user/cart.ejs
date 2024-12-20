@@ -1,250 +1,252 @@
 <%-include("../../views/partials/user/header")%>
 
-        <style>
-            .empty-cart {
-                font-size: 18px;
-                display: flex;
-                justify-content: center;
-                align-content: center;
-                height: 30vh;
-            }
+    <style>
+        .empty-cart {
+            font-size: 18px;
+            display: flex;
+            justify-content: center;
+            align-content: center;
+            height: 30vh;
+        }
 
-            a {
-                color: #fff;
-            }
-            a[disabled] {
-        pointer-events: none;
-        cursor: not-allowed;
-        opacity: 0.6;
-    }
+        a {
+            color: #fff;
+        }
 
-        </style>
+        a[disabled] {
+            pointer-events: none;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+    </style>
 
-        <div class="spacer">
+    <div class="spacer">
+    </div>
+
+    <!-- Bread Crumb -->
+    <div class="container">
+        <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+            <a href="/" class="stext-109 cl8 hov-cl1 trans-04">
+                Home
+                <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+            </a>
+
+            <span class="stext-109 cl4">
+                Shoping Cart
+            </span>
         </div>
+    </div>
 
-        <!-- Bread Crumb -->
+    <!-- Shoping Cart -->
+    <form class="bg0 p-t-75 p-b-85">
         <div class="container">
-            <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
-                <a href="/" class="stext-109 cl8 hov-cl1 trans-04">
-                    Home
-                    <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
-                </a>
-
-                <span class="stext-109 cl4">
-                    Shoping Cart
-                </span>
-            </div>
-        </div>
-
-        <!-- Shoping Cart -->
-        <form class="bg0 p-t-75 p-b-85">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
-                        <div class="m-l-25 m-r--38 m-lr-0-xl">
-                            <% if (messages.length > 0) { %>
-                                <div class="alert alert-warning">
-                                    <ul>
-                                        <% messages.forEach((msg) => { %>
-                                            <li><%= msg %></li>
+            <div class="row">
+                <div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
+                    <div class="m-l-25 m-r--38 m-lr-0-xl">
+                        <% if (messages.length> 0) { %>
+                            <div class="alert alert-warning">
+                                <ul>
+                                    <% messages.forEach((msg)=> { %>
+                                        <li>
+                                            <%= msg %>
+                                        </li>
                                         <% }) %>
-                                    </ul>
-                                </div>
+                                </ul>
+                            </div>
                             <% } %>
-                            <div class="wrap-table-shopping-cart">
-                                
-                                <% if(cart.items.length>0){ %>
-                                    <table class="table-shopping-cart">
-                                        <tr class="table_head">
-                                            <th class="column-1">Product</th>
-                                            <th class="column-2"></th>
-                                            <th class="column-3">Price</th>
-                                            <th class="column-4">Quantity</th>
-                                            <th class="column-5">Total</th>
-                                            <th class="column-2"></th>
-                                        </tr>
-                                        <% cart.items.forEach(item=>{ %>
-                                            <tr class="table_row">
-                                                <td class="column-1">
-                                                    <div class="how-itemcart1">
-                                                        <img src="/uploads/re-image/<%=item.productId.productImage[0]%>"
-                                                            alt="IMG">
-                                                    </div>
-                                                </td>
-                                                <td class="column-2">
-                                                    <%= item.productId.productName %>
-                                                </td>
-                                                <td class="column-3 price-column-3">
-                                                    <%= item.productId.salePrice %>
-                                                </td>
-                                                <td class="column-4">
-                                                    <div class="wrap-num-product flex-w m-l-auto m-r-0">
-                                                        <div onclick="minus('<%=item.productId._id%>','<%=item.quantity%>')"
-                                                            class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
-                                                            <i class="fs-16 zmdi zmdi-minus"></i>
-                                                        </div>
+                                <div class="wrap-table-shopping-cart">
 
-                                                        <input
-                                                            oninput="updateQuantity('<%=item.productId._id%>',this.value)"
-                                                            id="item" class="mtext-104 cl3 txt-center num-product"
-                                                            type="number" name="<%= item.productId._id %>"
-                                                            value="<%= item.quantity %>">
-
-                                                        <div onclick="plus('<%=item.productId._id%>','<%=item.quantity%>')"
-                                                            class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
-                                                            <i class="fs-16 zmdi zmdi-plus"></i>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td class="column-5">₹<%= (item.productId.salePrice *
-                                                        item.quantity).toFixed(2) %>
-                                                </td>
-                                                <td>
-                                                    <button onclick="removeItem(event,'<%=item.productId._id%>')"
-                                                        class="btn btn-danger">Remove</button>
-                                                </td>
+                                    <% if(cart.items.length>0){ %>
+                                        <table class="table-shopping-cart">
+                                            <tr class="table_head">
+                                                <th class="column-1">Product</th>
+                                                <th class="column-2"></th>
+                                                <th class="column-3">Price</th>
+                                                <th class="column-4">Quantity</th>
+                                                <th class="column-5">Total</th>
+                                                <th class="column-2"></th>
                                             </tr>
-                                            <% }) %>
-                                    </table>
-                                    <% } else { %>
-                                        <div class="empty-cart">
-                                            Your cart is empty.
-                                        </div>
-                                        <div>
-                                            <a href="/shop" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
-                                                Start Shopping
-                                            </a>
-                                        </div>
-                                    <% } %>
-                            </div>
-                        </div>
+                                            <% cart.items.forEach(item=>{ %>
+                                                <tr class="table_row">
+                                                    <td class="column-1">
+                                                        <div class="how-itemcart1">
+                                                            <img src="/uploads/re-image/<%=item.productId.productImage[0]%>"
+                                                                alt="IMG">
+                                                        </div>
+                                                    </td>
+                                                    <td class="column-2">
+                                                        <%= item.productId.productName %>
+                                                    </td>
+                                                    <td class="column-3 price-column-3">
+                                                        <%= item.productId.salePrice %>
+                                                    </td>
+                                                    <td class="column-4">
+                                                        <div class="wrap-num-product flex-w m-l-auto m-r-0">
+                                                            <div onclick="minus('<%=item.productId._id%>','<%=item.quantity%>')"
+                                                                class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
+                                                                <i class="fs-16 zmdi zmdi-minus"></i>
+                                                            </div>
+
+                                                            <input
+                                                                oninput="updateQuantity('<%=item.productId._id%>',this.value)"
+                                                                id="item" class="mtext-104 cl3 txt-center num-product"
+                                                                type="number" name="<%= item.productId._id %>"
+                                                                value="<%= item.quantity %>">
+
+                                                            <div onclick="plus('<%=item.productId._id%>','<%=item.quantity%>')"
+                                                                class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
+                                                                <i class="fs-16 zmdi zmdi-plus"></i>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="column-5">₹<%= (item.productId.salePrice *
+                                                            item.quantity).toFixed(2) %>
+                                                    </td>
+                                                    <td>
+                                                        <button onclick="removeItem(event,'<%=item.productId._id%>')"
+                                                            class="btn btn-danger">Remove</button>
+                                                    </td>
+                                                </tr>
+                                                <% }) %>
+                                        </table>
+                                        <% } else { %>
+                                            <div class="empty-cart">
+                                                Your cart is empty.
+                                            </div>
+                                            <div>
+                                                <a href="/shop"
+                                                    class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
+                                                    Start Shopping
+                                                </a>
+                                            </div>
+                                            <% } %>
+                                </div>
                     </div>
+                </div>
 
-                    <div class="col-sm-10 col-lg-7 col-xl-5 m-lr-auto m-b-50">
-                        <div class="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-r-40 m-lr-0-xl p-lr-15-sm">
-                            <h4 class="mtext-109 cl2 p-b-30">
-                                Cart Totals
-                            </h4>
+                <div class="col-sm-10 col-lg-7 col-xl-5 m-lr-auto m-b-50">
+                    <div class="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-r-40 m-lr-0-xl p-lr-15-sm">
+                        <h4 class="mtext-109 cl2 p-b-30">
+                            Cart Totals
+                        </h4>
 
-                            <div class="flex-w flex-t bor12 p-b-13">
-                                <div class="size-208">
-                                    <span class="stext-110 cl2">
-                                        Subtotal:
-                                    </span>
-                                </div>
-
-                                <div class="size-209">
-                                    <span class="mtext-110 cl2">
-                                        ₹<%= cartTotal %>
-                                    </span>
-                                </div>
+                        <div class="flex-w flex-t bor12 p-b-13">
+                            <div class="size-208">
+                                <span class="stext-110 cl2">
+                                    Subtotal:
+                                </span>
                             </div>
 
-                            <div class="flex-w flex-t bor12 p-t-15 p-b-30">
-                                <div class="size-208 w-full-ssm">
-                                    <span class="stext-110 cl2">
-                                        Shipping:
-                                    </span>
-                                </div>
-                                <div class="size-209">
-                                    <span class="mtext-110 cl2">
-                                        +₹49
-                                    </span>
-                                </div>
-
+                            <div class="size-209">
+                                <span class="mtext-110 cl2">
+                                    ₹<%= cartTotal %>
+                                </span>
                             </div>
-                            <div class="flex-w flex-t bor12 p-t-15 p-b-30">
-                                <div class="size-208 w-full-ssm">
-                                    <span class="stext-110 cl2">
-                                        Offer:
-                                    </span>
-                                </div>
-                                <div class="size-209">
-                                    <span class="mtext-110 cl2">
-                                        -₹49
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div class="flex-w flex-t p-t-27 p-b-33">
-                                <div class="size-208">
-                                    <span class="mtext-101 cl2">
-                                        Total:
-                                    </span>
-                                </div>
-
-                                <div class="size-209 p-t-1">
-                                    <span class="mtext-110 cl2">
-                                        ₹<%= cartTotal %>
-                                    </span>
-                                </div>
-                            </div>                        
-                            <a 
-                            class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer"  
-                            href="/checkout" <%= cart.items.some(item => item.quantity === 0) ? 'disabled' : '' %>>
-                            Proceed to Checkout
-                        </a>                   
                         </div>
+
+                        <div class="flex-w flex-t bor12 p-t-15 p-b-30">
+                            <div class="size-208 w-full-ssm">
+                                <span class="stext-110 cl2">
+                                    Shipping:
+                                </span>
+                            </div>
+                            <div class="size-209">
+                                <span class="mtext-110 cl2">
+                                    +₹49
+                                </span>
+                            </div>
+
+                        </div>
+                        <div class="flex-w flex-t bor12 p-t-15 p-b-30">
+                            <div class="size-208 w-full-ssm">
+                                <span class="stext-110 cl2">
+                                    Offer:
+                                </span>
+                            </div>
+                            <div class="size-209">
+                                <span class="mtext-110 cl2">
+                                    -₹49
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="flex-w flex-t p-t-27 p-b-33">
+                            <div class="size-208">
+                                <span class="mtext-101 cl2">
+                                    Total:
+                                </span>
+                            </div>
+
+                            <div class="size-209 p-t-1">
+                                <span class="mtext-110 cl2">
+                                    ₹<%= cartTotal %>
+                                </span>
+                            </div>
+                        </div>
+                        <a class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer"
+                            href="/checkout" <%=cart.items.some(item=> item.quantity === 0) ? 'disabled' : '' %>>
+                            Proceed to Checkout
+                        </a>
                     </div>
                 </div>
             </div>
-        </form>
+        </div>
+    </form>
 
     <%-include("../../views/partials/user/footer")%>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         <script>
-            
+
             async function checkout(cartItems) {
 
-    try {
-        const response = await fetch('/checkStock', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(cartItems),
-        });
+                try {
+                    const response = await fetch('/checkStock', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(cartItems),
+                    });
 
-        const result = await response.json();
-        if (!result.success) {
-            alert(`Stock issues:\n${result.stockIssues.map(issue => 
-                `${issue.productName}: Available - ${issue.availableStock}`).join('\n')}`);
-            return;
-        }
-        window.location.href = '/checkout';
-    } catch (error) {
-        console.error("Error checking stock:", error);
-        alert("Failed to check stock availability. Please try again later.");
-    }
-}
+                    const result = await response.json();
+                    if (!result.success) {
+                        alert(`Stock issues:\n${result.stockIssues.map(issue =>
+                            `${issue.productName}: Available - ${issue.availableStock}`).join('\n')}`);
+                        return;
+                    }
+                    window.location.href = '/checkout';
+                } catch (error) {
+                    console.error("Error checking stock:", error);
+                    alert("Failed to check stock availability. Please try again later.");
+                }
+            }
 
             function minus(id, quantity) {
-    if (quantity > 1) {
-        updateQuantity(id, --quantity);
-    } else {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Invalid Quantity',
-            text: 'Quantity cannot be less than 1.'
-        }).then(()=>{
-            location.reload()
-        })
-    }
-}
-            
+                if (quantity > 1) {
+                    updateQuantity(id, --quantity);
+                } else {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Invalid Quantity',
+                        text: 'Quantity cannot be less than 1.'
+                    }).then(() => {
+                        location.reload()
+                    })
+                }
+            }
+
             function plus(id, quantity) {
                 updateQuantity(id, ++quantity)
             }
 
             async function updateQuantity(id, quantity) {
                 if (quantity < 1) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Invalid Quantity',
-            text: 'Quantity cannot be less than 1.'
-        });
-        return;
-    }
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Invalid Quantity',
+                        text: 'Quantity cannot be less than 1.'
+                    });
+                    return;
+                }
                 try {
                     const response = await fetch('/cart', {
                         method: 'POST',
@@ -257,7 +259,7 @@
                             icon: 'error',
                             title: 'Oops',
                             text: result.message || 'Something went wrong!'
-                        }).then(()=>{
+                        }).then(() => {
                             location.reload();
                         })
                     } else {

@@ -76,7 +76,6 @@ const loadLogin = async (req, res) => {
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
-
         const findUser = await User.findOne({ isAdmin: false, email: email });
 
         if (!findUser) {
@@ -321,17 +320,6 @@ const loadProfile = async (req, res) => {
     }
 };
 
-const loadWishlist = async (req, res) => {
-    try {
-        const userSession = req.session.user;
-        const user = userSession ? await User.findById(userSession._id) : null;
-        const cart = user ? await Cart.findOne({ userId: user._id }).populate('items.productId') : null;
-        res.render('wishlist', { user, title: 'Wishlist',cart:cart|| {items:[]} })
-    } catch (error) {
-        console.log('Failed to load Wishlist', error)
-    }
-};
-
 const logout = async (req, res) => {
     try {
         req.session.destroy((err) => {
@@ -368,7 +356,6 @@ module.exports = {
     logout,
     loadProductPage,
     loadProfile,
-    loadWishlist,
     loadForgotPassword,
     forgotPassword,
     verifyForgotOtp,

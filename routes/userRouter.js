@@ -13,7 +13,7 @@ const cartController = require ('../controllers/user/cartController');
 const orderController = require('../controllers/user/orderController');
 const paymentController = require('../controllers/user/paymentController');
 const walletController = require('../controllers/user/walletController');
-
+const wishlistController = require('../controllers/user/wishlistContoller');
 
 ////Route Tester
 const working = (req,res,next)=>{
@@ -49,7 +49,7 @@ router.get('/logout',userController.logout);
 router.get('/',userAuth,userController.loadHomepage);
 router.get('/shop',userAuth,userController.loadShopping);
 router.get('/product/:id',userAuth,userController.loadProductPage);
-router.get('/wishlist',userAuth,userController.loadWishlist);
+
 
 
 //Profile Management
@@ -86,10 +86,15 @@ router.post('/returnOrder/:id',orderController.returnOrder);
 // router.post('/create-order', paymentController.createOrder);
 router.post('/verify-payment', paymentController.verifyPayment);
 
+
 //Wallet Management
 router.get('/wallet',profileAuth,userAuth,walletController.loadWallet);
 router.post('/wallet/add',walletController.addToWallet);
 
+
+//Wishlist Management
+router.get('/wishlist',profileAuth,userAuth,wishlistController.loadWishlist);
+router.post('/addToWishlist',wishlistController.addToWishlist)
 
 
 //For testing only
