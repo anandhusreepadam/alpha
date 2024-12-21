@@ -297,6 +297,68 @@ const loadShopping = async (req, res) => {
     }
 };
 
+const loadProducts = async(req,res)=>{
+    try {
+        const {
+            search = '', // Search term
+            category,    // Category filter
+            minPrice,    // Minimum price filter
+            maxPrice,    // Maximum price filter
+            brand,       // Brand filter
+            sortBy = 'createdAt', // Default sort field
+            order = 'desc',       // Default sort order
+            page = 1,             // Current page for pagination
+            limit = 3,           // Items per page
+        } = req.query;
+
+        // Escape the search term to prevent regex injection
+        const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        
+        // Build the query object dynamically
+        const query = {
+            isBlocked: false,
+            isDeleted: false,
+            quantity: { $gt: 0 },
+            ...(search ? { productName: { $regex: new RegExp(`.*${escapedSearch}.*`, 'i') } } : {}),
+            ...(category && category !== 'undefined'? { category: category } : {}),
+            ...(minPrice || maxPrice
+                ? {
+                      salePrice: {
+                          ...(minPrice ? { $gte: Number(minPrice) } : {}),
+                          ...(maxPrice ? { $lte: Number(maxPrice) } : {}),
+                      },
+                  }
+                : {}),
+            ...(brand ? { brand: brand } : {}),
+        };
+        
+        // Build the sorting options
+        const sortOptions = { [sortBy]: order === 'asc' ? 1 : -1 };
+        
+        // Fetch the products with filtering, sorting, and pagination
+        const allProducts = await Product.find(query)
+            .sort(sortOptions) // Apply sorting
+            .limit(Number(limit)) // Limit the results for pagination
+            .skip((Number(page) - 1) * Number(limit)) // Skip results for pagination
+            .populate('category') // Populate the category details
+            .exec();
+
+        // Count the total number of products matching the query
+        const totalProducts = await Product.countDocuments(query);
+
+        // Send the response
+        res.json({
+            products: allProducts,
+            currentPage: Number(page),
+            totalPages: Math.ceil(totalProducts / Number(limit)),
+            totalProducts,
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching products', error });
+    }
+    
+}
+
 const loadProductPage = async (req, res) => {
     try {
         const user = req.session.user;
@@ -360,5 +422,6 @@ module.exports = {
     forgotPassword,
     verifyForgotOtp,
     loadResetPassword,
-    resetPassword
+    resetPassword,
+    loadProducts
 };

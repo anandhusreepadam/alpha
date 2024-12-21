@@ -48,6 +48,7 @@ router.get('/logout',userController.logout);
 //Load User Pages
 router.get('/',userAuth,userController.loadHomepage);
 router.get('/shop',userAuth,userController.loadShopping);
+router.get('/shop/products',userAuth,userController.loadProducts)
 router.get('/product/:id',userAuth,userController.loadProductPage);
 
 
