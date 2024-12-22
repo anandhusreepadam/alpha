@@ -14,6 +14,7 @@ const orderController = require('../controllers/user/orderController');
 const paymentController = require('../controllers/user/paymentController');
 const walletController = require('../controllers/user/walletController');
 const wishlistController = require('../controllers/user/wishlistContoller');
+const couponController = require('../controllers/user/couponController');
 
 ////Route Tester
 const working = (req,res,next)=>{
@@ -96,6 +97,10 @@ router.post('/wallet/add',walletController.addToWallet);
 //Wishlist Management
 router.get('/wishlist',profileAuth,userAuth,wishlistController.loadWishlist);
 router.post('/addToWishlist',wishlistController.addToWishlist)
+router.post('/removeFromWishlist',wishlistController.removeFromWishlist);
+
+//Coupon Management
+router.post('/applyCoupon',profileAuth,userAuth,couponController.applyCoupon)
 
 
 //For testing only

@@ -33,18 +33,17 @@
                                             <div
                                                 class="list-group-item d-flex justify-content-between align-items-center">
                                                 <div>
+                                                    <a href="/orderDetails?id=<%=transaction.order%>">
                                                     <h6 class="mb-0">
-                                                        <%= transaction.type==='credit' ? 'Added Money' : 'Order #' +
-                                                            transaction.orderId %>
-                                                    </h6>
+                                                        <%= transaction.type==='credit' ? 'Added Money' : 'Order #' + transaction.orderId %>
+                                                    </h6></a>
                                                     <small class="text-muted">
                                                         <%= new Date(transaction.date).toLocaleDateString() %>
                                                     </small>
                                                 </div>
                                                 <div
                                                     class="fw-bold <%= transaction.type === 'debit' ? 'text-danger' : 'text-success' %>">
-                                                    <%= transaction.type==='debit' ? '-' : '+' %> ₹<%=transaction.amount
-                                                            %>
+                                                    <%= transaction.type==='debit' ? '-' : '+' %> ₹<%=transaction.amount%>
                                                 </div>
 
                                             </div>

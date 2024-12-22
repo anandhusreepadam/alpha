@@ -80,8 +80,12 @@ const userSchema = new Schema({
             type:Date,
             default:Date.now
         }
-    }]
-
+    }],
+    usedCoupons: [{ 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Coupon' 
+    }],
+    
 },{timestamps:true})
 
 

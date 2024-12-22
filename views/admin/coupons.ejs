@@ -1,0 +1,170 @@
+<%- include("../../views/partials/admin/header") %>
+
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+</head>
+<section class="content-main">
+    <div class="content-header">
+        <h2 class="content-title card-title">Coupons</h2>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createCouponModal">
+            Create New Coupon
+        </button>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col"><b>No.</b></th>
+                        <th scope="col"><b>Coupon Code</b></th>
+                        <th scope="col"><b>Discount Type</b></th>
+                        <th scope="col"><b>Discount Value</b></th>
+                        <th scope="col"><b>Min Order Value</b></th>
+                        <th scope="col"><b>Expiry Date</b></th>
+                        <th scope="col"><b>Usage Limit</b></th>
+                        <th scope="col"><b>Actions</b></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for (let i = 0; i < coupons.length; i++) { %>
+                        <tr>
+                            <td><%= i + 1 %></td>
+                            <td><%= coupons[i].code %></td>
+                            <td><%= coupons[i].discountType %></td>
+                            <td>
+                                <% if (coupons[i].discountType === 'percentage') { %>
+                                    <%= coupons[i].discountValue %>%
+                                <% } else { %>
+                                    ₹<%= coupons[i].discountValue %>
+                                <% } %>
+                            </td>
+                            <td>₹<%= coupons[i].minOrderValue %></td>
+                            <td><%= new Date(coupons[i].expiryDate).toLocaleDateString() %></td>
+                            <td><%= coupons[i].usageLimit %></td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" onclick="deleteCoupon('<%= coupons[i]._id %>')">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- Create Coupon Modal -->
+<div class="modal fade" id="createCouponModal" tabindex="-1" aria-labelledby="createCouponModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="createCouponForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createCouponModalLabel">Create New Coupon</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="couponCode" class="form-label">Coupon Code</label>
+                        <input type="text" class="form-control" id="couponCode" name="code" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="discountType" class="form-label">Discount Type</label>
+                        <select class="form-control" id="discountType" name="discountType" required>
+                            <option value="percentage">Percentage</option>
+                            <option value="flat">Flat</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="discountValue" class="form-label">Discount Value</label>
+                        <input type="number" class="form-control" id="discountValue" name="discountValue" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="minOrderValue" class="form-label">Min Order Value</label>
+                        <input type="number" class="form-control" id="minOrderValue" name="minOrderValue" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="expiryDate" class="form-label">Expiry Date</label>
+                        <input type="date" class="form-control" id="expiryDate" name="expiryDate" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="usageLimit" class="form-label">Usage Limit</label>
+                        <input type="number" class="form-control" id="usageLimit" name="usageLimit" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Create Coupon</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<%- include("../../views/partials/admin/footer") %>
+<script>
+    // Submit Create Coupon Form
+    document.getElementById('createCouponForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = {
+            code: document.getElementById('couponCode').value,
+            discountType: document.getElementById('discountType').value,
+            discountValue: document.getElementById('discountValue').value,
+            minOrderValue: document.getElementById('minOrderValue').value,
+            expiryDate: document.getElementById('expiryDate').value,
+            usageLimit: document.getElementById('usageLimit').value,
+        };
+
+        try {
+            const response = await fetch('/admin/coupons', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData),
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                Swal.fire('Success','Coupon created successfully!','success')
+                .then(()=>{
+                    window.location.reload();
+                });
+            } else {
+                Swal.fire('Error', data.message, 'error');
+            }
+        } catch (error) {
+            Swal.fire('Error', 'Something went wrong. Please try again.', 'error');
+        }
+    });
+
+    // Delete Coupon Function
+    async function deleteCoupon(couponId) {
+        const confirm = await Swal.fire({
+            title: 'Are you sure?',
+            text: 'You won\'t be able to revert this!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+        });
+
+        if (confirm.isConfirmed) {
+            try {
+                const response = await fetch(`/admin/coupons/${couponId}`, { 
+                    method: 'DELETE' 
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    Swal.fire('Deleted!', 'Coupon has been deleted.', 'success')
+                    .then(()=>{
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire('Error', data.message, 'error');
+                }
+            } catch (error) {
+                Swal.fire('Error', 'Something went wrong. Please try again.', 'error');
+            }
+        }
+    }
+</script>
+
+

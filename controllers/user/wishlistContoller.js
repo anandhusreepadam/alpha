@@ -34,7 +34,6 @@ const loadWishlist = async (req, res) => {
                 };
             });
         };
-        console.log(wishlistItems)
         res.render('wishlist', {
             user,
             title: 'Wishlist',
@@ -46,7 +45,6 @@ const loadWishlist = async (req, res) => {
         console.log('Failed to load Wishlist', error)
     }
 };
-
 
 const addToWishlist = async(req,res)=>{
     const {productId} = req.body;
@@ -90,7 +88,28 @@ const addToWishlist = async(req,res)=>{
         res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
 }
+
+const removeFromWishlist =async(req,res)=>{
+    try {
+        const userId = req.session.user._id;
+        const { productId } = req.body;
+        
+        console.log(productId)
+        const result = await Wishlist.updateOne(
+            { userId },
+            { $pull: { items: { productId } } }
+        );
+        console.log(result)
+        console.log('hiii')
+        res.json({ success: true, message: 'Item removed from wishlist' });
+    } catch (error) {
+        console.error('Error removing from wishlist:', error);
+        res.status(500).json({ success: false, message: 'Failed to remove item' });
+    }
+}
+
 module.exports = {
     loadWishlist,
-    addToWishlist
+    addToWishlist,
+    removeFromWishlist
 }

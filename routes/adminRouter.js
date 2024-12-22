@@ -20,6 +20,7 @@ const categoryController= require('../controllers/admin/categoryController');
 const productController = require('../controllers/admin/productController');
 const orderController = require('../controllers/admin/orderController');
 const stockController = require('../controllers/admin/stockController');
+const couponController = require('../controllers/admin/couponController');
 
 
 //Admin Routes
@@ -69,6 +70,11 @@ router.post('/updateStatus',adminAuth,orderController.updateStatus)
 router.get('/stock',adminAuth,stockController.loadStock);
 router.post('/updateStock',adminAuth,stockController.updateStock)
 
+
+//Coupon Management
+router.get('/coupons',adminAuth,couponController.loadCoupons);
+router.post('/coupons',adminAuth,couponController.createCoupon);
+router.delete('/coupons/:id',adminAuth,couponController.deleteCoupon)
 
 
 module.exports=router

@@ -4,6 +4,9 @@ const Address = require('../../models/addressSchema');
 const Order = require('../../models/orderSchema');
 const Product = require('../../models/productSchema');
 const Wallet = require('../../models/walletSchema');
+const Coupon = require('../../models/couponSchema');
+const User = require('../../models/userSchema');
+
 const mongoose = require('mongoose');
 
 //RazorPay Instance
@@ -34,8 +37,8 @@ const loadCheckout = async (req, res) => {
 
 const placeOrder = async (req, res) => {
     try {
-        const user = req.session.user;
-        const { addressId, paymentMethod } = req.body;
+        const user = await User.findOne({_id:req.session.user._id})
+        const { addressId, paymentMethod, couponCode } = req.body;
         const userId = new mongoose.Types.ObjectId(user._id);
         const objectAddressId = new mongoose.Types.ObjectId(addressId);
 
@@ -61,9 +64,35 @@ const placeOrder = async (req, res) => {
                 });
             }
         }
+
         const totalAmount = cartItems.items.reduce((total, item) => total + (item.productId.salePrice * item.quantity), 0);
-        const shippingCharge = 50;
-        const finalAmount = totalAmount + shippingCharge;
+
+        let discount = 0;
+        if (couponCode) {
+            const coupon = await Coupon.findOne({ code: couponCode });
+            if (!coupon) {
+                return res.status(400).json({ success: false, message: 'Invalid coupon code.' });
+            }
+
+            if (coupon.expiryDate < new Date()) {
+                return res.status(400).json({ success: false, message: 'Coupon has expired.' });
+            }
+
+            if (user.usedCoupons.includes(coupon._id)) {
+                return res.status(400).json({ success: false, message: 'Coupon already used.' });
+            }
+
+            discount = coupon.discountType === 'percentage'
+                ? (totalAmount * coupon.discountValue) / 100
+                : Math.min(coupon.discountValue, totalAmount);
+
+            // Add coupon to user's used coupons
+            user.usedCoupons.push(coupon._id);
+            await user.save();
+        }
+
+        const finalAmount = totalAmount - discount;
+
         const bulkOps = cartItems.items.map(item => ({
             updateOne: {
                 filter: { _id: item.productId },
@@ -146,6 +175,7 @@ const placeOrder = async (req, res) => {
             await newOrder.save();
 
             wallet.transactions.unshift({
+                order:newOrder._id,
                 orderId: newOrder.orderId,
                 type: 'debit',
                 amount: finalAmount,
@@ -239,6 +269,7 @@ const cancelOrder = async (req, res) => {
             const refundAmount = updatedOrder.finalAmount;
             wallet.balance += refundAmount;
             wallet.transactions.unshift({
+                order:updatedOrder._id,
                 orderId: updatedOrder.orderId,
                 type: 'refund',
                 amount: refundAmount,

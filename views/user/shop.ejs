@@ -1,5 +1,7 @@
 <%-include("../../views/partials/user/header")%>
 
+
+
 	<div class="shop-head">
 
 	</div>
@@ -249,10 +251,17 @@
 					</div>
 				</div>
 			</div>
-
+			<style>
+				#shopList{
+					height: 800vh;
+				}
+			</style>
+		
+			
+			
 			<div class="row isotope-grid" id="shopList">
 			</div>
-
+			
 			<div id="pagination"></div>
 
 			<!-- Load more -->
@@ -264,11 +273,13 @@
 		</div>
 	</div>
 
+
 	<%-include("../../views/partials/user/footer")%>
 
 		<script>
 
 			document.addEventListener('DOMContentLoaded', () => {
+				
 
 				// Fetch all category links
 				const categoryLinks = document.querySelectorAll('.category-link');
@@ -335,7 +346,9 @@
 
 			// Function to display fetched products (example placeholder)
 			function displayProducts(products) {
+				console.log('Products:', products);
 				const shopList = document.getElementById('shopList');
+
 				shopList.innerHTML = ''; // Clear current products
 
 				products.forEach(product => {
@@ -370,8 +383,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            `;
+                </div>`;
 					shopList.innerHTML += productHTML;
 				});
 			}

@@ -1,7 +1,6 @@
 <%-include("../../views/partials/user/header")%>
 
-<div class="spacer">
-</div>
+<div class="spacer"></div>
 
 <!-- Bread Crumb -->
 <div class="container">
@@ -12,11 +11,11 @@
         </a>
 
         <span class="stext-109 cl4">
-            wishlist
+            Wishlist
         </span>
     </div>
 </div>
-    
+
 <!-- Shoping Cart -->
 <form class="bg0 p-t-75 p-b-85">
     <div class="container">
@@ -44,6 +43,9 @@
                                     <div onclick="addToCart('<%=item.id%>')" class="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-10">
                                         Add To Cart
                                     </div>
+                                    <div onclick="removeFromWishlist('<%=item.id%>')" class="flex-c-m stext-101 cl2 size-119 bg10 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-10" style="background-color: #ff5c5c; color: white;">
+                                        Remove
+                                    </div>
                                 </td>
                             </tr>
                             <% })%>
@@ -57,7 +59,7 @@
                                     Start Shopping
                                 </a>
                             </div>
-                    <% } %>
+                        <% } %>
                     </div>
                 </div>
             </div>
@@ -65,39 +67,60 @@
     </div>
 </form>
 
-
 <%-include("../../views/partials/user/footer")%>
 
 <script>
-            async function addToCart(productId) {
-            
-            const quantity = 1;
-            try {
-                const response = await fetch('/addToCart', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ productId, quantity }),
-                });
+    async function addToCart(productId) {
+        const quantity = 1;
+        try {
+            const response = await fetch('/addToCart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ productId, quantity }),
+            });
 
-                const result = await response.json();
-                if (result.success) {
-                    swal('success', "Added to cart !", "success")
-                        .then(() => {
-                            location.reload();
-                        })
-                } else if (result.message == 'Please Login First') {
-                    swal('Oops', result.message, "error")
-                        .then(() => {
-                            location.href = result.redirect;
-                        })
-                } else {
-                    swal('Oops', result.message, "error")
-                }
-            } catch (error) {
-                console.error('Error adding to cart:', error);
+            const result = await response.json();
+            if (result.success) {
+                swal('Success', "Added to cart!", "success")
+                    .then(() => {
+                        location.reload();
+                    })
+            } else if (result.message == 'Please Login First') {
+                swal('Oops', result.message, "error")
+                    .then(() => {
+                        location.href = result.redirect;
+                    })
+            } else {
+                swal('Oops', result.message, "error")
             }
-        };
+        } catch (error) {
+            console.error('Error adding to cart:', error);
+        }
+    };
 
+    async function removeFromWishlist(productId) {
+        try {
+            const response = await fetch('/removeFromWishlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ productId }),
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                swal('Success', "Removed from wishlist!", "success")
+                    .then(() => {
+                        location.reload();
+                    })
+            } else {
+                swal('Oops', result.message || "Failed to remove item", "error");
+            }
+        } catch (error) {
+            console.error('Error removing from wishlist:', error);
+        }
+    }
 </script>

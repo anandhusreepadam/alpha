@@ -18,6 +18,10 @@ const orderSchema = new Schema({
     razorpayOrderId:{
         type:String,    
     },
+    couponId:{
+        type:Schema.Types.ObjectId,
+        ref:'Coupon'
+    },
     items: [
         {
             productId: {

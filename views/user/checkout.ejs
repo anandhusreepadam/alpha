@@ -76,7 +76,8 @@
                             <span class="error-message text-danger"></span>
                         </div>
                     </div>
-                    <button class="btn btn-primary" type="submit" id="submitAddress">Save Address</button>
+                    <button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer mt-4"
+                        type="submit" id="submitAddress">Save Address</button>
                 </form>
 
                 <hr>
@@ -135,6 +136,15 @@
 
             <!-- Right Section: Cart Totals -->
             <div class="col-lg-5">
+                <div class="bor10 p-lr-40 p-t-30 p-b-40 mt-4">
+                    <h4 class="mtext-109 cl2 p-b-30 ">Apply Coupon</h4>
+                    <div class="d-flex mb-3">
+                        <input id="couponCodeInput" type="text" class="form-control" placeholder="Enter coupon code">
+                        <button id="applyCouponBtn" class="ml-2 flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer mt-4">Apply</button>
+                    </div>
+                    <div id="couponMessage" class="text-danger"></div>
+                </div>
+
                 <div class="bor10 p-lr-40 p-t-30 p-b-40">
                     <h4 class="mtext-109 cl2 p-b-30">Cart Totals</h4>
                     <div class="flex-w flex-t bor12 p-b-13">
@@ -142,8 +152,19 @@
                             <span class="stext-110 cl2">Subtotal:</span>
                         </div>
                         <div class="size-209">
-                            <span class="mtext-110 cl2">₹<%= cart.items.reduce((total, item)=> total +
+                            <span id="subTotal" class="mtext-110 cl2">₹<%= cart.items.reduce((total, item)=> total +
                                     (item.productId.salePrice * item.quantity), 0).toFixed(2) %></span>
+                        </div>
+                    </div>
+
+                    <div class="flex-w flex-t bor12 p-t-27 p-b-23">
+                        <div class="size-208">
+                            <span class="stext-110 cl2">Coupon Discount:</span>
+                        </div>
+                        <div class="size-209">
+                            <span class="mtext-110 cl2 text-success" id="couponDiscount">
+                                ₹0.00
+                            </span>
                         </div>
                     </div>
 
@@ -152,7 +173,7 @@
                             <span class="mtext-101 cl2">Total:</span>
                         </div>
                         <div class="size-209 p-t-1">
-                            <span class="mtext-110 cl2">₹<%= cart.items.reduce((total, item)=> total +
+                            <span id="total" class="mtext-110 cl2">₹<%= cart.items.reduce((total, item)=> total +
                                     (item.productId.salePrice * item.quantity), 0).toFixed(2) %></span>
                         </div>
                     </div>
@@ -166,8 +187,6 @@
         </div>
     </div>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-
-
 
     <script>
 
@@ -279,9 +298,9 @@
         document.getElementById('placeOrderBtn').addEventListener('click', async function (event) {
             event.preventDefault();
 
-            const selectedAddress = document.querySelector('input[name="savedAddress"]:checked').value;
-            const paymentMethods = document.querySelector('input[name="paymentMethod"]:checked').value;
-
+            const selectedAddress = document.querySelector('input[name="savedAddress"]:checked');
+            const paymentMethods = document.querySelector('input[name="paymentMethod"]:checked');
+            const couponCode = document.getElementById('couponCodeInput').value;
             if (!selectedAddress || !paymentMethods) {
                 swal({
                     icon: 'error',
@@ -292,8 +311,9 @@
             }
 
             const orderData = {
-                addressId: selectedAddress,
-                paymentMethod: paymentMethods
+                addressId: selectedAddress.value,
+                paymentMethod: paymentMethods.value,
+                couponCode,
             };
 
             try {
@@ -308,7 +328,7 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    if (paymentMethods == 'razorpay') {
+                    if (paymentMethods.value == 'razorpay') {
                         const options = {
                             key: data.key, // Razorpay key ID from server
                             amount: data.amount, // Amount in paise
@@ -341,7 +361,7 @@
                         };
                         const rzp1 = new Razorpay(options);
                         rzp1.open();
-                    }else{
+                    } else {
                         window.location.href = '/orderPlaced';
                     }
                 } else {
@@ -356,6 +376,44 @@
                 alert('Something went wrong. Please try again.');
             }
         });
+
+        document.getElementById('applyCouponBtn').addEventListener('click', async () => {
+            const couponCode = document.getElementById('couponCodeInput').value;
+            const orderTotal = parseFloat(document.getElementById('subTotal').innerText.replace('₹', ''));
+            const userId = "<%= user._id %>";
+
+            if (!couponCode) {
+                document.getElementById('couponMessage').innerText = 'Please enter a coupon code.';
+                return;
+            }
+
+            try {
+                const response = await fetch('/applyCoupon', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ couponCode, userId, orderTotal }),
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    const discountedTotal = orderTotal - result.discount;
+                    document.getElementById('total').innerText = `₹${discountedTotal.toFixed(2)}`;
+                    document.getElementById('couponDiscount').innerText = `₹${result.discount.toFixed(2)}`
+                    document.getElementById('couponMessage').innerText = 'Coupon applied successfully!';
+                    document.getElementById('couponMessage').classList.remove('text-danger');
+                    document.getElementById('couponMessage').classList.add('text-success');
+                } else {
+                    document.getElementById('couponMessage').innerText = result.message;
+                    document.getElementById('couponMessage').classList.add('text-danger');
+                }
+            } catch (error) {
+                console.error('Error applying coupon:', error);
+                document.getElementById('couponMessage').innerText = 'An error occurred while applying the coupon.';
+            }
+        });
+    
     </script>
+
 
     <%- include("../../views/partials/user/footer") %>
