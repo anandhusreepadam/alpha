@@ -34,6 +34,9 @@ const orderSchema = new Schema({
                 required: true,
                 default: 1,
             },
+            price:{
+                type:Number,
+            }
         },
     ],
     totalAmount: {
@@ -67,6 +70,12 @@ const orderSchema = new Schema({
         type:String,
         required:false
     },
+    discount:{
+        type:Number,
+    },
+    couponCode:{
+        type:String,
+    }
 
 },{timestamps:true});
 

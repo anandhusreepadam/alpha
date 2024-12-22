@@ -1,9 +1,12 @@
 <%-include("../../views/partials/user/header")%>
-
-
+<!-- <style>
+	#shopList {
+    min-height: 900px; /* Set a minimum height */
+    margin-bottom: 50px; /* Ensure spacing from the footer */
+} -->
+</style>
 
 	<div class="shop-head">
-
 	</div>
 	<!-- Product -->
 	<div class="bg0 m-t-23 p-b-140">
@@ -110,8 +113,6 @@
 
 
 
-
-
 						<div class="filter-col2 p-r-15 p-b-27">
 							<div class="mtext-102 cl2 p-b-15">
 								Price
@@ -157,7 +158,7 @@
 						</div>
 
 
-						<div class="filter-col3 p-r-15 p-b-27">
+						<!-- <div class="filter-col3 p-r-15 p-b-27">
 							<div class="mtext-102 cl2 p-b-15">
 								Color
 							</div>
@@ -223,7 +224,7 @@
 									</a>
 								</li>
 							</ul>
-						</div>
+						</div> -->
 
 						<div class="filter-col4 p-b-27">
 							<div class="mtext-102 cl2 p-b-15">
@@ -245,21 +246,12 @@
 						</div>
 
 
-
-
-
 					</div>
 				</div>
 			</div>
-			<style>
-				#shopList{
-					height: 800vh;
-				}
-			</style>
-		
-			
 			
 			<div class="row isotope-grid" id="shopList">
+				
 			</div>
 			
 			<div id="pagination"></div>
@@ -280,38 +272,26 @@
 
 			document.addEventListener('DOMContentLoaded', () => {
 				
-
-				// Fetch all category links
 				const categoryLinks = document.querySelectorAll('.category-link');
-				// Add event listeners to each category link
 				categoryLinks.forEach(link => {
 					link.addEventListener('click', async (event) => {
-						event.preventDefault(); // Prevent default link behavior
-						// Get the selected category
+						event.preventDefault();
 						const category = link.getAttribute('data-category');
-						// Call the fetchProducts function with the selected category
 						await fetchProducts(1, 'createdAt', 'desc', category);
 					});
 				});
 
-				// Fetch all sorting links
 				const sortingLinks = document.querySelectorAll('.sorting');
-				// Add click event listeners to each link
 				sortingLinks.forEach(link => {
 					link.addEventListener('click', async (event) => {
-						event.preventDefault(); // Prevent default link behavior
-						// Extract sorting parameters from data attributes
+						event.preventDefault();
 						const sortBy = link.getAttribute('data-sort');
 						const order = link.getAttribute('data-order');
-						// Call the fetchProducts function with sorting options
 						await fetchProducts(1, sortBy, order);
 					});
 				});
 
-
-
-				// Function to fetch products dynamically with sorting
-				async function fetchProducts(page = 1, sortBy = 'createdAt', order = 'desc', category) {
+			async function fetchProducts(page = 1, sortBy = 'createdAt', order = 'desc', category) {
 					const search = document.getElementById('search')?.value || '';
 					const minPrice = document.getElementById('minPrice')?.value || '';
 					const maxPrice = document.getElementById('maxPrice')?.value || '';
@@ -331,11 +311,7 @@
 						const response = await fetch(`/shop/products?${params.toString()}`);
 						const data = await response.json();
 						console.log('data recieved', data)
-
-						// Update the product list (implement displayProducts function)
 						displayProducts(data.products);
-
-						// Update pagination (implement setupPagination function)
 						setupPagination(data.currentPage, data.totalPages);
 					} catch (error) {
 						console.error('Error fetching products:', error);
@@ -344,12 +320,11 @@
 				fetchProducts();
 			});
 
-			// Function to display fetched products (example placeholder)
 			function displayProducts(products) {
 				console.log('Products:', products);
 				const shopList = document.getElementById('shopList');
 
-				shopList.innerHTML = ''; // Clear current products
+				shopList.innerHTML = '';
 
 				products.forEach(product => {
 					const productHTML = `
@@ -402,7 +377,6 @@
 					pagination.appendChild(button);
 				}
 			}
-
 
 			async function addToCart(productId) {
 				const quantity = 1;

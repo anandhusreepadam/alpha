@@ -1,0 +1,126 @@
+<%- include("../../views/partials/admin/header") %>
+
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+</head>
+<section class="content-main">
+    <div class="content-header">
+        <h2 class="content-title card-title">Sales Report</h2>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form id="filterForm">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="dateRange" class="form-label">Custom Date Range</label>
+                        <input type="date" id="startDate" class="form-control mb-2" placeholder="Start Date" required>
+                        <input type="date" id="endDate" class="form-control" placeholder="End Date" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="filterType" class="form-label">Quick Filters</label>
+                        <select id="filterType" class="form-control">
+                            <option value="">Select Filter</option>
+                            <option value="daily">Last 1 Day</option>
+                            <option value="weekly">Last 1 Week</option>
+                            <option value="monthly">Last 1 Month</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 align-self-end">
+                        <button type="button" class="btn btn-primary" onclick="generateReport()">Generate Report</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Report Section -->
+    <div class="card">
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="info-box">
+                        <h5>Total Sales Count</h5>
+                        <p id="totalSalesCount">0</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="info-box">
+                        <h5>Total Order Amount</h5>
+                        <p id="totalOrderAmount">₹0</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="info-box">
+                        <h5>Total Discounts</h5>
+                        <p id="totalDiscounts">₹0</p>
+                    </div>
+                </div>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Order ID</th>
+                        <th>Order Date</th>
+                        <th>Total Amount</th>
+                        <th>Discount Applied</th>
+                        <th>Final Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="reportTable">
+                    <!-- Rows will be dynamically populated -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<%- include("../../views/partials/admin/footer") %>
+
+<script>
+    async function generateReport() {
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        const filterType = document.getElementById('filterType').value;
+
+        try {
+            const response = await fetch('/admin/salesReport', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ startDate, endDate, filterType }),
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                document.getElementById('totalSalesCount').textContent = result.totalSalesCount;
+                document.getElementById('totalOrderAmount').textContent = `₹${result.totalOrderAmount}`;
+                document.getElementById('totalDiscounts').textContent = `₹${result.totalDiscounts}`;
+
+                const reportTable = document.getElementById('reportTable');
+                reportTable.innerHTML = '';
+
+                result.orders.forEach((order, index) => {
+                    const row = `<tr>
+                        <td>${index + 1}</td>
+                        <td>${order.orderId}</td>
+                        <td>${new Date(order.date).toLocaleDateString()}</td>
+                        <td>₹${order.totalAmount}</td>
+                        <td>₹${order.discount}</td>
+                        <td>₹${order.finalAmount}</td>
+                    </tr>`;
+                    reportTable.innerHTML += row;
+                });
+            } else {
+                Swal.fire('Error', result.message, 'error');
+            }
+        } catch (error) {
+            console.error('Error generating report:', error);
+            Swal.fire('Error', 'Something went wrong while generating the report.', 'error');
+        }
+    }
+</script>

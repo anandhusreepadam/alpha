@@ -13,7 +13,6 @@ const loadCoupons = async(req,res)=>{
 }
 
 const createCoupon = async (req,res)=>{
-    console.log('hello')
     try {
         const {code,discountType,discountValue,minOrderValue,expiryDate,usageLimit} = req.body;
         console.log(req.body)
@@ -43,12 +42,6 @@ const deleteCoupon = async(req,res)=>{
         res.status(500).json({message:'Server error'})
     }
 }
-
-
-
-
-
-
 
 
 

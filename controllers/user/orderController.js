@@ -86,9 +86,11 @@ const placeOrder = async (req, res) => {
                 ? (totalAmount * coupon.discountValue) / 100
                 : Math.min(coupon.discountValue, totalAmount);
 
-            // Add coupon to user's used coupons
             user.usedCoupons.push(coupon._id);
             await user.save();
+
+            
+            
         }
 
         const finalAmount = totalAmount - discount;
@@ -108,6 +110,7 @@ const placeOrder = async (req, res) => {
                     receipt: `${user._id}_${Date.now()}`,
                     amount: finalAmount * 100,
                 })
+                console.log(discount)
                 const newOrder = new Order({
                     userId: user._id,
                     razorpayOrderId: razorpayOrder.id,
@@ -116,6 +119,9 @@ const placeOrder = async (req, res) => {
                     paymentMethod,
                     totalAmount,
                     finalAmount,
+                    couponCode,
+                    discount
+                    
                 });
                 console.log('Generated Order ID:', newOrder.orderId);
                 console.log('RazorPay ID:', razorpayOrder.id);
@@ -139,6 +145,8 @@ const placeOrder = async (req, res) => {
                 paymentMethod,
                 totalAmount,
                 finalAmount,
+                couponCode,
+                discount
             });
             console.log('Generated Order ID:', newOrder.orderId);
             await newOrder.save();
@@ -169,6 +177,8 @@ const placeOrder = async (req, res) => {
                 totalAmount,
                 finalAmount,
                 paymentStatus: 'Paid',
+                couponCode,
+                discount
             });
 
             console.log('Generated Order ID:', newOrder.orderId);

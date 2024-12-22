@@ -272,7 +272,7 @@ const loadShopping = async (req, res) => {
         const limit = 8;
         const userSession = req.session.user;
         const user = userSession ? await User.findById(userSession._id) : null;
-        const cart =user? await Cart.findOne({ userId: user._id }):null;
+        const cart =user? await Cart.findOne({ userId: user._id }):{ items: [] };
 
         const allProducts = await Product.find({
             isBlocked: false,
@@ -289,7 +289,7 @@ const loadShopping = async (req, res) => {
         }).countDocuments();
 
         const totalPages = Math.ceil(count/limit)
-        return res.render('shop', { user, allProducts, title: "Shop", cart: cart || { items: [] } ,currentPage: page,
+        return res.render('shop', { user, allProducts, title: "Shop", cart: cart,currentPage: page,
             totalPages: totalPages,search:search});
     } catch (error) {
         console.log('Shopping page not loading:', error);
@@ -300,21 +300,19 @@ const loadShopping = async (req, res) => {
 const loadProducts = async(req,res)=>{
     try {
         const {
-            search = '', // Search term
-            category,    // Category filter
-            minPrice,    // Minimum price filter
-            maxPrice,    // Maximum price filter
-            brand,       // Brand filter
-            sortBy = 'createdAt', // Default sort field
-            order = 'desc',       // Default sort order
-            page = 1,             // Current page for pagination
-            limit = 3,           // Items per page
+            search = '',
+            category,
+            minPrice,
+            maxPrice,
+            brand,
+            sortBy = 'createdAt',
+            order = 'desc',
+            page = 1,
+            limit = 3,
         } = req.query;
 
-        // Escape the search term to prevent regex injection
         const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         
-        // Build the query object dynamically
         const query = {
             isBlocked: false,
             isDeleted: false,
@@ -332,21 +330,15 @@ const loadProducts = async(req,res)=>{
             ...(brand ? { brand: brand } : {}),
         };
         
-        // Build the sorting options
         const sortOptions = { [sortBy]: order === 'asc' ? 1 : -1 };
-        
-        // Fetch the products with filtering, sorting, and pagination
         const allProducts = await Product.find(query)
-            .sort(sortOptions) // Apply sorting
-            .limit(Number(limit)) // Limit the results for pagination
-            .skip((Number(page) - 1) * Number(limit)) // Skip results for pagination
-            .populate('category') // Populate the category details
-            .exec();
+            .sort(sortOptions)
+            .limit(Number(limit))
+            .skip((Number(page) - 1) * Number(limit))
+            .populate('category')
 
-        // Count the total number of products matching the query
         const totalProducts = await Product.countDocuments(query);
 
-        // Send the response
         res.json({
             products: allProducts,
             currentPage: Number(page),
