@@ -56,6 +56,7 @@ const addToWallet = async (req, res) => {
 
     }
 }
+
 module.exports = {
     loadWallet,
     addToWallet

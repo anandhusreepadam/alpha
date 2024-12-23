@@ -84,6 +84,7 @@
 
             const result = await response.json();
             if (result.success) {
+                removeFromWishlist(productId)
                 swal('Success', "Added to cart!", "success")
                     .then(() => {
                         location.reload();

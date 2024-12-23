@@ -1,7 +1,5 @@
 const Coupon = require('../../models/couponSchema');
 const User = require('../../models/userSchema');
-const Cart = require('../../models/cartSchema');
-
 
 
 
@@ -14,12 +12,10 @@ const applyCoupon = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Invalid coupon code' });
         }
 
-        // Check if the coupon is expired
         if (new Date() > coupon.expiryDate) {
             return res.status(400).json({ success: false, message: 'Coupon has expired' });
         }
 
-        // Check minimum order value
         if (orderTotal < coupon.minOrderValue) {
             return res.status(400).json({
                 success: false,
@@ -27,13 +23,11 @@ const applyCoupon = async (req, res) => {
             });
         }
 
-        // Find the user and check if they have already used the coupon
         const user = await User.findById(userId);
         if (user.usedCoupons.includes(coupon._id)) {
             return res.status(400).json({ success: false, message: 'You have already used this coupon' });
         }
 
-        // Calculate discount
         const discount =
             coupon.discountType === 'percentage'
                 ? (orderTotal * coupon.discountValue) / 100

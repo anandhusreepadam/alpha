@@ -3,6 +3,7 @@
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
 </head>
+
 <section class="content-main">
     <div class="content-header">
         <h2 class="content-title card-title">Sales Report</h2>
@@ -74,6 +75,14 @@
                     <!-- Rows will be dynamically populated -->
                 </tbody>
             </table>
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <button class="btn btn-primary" onclick="downloadPDF()">Download PDF</button>
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-primary" onclick="downloadExcel()">Download Excel</button>
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -81,10 +90,19 @@
 <%- include("../../views/partials/admin/footer") %>
 
 <script>
+
     async function generateReport() {
         const startDate = document.getElementById('startDate').value;
         const endDate = document.getElementById('endDate').value;
         const filterType = document.getElementById('filterType').value;
+
+        if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+            Swal.fire('Error', 'Start date cannot be later than end date.', 'error');
+            return;
+        }
+        const generateButton = document.querySelector('button[type="button"]');
+        generateButton.disabled = true;
+        generateButton.textContent = 'Generating Report...';
 
         try {
             const response = await fetch('/admin/salesReport', {
@@ -104,23 +122,141 @@
                 const reportTable = document.getElementById('reportTable');
                 reportTable.innerHTML = '';
 
-                result.orders.forEach((order, index) => {
-                    const row = `<tr>
-                        <td>${index + 1}</td>
-                        <td>${order.orderId}</td>
-                        <td>${new Date(order.date).toLocaleDateString()}</td>
-                        <td>₹${order.totalAmount}</td>
-                        <td>₹${order.discount}</td>
-                        <td>₹${order.finalAmount}</td>
-                    </tr>`;
-                    reportTable.innerHTML += row;
-                });
+                if (result.orders.length === 0) {
+                    reportTable.innerHTML = '<tr><td colspan="6" class="text-center">No orders found for the selected filters.</td></tr>';
+                } else {
+                    result.orders.forEach((order, index) => {
+                        const row = `<tr>
+                            <td>${index + 1}</td>
+                            <td>${order.orderId}</td>
+                            <td>${new Date(order.date).toLocaleDateString()}</td>
+                            <td>₹${order.totalAmount}</td>
+                            <td>₹${order.discount}</td>
+                            <td>₹${order.finalAmount}</td>
+                        </tr>`;
+                        reportTable.innerHTML += row;
+                    });
+                }
             } else {
                 Swal.fire('Error', result.message, 'error');
             }
         } catch (error) {
             console.error('Error generating report:', error);
             Swal.fire('Error', 'Something went wrong while generating the report.', 'error');
+        } finally {
+            generateButton.disabled = false;
+            generateButton.textContent = 'Generate Report';
         }
     }
+
+    async function downloadPDF() {
+        console.log('button clicked')
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        const filterType = document.getElementById('filterType').value;
+
+
+        const orders = [];
+        const rows = document.querySelectorAll('#reportTable tr');
+        rows.forEach(row => {
+            const orderData = row.querySelectorAll('td');
+            if (orderData.length > 0) {
+                orders.push({
+                    orderId: orderData[1].textContent,
+                    date: orderData[2].textContent,
+                    totalAmount: parseFloat(orderData[3].textContent.replace('₹', '')),
+                    discount: parseFloat(orderData[4].textContent.replace('₹', '')),
+                    finalAmount: parseFloat(orderData[5].textContent.replace('₹', ''))
+                });
+            }
+        });
+
+        const totalSalesCount = orders.length;
+        const totalOrderAmount = orders.reduce((sum, order) => sum + order.totalAmount, 0);
+        const totalDiscounts = orders.reduce((sum, order) => sum + order.discount, 0);
+
+        const requestData = {
+            startDate,
+            endDate,
+            filterType,
+            orders,
+            totalSalesCount,
+            totalOrderAmount,
+            totalDiscounts
+        };
+
+        try {
+            const response = await fetch('/admin/generate-pdf', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestData)
+            });
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'sales_report.pdf';
+                link.click();
+            } else {
+                Swal.fire('Error', 'Failed to generate PDF.', 'error');
+            }
+        } catch (error) {
+            console.error('Error downloading PDF:', error);
+            Swal.fire('Error', 'Something went wrong while downloading the report.', 'error');
+        }
+    }
+
+    async function downloadExcel() {
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        const filterType = document.getElementById('filterType').value;
+        const orders = [];
+        const rows = document.querySelectorAll('#reportTable tr');
+        rows.forEach(row => {
+            const orderData = row.querySelectorAll('td');
+            if (orderData.length > 0) {
+                orders.push({
+                    orderId: orderData[1].textContent,
+                    date: orderData[2].textContent,
+                    totalAmount: parseFloat(orderData[3].textContent.replace('₹', '')),
+                    discount: parseFloat(orderData[4].textContent.replace('₹', '')),
+                    finalAmount: parseFloat(orderData[5].textContent.replace('₹', ''))
+                });
+            }
+        });
+        const totalSalesCount = orders.length;
+        const totalOrderAmount = orders.reduce((sum, order) => sum + order.totalAmount, 0);
+        const totalDiscounts = orders.reduce((sum, order) => sum + order.discount, 0);
+        const requestData = {
+            startDate,
+            endDate,
+            filterType,
+            orders,
+            totalSalesCount,
+            totalOrderAmount,
+            totalDiscounts
+        };
+        try {
+            const response = await fetch('/admin/generate-excel', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestData)
+            });
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'sales_report.xlsx';
+                link.click();
+            } else {
+                Swal.fire('Error', 'Failed to generate Excel file.', 'error');
+            }
+        } catch (error) {
+            console.error('Error downloading Excel:', error);
+            Swal.fire('Error', 'Something went wrong while downloading the report.', 'error');
+        }
+    }
+
 </script>

@@ -100,7 +100,11 @@ router.post('/addToWishlist',wishlistController.addToWishlist)
 router.post('/removeFromWishlist',wishlistController.removeFromWishlist);
 
 //Coupon Management
-router.post('/applyCoupon',profileAuth,userAuth,couponController.applyCoupon)
+router.post('/applyCoupon',couponController.applyCoupon)
+
+
+
+
 
 
 //For testing only

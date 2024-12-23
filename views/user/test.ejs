@@ -1,202 +1,26 @@
 <%-include("../../views/partials/user/header")%>
-<div class="spacer">
-</div>
-
-<!-- Bread Crumb -->
-<div class="container">
-    <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
-        <a href="/" class="stext-109 cl8 hov-cl1 trans-04">
-            Home
-            <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
-        </a>
-        <a href="/cart" class="stext-109 cl8 hov-cl1 trans-04">
-            Cart
-            <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
-        </a>
-
-        <span class="stext-109 cl4">
-            Checkout
-        </span>
-    </div>
-</div>
-
-<!-- Checkout -->
-<form action="/checkout" method="POST" class="bg0 p-t-75 p-b-85">
-    <div class="container">
-        <div class="row">
-            <!-- Address Selection -->
-            <div class="col-lg-7 col-xl-8 m-lr-auto m-b-50">
-                <div class="bor10 p-lr-40 p-t-30 p-b-40 m-lr-0-xl">
-                    <h4 class="mtext-109 cl2 p-b-30">
-                        Select Delivery Address
-                    </h4>
-
-                    <% if (addresses.length > 0) { %>
-                        <div class="address-list">
-                            <% addresses.forEach((address, index) => { %>
-                                <div class="address-item">
-                                    <input type="radio" name="selectedAddress" id="address-<%= index %>" value="<%= address._id %>" <%= index === 0 ? 'checked' : '' %> >
-                                    <label for="address-<%= index %>" class="stext-109 cl4">
-                                        <%= address.name %>, <%= address.street %>, <%= address.city %>, <%= address.state %> - <%= address.zip %>
-                                    </label>
-                                </div>
-                            <% }) %>
-                        </div>
-                    <% } else { %>
-                        <p class="stext-109 cl4">No saved addresses found. Please add an address in your profile.</p>
-                    <% } %>
-
-                    <!-- Add Address Section -->
-                    <div id="add-address-section" style="display: none;">
-                        <div class="p-t-20">
-                            <label for="newAddressName" class="stext-109 cl4">Name:</label>
-                            <input type="text" id="newAddressName" name="newAddressName" class="size-116 p-lr-15 m-b-10 address-input" required>
-
-                            <label for="newAddressStreet" class="stext-109 cl4">Street:</label>
-                            <input type="text" id="newAddressStreet" name="newAddressStreet" class="size-116 p-lr-15 m-b-10 address-input" required>
-
-                            <label for="newAddressCity" class="stext-109 cl4">City:</label>
-                            <input type="text" id="newAddressCity" name="newAddressCity" class="size-116 p-lr-15 m-b-10 address-input" required>
-
-                            <label for="newAddressState" class="stext-109 cl4">State:</label>
-                            <input type="text" id="newAddressState" name="newAddressState" class="size-116 p-lr-15 m-b-10 address-input" required>
-
-                            <label for="newAddressZip" class="stext-109 cl4">Zip Code:</label>
-                            <input type="text" id="newAddressZip" name="newAddressZip" class="size-116 p-lr-15 m-b-10 address-input" required>
-
-                            <button type="button" class="stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer" onclick="saveNewAddress()">
-                                Save Address
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="p-t-20">
-                        <button type="button" class="stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer" onclick="toggleAddressSection('add')">
-                            Add New Address
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Order Summary -->
-            <div class="col-sm-10 col-lg-5 col-xl-4 m-lr-auto m-b-50">
-                <div class="bor10 p-lr-40 p-t-30 p-b-40 m-lr-0-xl">
-                    <h4 class="mtext-109 cl2 p-b-30">
-                        Order Summary
-                    </h4>
-
-                    <div class="flex-w flex-t bor12 p-b-13">
-                        <div class="size-208">
-                            <span class="stext-110 cl2">
-                                Subtotal:
-                            </span>
-                        </div>
-
-                        <div class="size-209">
-                            <span class="mtext-110 cl2">
-                                ₹<%= orderSummary.subtotal %>
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="flex-w flex-t bor12 p-t-15 p-b-30">
-                        <div class="size-208 w-full-ssm">
-                            <span class="stext-110 cl2">
-                                Shipping:
-                            </span>
-                        </div>
-                        <div class="size-209">
-                            <span class="mtext-110 cl2">
-                                ₹<%= orderSummary.shipping %>
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="flex-w flex-t p-t-27 p-b-33">
-                        <div class="size-208">
-                            <span class="mtext-101 cl2">
-                                Total:
-                            </span>
-                        </div>
-
-                        <div class="size-209 p-t-1">
-                            <span class="mtext-110 cl2">
-                                ₹<%= orderSummary.total %>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Payment Options -->
-        <div class="bor10 p-lr-40 p-t-30 p-b-40 m-lr-auto m-b-50">
-            <h4 class="mtext-109 cl2 p-b-30">
-                Payment Options
-            </h4>
-
-            <!-- Payment Method Options -->
-            <div class="payment-option">
-                <input type="radio" id="paymentCard" name="paymentMethod" value="card" checked>
-                <label for="paymentCard" class="stext-109 cl4">Credit/Debit Card</label>
-            </div>
-
-            <div class="payment-option">
-                <input type="radio" id="paymentUPI" name="paymentMethod" value="upi">
-                <label for="paymentUPI" class="stext-109 cl4">UPI</label>
-            </div>
-
-            <div class="payment-option">
-                <input type="radio" id="paymentCOD" name="paymentMethod" value="cod">
-                <label for="paymentCOD" class="stext-109 cl4">Cash on Delivery</label>
-            </div>
-
-            <div class="p-t-20">
-                <button type="submit" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
-                    Confirm Order
-                </button>
-            </div>
-        </div>
-
-    </div>
-</form>
-
-<script>
-    function toggleAddressSection(section) {
-        if (section === 'add') {
-            document.getElementById('add-address-section').style.display = 'block';
-        } else {
-            document.getElementById('add-address-section').style.display = 'none';
-        }
-    }
-
-    function saveNewAddress() {
-        // Logic for saving new address can go here (e.g., sending form data via AJAX)
-        alert("New address saved!");
-    }
-</script>
-
-<style>
-    /* Add border to address input fields */
-    .address-input {
-        border: 2px solid #ccc; /* Light gray border */
-        padding: 10px;
-        width: 100%;
-        box-sizing: border-box;
-        margin-bottom: 15px;
-        border-radius: 5px; /* Rounded corners */
-    }
-
-    .address-input:focus {
-        border-color: #6c757d; /* Darker border on focus */
-        outline: none;
-    }
-
-    /* Payment option style */
-    .payment-option {
-        margin-bottom: 15px;
-    }
-</style>
 
 
-    <%-include("../../views/partials/user/footer")%>
+<!-- ///////////////////////////////////////////////////////// -->
+         <h5>Hii This is a testing page for alpha</h5>
+<!-- ///////////////////////////////////////////////////////// -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<%-include("../../views/partials/user/footer")%>

@@ -19,7 +19,7 @@
         <div class="row">
             <!-- Left Section: Address Form & Saved Address Selection -->
             <div class="col-lg-7">
-                <!-- Shipping Address Header -->
+
                 <h4 class="mtext-109 cl2 p-b-30">Shipping Address</h4>
 
                 <!-- Address Form -->
@@ -186,6 +186,7 @@
             </div>
         </div>
     </div>
+    <%- include("../../views/partials/user/footer") %>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     <script>
@@ -330,14 +331,13 @@
                 if (data.success) {
                     if (paymentMethods.value == 'razorpay') {
                         const options = {
-                            key: data.key, // Razorpay key ID from server
-                            amount: data.amount, // Amount in paise
+                            key: data.key,
+                            amount: data.amount,
                             currency: 'INR',
                             name: 'Chanel One',
                             description: 'Payment for your order on Chanel One',
-                            order_id: data.razorpayOrderId, // Order ID from server
+                            order_id: data.razorpayOrderId,
                             handler: async function (response) {
-                                // Verify payment on the server
                                 const verifyResponse = await fetch('/verify-payment', {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
@@ -393,9 +393,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ couponCode, userId, orderTotal }),
                 });
-
                 const result = await response.json();
-
                 if (result.success) {
                     const discountedTotal = orderTotal - result.discount;
                     document.getElementById('total').innerText = `₹${discountedTotal.toFixed(2)}`;
@@ -416,4 +414,3 @@
     </script>
 
 
-    <%- include("../../views/partials/user/footer") %>

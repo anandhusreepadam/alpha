@@ -1,6 +1,7 @@
 const Product = require('../../models/productSchema');
 const User = require('../../models/userSchema');
 const Cart = require('../../models/cartSchema');
+const Category = require('../../models/categorySchema');
 const nodemailer = require('nodemailer');
 const { response } = require('express');
 const bcrypt = require('bcrypt');
@@ -273,7 +274,7 @@ const loadShopping = async (req, res) => {
         const userSession = req.session.user;
         const user = userSession ? await User.findById(userSession._id) : null;
         const cart =user? await Cart.findOne({ userId: user._id }):{ items: [] };
-
+        const category = await Category.find({ isDeleted: false, isListed: true })
         const allProducts = await Product.find({
             isBlocked: false,
             isDeleted: false,
@@ -289,7 +290,7 @@ const loadShopping = async (req, res) => {
         }).countDocuments();
 
         const totalPages = Math.ceil(count/limit)
-        return res.render('shop', { user, allProducts, title: "Shop", cart: cart,currentPage: page,
+        return res.render('shop', { user, allProducts,category, title: "Shop", cart: cart,currentPage: page,
             totalPages: totalPages,search:search});
     } catch (error) {
         console.log('Shopping page not loading:', error);
@@ -308,9 +309,8 @@ const loadProducts = async(req,res)=>{
             sortBy = 'createdAt',
             order = 'desc',
             page = 1,
-            limit = 3,
+            limit = 8,
         } = req.query;
-
         const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         
         const query = {

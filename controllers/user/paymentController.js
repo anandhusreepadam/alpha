@@ -4,24 +4,19 @@ const crypto = require('crypto');
 
 const createOrder =  async(req, res)=> {
         try {
-            // Initialize Razorpay instance
             const razorpay = new Razorpay({
                 key_id: process.env.RAZORPAY_KEY_ID,
                 key_secret: process.env.RAZORPAY_KEY_SECRET,
             });
-
-            // Create Razorpay order
-            const amount = req.body.amount; // Amount in rupees from the client
+            const amount = req.body.amount;
             const currency = 'INR';
 
             const options = {
-                amount: amount * 100, // Convert to paise
+                amount: amount * 100,
                 currency,
-                receipt: `receipt_${Date.now()}`, // Unique receipt ID
+                receipt: `receipt_${Date.now()}`,
             };
-
             const order = await razorpay.orders.create(options);
-
             res.status(200).json({
                 success: true,
                 razorpayOrderId: order.id,
@@ -37,7 +32,6 @@ const createOrder =  async(req, res)=> {
   const verifyPayment = async (req, res) =>{
         try {
             const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
-
             const body = razorpay_order_id + "|" + razorpay_payment_id;
             const expectedSignature = crypto
                 .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)

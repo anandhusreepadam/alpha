@@ -1,10 +1,10 @@
 <%-include("../../views/partials/user/header")%>
-<!-- <style>
-	#shopList {
-    min-height: 900px; /* Set a minimum height */
-    margin-bottom: 50px; /* Ensure spacing from the footer */
-} -->
-</style>
+	<style>
+		#shopList {
+			min-height: 500px;
+			margin-bottom: 50px;
+		}
+	</style>
 
 	<div class="shop-head">
 	</div>
@@ -13,29 +13,14 @@
 		<div class="container">
 			<div class="flex-w flex-sb-m p-b-52">
 				<div class="flex-w flex-l-m filter-tope-group m-tb-10">
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
+					<button data-category="" class="category-link stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
 						All Products
 					</button>
-
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".women">
-						Women
+					<% category.map((category)=>{%>
+					<button data-category="<%=category._id%>" class="category-link stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" >
+						<%=category.name%>
 					</button>
-
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".men">
-						Men
-					</button>
-
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".bag">
-						Bag
-					</button>
-
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".shoes">
-						Shoes
-					</button>
-
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".watches">
-						Watches
-					</button>
+					<%})%>
 				</div>
 
 				<div class="flex-w flex-c-m m-tb-10">
@@ -84,25 +69,25 @@
 									</a>
 								</li>
 								<li class="p-b-6">
-									<a href="#" value="salePrice" data-order="desc"
+									<a href="#" value="salePrice" data-sort="salePrice" data-order="desc"
 										class="filter-link stext-106 trans-04 sorting">
 										Price: High to Low
 									</a>
 								</li>
 								<li class="p-b-6">
-									<a href="#" value="salePrice" data-order="asc"
+									<a href="#" value="salePrice" data-sort="salePrice" data-order="asc"
 										class="filter-link stext-106 trans-04 filter-link sorting">
 										Price: Low to High
 									</a>
 								</li>
 								<li class="p-b-6">
-									<a href="#" value="productName" data-order="asc"
+									<a href="#" value="productName" data-sort="productName" data-order="asc"
 										class="filter-link stext-106 trans-04 sorting">
 										Aa-Zz
 									</a>
 								</li>
 								<li class="p-b-6">
-									<a href="#" value="productName" data-order="desc"
+									<a href="#" value="productName" data-sort="productName" data-order="desc"
 										class="filter-link stext-106 trans-04 sorting">
 										Zz-Aa
 									</a>
@@ -112,7 +97,7 @@
 						</div>
 
 
-
+						<!-- 
 						<div class="filter-col2 p-r-15 p-b-27">
 							<div class="mtext-102 cl2 p-b-15">
 								Price
@@ -155,7 +140,7 @@
 									</a>
 								</li>
 							</ul>
-						</div>
+						</div> -->
 
 
 						<!-- <div class="filter-col3 p-r-15 p-b-27">
@@ -230,38 +215,68 @@
 							<div class="mtext-102 cl2 p-b-15">
 								Category
 							</div>
-
 							<div class="flex-w p-t-4 m-r--5">
 								<a href="#" data-category=""
 									class="category-link flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
 									All Categories
 								</a>
-								<% allProducts.map((product)=>{%>
-									<a href="#" data-category="<%=product.category._id%>"
+								<% category.map((category)=>{%>
+									<a href="#" data-category="<%=category._id%>"
 										class="category-link flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
-										<%=product.category.name%>
+										<%=category.name%>
 									</a>
 								<%})%>
 							</div>
 						</div>
-
-
 					</div>
 				</div>
 			</div>
-			
-			<div class="row isotope-grid" id="shopList">
-				
-			</div>
-			
-			<div id="pagination"></div>
 
-			<!-- Load more -->
-			<div class="flex-c-m flex-w w-full p-t-45">
-				<a href="#" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04">
-					Load More
-				</a>
+			<div class="row isotope-grid" id="shopList">
+
 			</div>
+
+			<div id="pagination" class="pagination" style="text-align: center;"></div>
+
+			<style>
+				.pagination {
+					display: flex;
+					justify-content: center;
+					gap: 8px;
+					margin-top: 20px;
+				}
+
+				.pagination button {
+					padding: 10px 15px;
+					border: 1px solid #ccc;
+					background-color: #f9f9f9;
+					color: #333;
+					border-radius: 5px;
+					cursor: pointer;
+					font-size: 14px;
+					transition: all 0.3s ease;
+				}
+
+				.pagination button:hover {
+					background-color: #717fe0;
+					color: #fff;
+					border-color: #717fe0;
+				}
+
+				.pagination button:disabled {
+					background-color: #ddd;
+					color: #999;
+					cursor: not-allowed;
+					border-color: #ddd;
+				}
+
+				.pagination button.active {
+					background-color: #717fe0;
+					color: #fff;
+					border-color: #717fe0;
+				}
+			</style>
+
 		</div>
 	</div>
 
@@ -270,115 +285,12 @@
 
 		<script>
 
-			document.addEventListener('DOMContentLoaded', () => {
-				
-				const categoryLinks = document.querySelectorAll('.category-link');
-				categoryLinks.forEach(link => {
-					link.addEventListener('click', async (event) => {
-						event.preventDefault();
-						const category = link.getAttribute('data-category');
-						await fetchProducts(1, 'createdAt', 'desc', category);
-					});
-				});
-
-				const sortingLinks = document.querySelectorAll('.sorting');
-				sortingLinks.forEach(link => {
-					link.addEventListener('click', async (event) => {
-						event.preventDefault();
-						const sortBy = link.getAttribute('data-sort');
-						const order = link.getAttribute('data-order');
-						await fetchProducts(1, sortBy, order);
-					});
-				});
-
-			async function fetchProducts(page = 1, sortBy = 'createdAt', order = 'desc', category) {
-					const search = document.getElementById('search')?.value || '';
-					const minPrice = document.getElementById('minPrice')?.value || '';
-					const maxPrice = document.getElementById('maxPrice')?.value || '';
-
-					const params = new URLSearchParams({
-						search,
-						category,
-						minPrice,
-						maxPrice,
-						sortBy,
-						order,
-						page,
-						limit: 10,
-					});
-
-					try {
-						const response = await fetch(`/shop/products?${params.toString()}`);
-						const data = await response.json();
-						console.log('data recieved', data)
-						displayProducts(data.products);
-						setupPagination(data.currentPage, data.totalPages);
-					} catch (error) {
-						console.error('Error fetching products:', error);
-					}
-				}
-				fetchProducts();
-			});
-
-			function displayProducts(products) {
-				console.log('Products:', products);
-				const shopList = document.getElementById('shopList');
-
-				shopList.innerHTML = '';
-
-				products.forEach(product => {
-					const productHTML = `
-                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
-                    <div class="block2">
-                        <div class="block2-pic hov-img0">
-                            <img src="uploads/re-image/${product.productImage[0]}" alt="IMG-PRODUCT">
-                            <a href="#" onclick="addToCart('${product._id}')"
-                                class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-                                ADD TO CART
-                            </a>
-                        </div>
-                        <div class="block2-txt flex-w flex-t p-t-14">
-                            <div class="block2-txt-child1 flex-col-l ">
-                                <a href="/product/${product._id}"
-                                    class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                    ${product.productName}
-                                </a>
-                                <span class="stext-105 cl3">
-                                    ₹${product.salePrice}
-                                </span>
-                            </div>
-                            <div class="block2-txt-child2 flex-r p-t-3">
-                                <a onclick="addToWishlist('${product._id}')"
-                                    class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                    <img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png"
-                                        alt="ICON">
-                                    <img class="icon-heart2 dis-block trans-04 ab-t-l"
-                                        src="images/icons/icon-heart-02.png" alt="ICON">
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-					shopList.innerHTML += productHTML;
-				});
-			}
-
-			function setupPagination(currentPage, totalPages) {
-				const pagination = document.getElementById('pagination');
-				pagination.innerHTML = '';
-
-				for (let i = 1; i <= totalPages; i++) {
-					const button = document.createElement('button');
-					button.textContent = i;
-					button.onclick = () => fetchProducts(i);
-					if (i === Number(currentPage)) {
-						button.disabled = true;
-					}
-					pagination.appendChild(button);
-				}
-			}
+			let sortBy;
+			let order;
+			let category;
 
 			async function addToCart(productId) {
+				console.log('hiii')
 				const quantity = 1;
 				try {
 					const response = await fetch('/addToCart', {
@@ -429,5 +341,109 @@
 				}
 
 			}
+
+			document.addEventListener('DOMContentLoaded', () => {
+				const categoryLinks = document.querySelectorAll('.category-link');
+				categoryLinks.forEach(link => {
+					link.addEventListener('click', async (event) => {
+						event.preventDefault();
+						category = link.getAttribute('data-category');
+						await fetchProducts(1, 'createdAt', 'desc', category);
+					});
+				});
+
+				const sortingLinks = document.querySelectorAll('.sorting');
+				sortingLinks.forEach(link => {
+					link.addEventListener('click', async (event) => {
+						event.preventDefault();
+						sortBy = link.getAttribute('data-sort');
+						order = link.getAttribute('data-order');
+						await fetchProducts(1, sortBy, order,category); 
+					});
+				});
+
+				async function fetchProducts(page = 1, sortBy = 'createdAt', order = 'desc', category) {
+					const search = document.getElementById('search')?.value || '';
+					const minPrice = document.getElementById('minPrice')?.value || '';
+					const maxPrice = document.getElementById('maxPrice')?.value || '';
+					const params = new URLSearchParams({
+						search,
+						category,
+						minPrice,
+						maxPrice,
+						sortBy,
+						order,
+						page,
+						limit: 3,
+					});
+					try {
+						const response = await fetch(`/shop/products?${params.toString()}`);
+						const data = await response.json();
+						displayProducts(data.products);
+						setupPagination(data.currentPage, data.totalPages);
+					} catch (error) {
+						console.error('Error fetching products:', error);
+					}
+				}
+				
+				fetchProducts();
+
+				function displayProducts(products) {
+					console.log('Products:', products);
+					const shopList = document.getElementById('shopList');
+					shopList.innerHTML = '';
+					products.forEach(product => {
+						const productHTML = `
+                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
+                    <div class="block2">
+                        <div class="block2-pic hov-img0">
+                            <img src="uploads/re-image/${product.productImage[0]}" alt="IMG-PRODUCT">
+                            <a href="#" onclick="addToCart('${product._id}')"
+                                class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
+                                ADD TO CART
+                            </a>
+                        </div>
+                        <div class="block2-txt flex-w flex-t p-t-14">
+                            <div class="block2-txt-child1 flex-col-l ">
+                                <a href="/product/${product._id}"
+                                    class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                                    ${product.productName}
+                                </a>
+                                <span class="stext-105 cl3">
+                                    ₹${product.salePrice}
+                                </span>
+                            </div>
+                            <div class="block2-txt-child2 flex-r p-t-3">
+                                <a onclick="addToWishlist('${product._id}')"
+                                    class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
+                                    <img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png"
+                                        alt="ICON">
+                                    <img class="icon-heart2 dis-block trans-04 ab-t-l"
+                                        src="images/icons/icon-heart-02.png" alt="ICON">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+						shopList.innerHTML += productHTML;
+					});
+				}
+
+				function setupPagination(currentPage, totalPages) {
+					const pagination = document.getElementById('pagination');
+					pagination.innerHTML = '';
+
+					for (let i = 1; i <= totalPages; i++) {
+						const button = document.createElement('button');
+						button.textContent = i;
+						button.onclick = () => fetchProducts(i, sortBy, order, category);
+						if (i === Number(currentPage)) {
+							button.disabled = true;
+						}
+						pagination.appendChild(button);
+					}
+				}
+			
+			});
 
 		</script>

@@ -80,5 +80,9 @@ router.delete('/coupons/:id',adminAuth,couponController.deleteCoupon)
 //Report
 router.get('/report',adminAuth,adminController.loadReport);
 router.post('/salesReport',adminController.salesReport);
+router.post('/generate-pdf', adminController.generatePdf);
+router.post('/generate-excel', adminController.generateExcel);
+
+
 
 module.exports=router

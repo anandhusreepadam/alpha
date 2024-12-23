@@ -1,7 +1,7 @@
 const User = require('../../models/userSchema');
 const Order = require('../../models/orderSchema');
-
-const mongoose = require('mongoose');
+const PDFDocument = require('pdfkit');
+const ExcelJS = require('exceljs');
 const bcrypt = require('bcrypt');
 
 
@@ -72,6 +72,9 @@ const logout = async (req, res) => {
     }
 }
 
+
+//Sales Report
+
 const loadReport = async (req, res) => {
     try {
         res.render('report')
@@ -80,13 +83,11 @@ const loadReport = async (req, res) => {
         res.status(500).json(error);
     }
 }
+
 const salesReport = async (req, res) => {
-
     const { startDate, endDate, filterType } = req.body;
-
     try {
         let filter = {};
-
         if (startDate && endDate) {
             filter.createdAt = { $gte: new Date(startDate), $lte: new Date(endDate) };
         } else if (filterType) {
@@ -99,13 +100,10 @@ const salesReport = async (req, res) => {
                 filter.createdAt = { $gte: new Date(now.setMonth(now.getMonth() - 1)) };
             }
         }
-
         const orders = await Order.find(filter);
-
         const totalSalesCount = orders.length;
         const totalOrderAmount = orders.reduce((sum, order) => sum + order.totalAmount, 0);
         const totalDiscounts = orders.reduce((sum, order) => sum + (order.discount || 0), 0);
-
         const reportOrders = orders.map(order => ({
             orderId: order.orderId,
             date: order.createdAt,
@@ -113,7 +111,6 @@ const salesReport = async (req, res) => {
             discount: order.discount || 0,
             finalAmount: order.totalAmount - (order.discount || 0),
         }));
-
         res.json({
             success: true,
             totalSalesCount,
@@ -127,6 +124,81 @@ const salesReport = async (req, res) => {
     }
 }
 
+const generatePdf = async (req, res) => {
+    const { startDate, endDate, filterType, orders, totalSalesCount, totalOrderAmount, totalDiscounts } = req.body;
+    const doc = new PDFDocument();
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="sales_report.pdf"');
+
+    doc.pipe(res);
+    doc.fontSize(18).text('Sales Report', { align: 'center' });
+    doc.fontSize(12).text(`Date Range: ${startDate} to ${endDate}`, { align: 'center' });
+    doc.moveDown(1);
+    doc.fontSize(12).text(`Total Sales Count: ${totalSalesCount}`);
+    doc.text(`Total Order Amount: ₹${totalOrderAmount}`);
+    doc.text(`Total Discounts: ₹${totalDiscounts}`);
+    doc.moveDown(1);
+    doc.text('Order Details:', { fontSize: 14, underline: true });
+    doc.moveDown(0.5);
+
+    const tableHeaders = ['No.', 'Order ID', 'Order Date', 'Total Amount', 'Discount Applied', 'Final Amount'];
+    tableHeaders.forEach((header, index) => {
+        doc.text(header, { continued: index !== tableHeaders.length - 1 });
+        if (index < tableHeaders.length - 1) doc.text(' | ', { continued: true });
+    });
+    doc.moveDown(0.5);
+    orders.forEach((order, index) => {
+        doc.text(`${index + 1}. ${order.orderId}`, { continued: true });
+        doc.text(` | ${new Date(order.date).toLocaleDateString()}`, { continued: true });
+        doc.text(` | ₹${order.totalAmount}`, { continued: true });
+        doc.text(` | ₹${order.discount}`, { continued: true });
+        doc.text(` | ₹${order.finalAmount}`);
+    });
+
+    doc.end();
+}
+
+const generateExcel = async (req, res) => {
+    const { startDate, endDate, filterType, orders, totalSalesCount, totalOrderAmount, totalDiscounts } = req.body;
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Sales Report');
+
+    worksheet.mergeCells('A1:E1');
+    worksheet.getCell('A1').value = 'Sales Report';
+    worksheet.getCell('A1').font = { size: 18, bold: true };
+    worksheet.getCell('A1').alignment = { horizontal: 'center' };
+
+    worksheet.mergeCells('A2:E2');
+    worksheet.getCell('A2').value = `Date Range: ${startDate} to ${endDate}`;
+    worksheet.getCell('A2').alignment = { horizontal: 'center' };
+
+    worksheet.addRow([]);
+    worksheet.addRow([`Total Sales Count: ${totalSalesCount}`]);
+    worksheet.addRow([`Total Order Amount: ₹${totalOrderAmount}`]);
+    worksheet.addRow([`Total Discounts: ₹${totalDiscounts}`]);
+    worksheet.addRow([]);
+    worksheet.addRow(['No.', 'Order ID', 'Order Date', 'Total Amount', 'Discount Applied', 'Final Amount']);
+    orders.forEach((order, index) => {
+        worksheet.addRow([
+            index + 1,
+            order.orderId,
+            new Date(order.date).toLocaleDateString(),
+            order.totalAmount,
+            order.discount,
+            order.finalAmount
+        ]);
+    });
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename="sales_report.xlsx"');
+
+    await workbook.xlsx.write(res);
+    res.end();
+}
+
+
+
 module.exports = {
     loadLogin,
     login,
@@ -134,5 +206,7 @@ module.exports = {
     pageError,
     logout,
     loadReport,
-    salesReport
+    salesReport,
+    generatePdf,
+    generateExcel,
 }
