@@ -138,12 +138,32 @@
             <div class="col-lg-5">
                 <div class="bor10 p-lr-40 p-t-30 p-b-40 mt-4">
                     <h4 class="mtext-109 cl2 p-b-30 ">Apply Coupon</h4>
-                    <div class="d-flex mb-3">
+                    <div class="position-relative d-flex mb-3" style="width: 100%;">
+                        <span id="clearCouponField" class="clear-icon position-absolute">&times;</span>
                         <input id="couponCodeInput" type="text" class="form-control" placeholder="Enter coupon code">
-                        <button id="applyCouponBtn" class="ml-2 flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer mt-4">Apply</button>
+                        <button id="applyCouponBtn" class="ml-2 flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">Apply</button>
                     </div>
                     <div id="couponMessage" class="text-danger"></div>
                 </div>
+                
+                <style>
+                .clear-icon {
+                    top: 50%;
+                    right: 52%;
+                    transform: translateY(-50%);
+                    font-size: 18px;
+                    color: #aaa;
+                    cursor: pointer;
+                    display: none;
+                }
+                .clear-icon:hover {
+                    color: #000;
+                }
+                .position-relative input {
+                    padding-right: 30px;
+                }
+                </style>
+                
 
                 <div class="bor10 p-lr-40 p-t-30 p-b-40">
                     <h4 class="mtext-109 cl2 p-b-30">Cart Totals</h4>
@@ -411,6 +431,27 @@
             }
         });
     
+        document.addEventListener("DOMContentLoaded", function () {
+    const couponInput = document.getElementById("couponCodeInput");
+    const clearIcon = document.getElementById("clearCouponField");
+
+    // Show or hide the clear icon
+    couponInput.addEventListener("input", function () {
+        if (this.value) {
+            clearIcon.style.display = "block";
+        } else {
+            clearIcon.style.display = "none";
+        }
+    });
+
+    // Clear the input field on clicking the clear icon
+    clearIcon.addEventListener("click", function () {
+        couponInput.value = "";
+        clearIcon.style.display = "none";
+        couponInput.focus(); // Optionally refocus on the input field
+    });
+});
+
     </script>
 
 

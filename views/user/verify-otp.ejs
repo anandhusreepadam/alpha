@@ -45,9 +45,9 @@
 
             // Start Timer
             function startTimer() {
-                timerElement.textContent = "Time remaining: 00:30"; // Reset the timer text
+                timerElement.textContent = "Time remaining: 00:30";
                 input.disabled=false;
-                resendButton.disabled = true; // Disable resend button during countdown
+                resendButton.disabled = true;
 
                 timer = setInterval(() => {
                     if (timeLeft <= 0) {
@@ -60,7 +60,7 @@
                             });
                         timerElement.textContent = "OTP expired. Please request a new one.";
                         input.disabled=true;
-                        resendButton.disabled = false; // Enable resend button when timer expires
+                        resendButton.disabled = false;
                     } else {
                         const minutes = Math.floor(timeLeft / 60);
                         const seconds = timeLeft % 30;
@@ -76,7 +76,6 @@
                 timeLeft = 30; // Reset timer
                 startTimer(); // Restart the timer
 
-                // Simulate an AJAX call to resend OTP
                 $.ajax({
                     type: 'POST',
                     url: '/resend-otp',
@@ -105,7 +104,7 @@
                     }
                 });
 
-                return false; // Prevent default button behavior
+                return false; // Prevent from submiting
             }
 
             // Validate OTP Form
@@ -117,10 +116,9 @@
                         title: 'Invalid OTP',
                         text: 'Please enter a valid 6-digit OTP.',
                     });
-                    return false; // Prevent form submission
+                    return false;
                 }
 
-                // Simulate an AJAX call to verify OTP
                 $.ajax({
                     type: 'POST',
                     url: '/verify-otp',
