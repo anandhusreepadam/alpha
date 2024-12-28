@@ -220,6 +220,8 @@
             <!-- Action Buttons -->
             <div class="order-actions d-flex justify-content-end mb-3">
                 <% if (order.status==='Delivered' ) { %>
+                    <a id="invoice-btn" class="btn btn-primary me-2"
+                        href="/generateInvoice?orderId=<%= order._id %>">Download Invoice</a>
                     <button id="return-btn" class="btn btn-primary me-2"
                         onclick="returnOrder('<%= order._id %>')">Return</button>
                     <% } else if (order.status==='Shipped' || order.status==='Pending' ) { %>

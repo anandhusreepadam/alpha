@@ -2,6 +2,7 @@ const Product = require('../../models/productSchema');
 const User = require('../../models/userSchema');
 const Cart = require('../../models/cartSchema');
 const Category = require('../../models/categorySchema');
+
 const nodemailer = require('nodemailer');
 const { response } = require('express');
 const bcrypt = require('bcrypt');

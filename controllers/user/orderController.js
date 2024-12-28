@@ -7,9 +7,8 @@ const Wallet = require('../../models/walletSchema');
 const Coupon = require('../../models/couponSchema');
 const User = require('../../models/userSchema');
 
+const PDFDocument = require("pdfkit");
 const mongoose = require('mongoose');
-
-//RazorPay Instance
 const razorpay = require('../../config/razorpay');
 
 
@@ -37,7 +36,7 @@ const loadCheckout = async (req, res) => {
 
 const placeOrder = async (req, res) => {
     try {
-        const user = await User.findOne({_id:req.session.user._id})
+        const user = await User.findOne({ _id: req.session.user._id })
         const { addressId, paymentMethod, couponCode } = req.body;
         const userId = new mongoose.Types.ObjectId(user._id);
         const objectAddressId = new mongoose.Types.ObjectId(addressId);
@@ -89,8 +88,8 @@ const placeOrder = async (req, res) => {
             user.usedCoupons.push(coupon._id);
             await user.save();
 
-            
-            
+
+
         }
 
         const finalAmount = totalAmount - discount;
@@ -121,7 +120,7 @@ const placeOrder = async (req, res) => {
                     finalAmount,
                     couponCode,
                     discount
-                    
+
                 });
                 console.log('Generated Order ID:', newOrder.orderId);
                 console.log('RazorPay ID:', razorpayOrder.id);
@@ -185,7 +184,7 @@ const placeOrder = async (req, res) => {
             await newOrder.save();
 
             wallet.transactions.unshift({
-                order:newOrder._id,
+                order: newOrder._id,
                 orderId: newOrder.orderId,
                 type: 'debit',
                 amount: finalAmount,
@@ -271,7 +270,7 @@ const cancelOrder = async (req, res) => {
             const wallet = await Wallet.findOne({ userId: user._id });
             if (!wallet) {
                 const wallet = new Wallet({
-                    order:updatedOrder._id,
+                    order: updatedOrder._id,
                     userId: user._id,
                     balance: 0,
                     transactions: [],
@@ -280,7 +279,7 @@ const cancelOrder = async (req, res) => {
             const refundAmount = updatedOrder.finalAmount;
             wallet.balance += refundAmount;
             wallet.transactions.unshift({
-                order:updatedOrder._id,
+                order: updatedOrder._id,
                 orderId: updatedOrder.orderId,
                 type: 'refund',
                 amount: refundAmount,
@@ -320,13 +319,148 @@ const returnOrder = async (req, res) => {
     }
 };
 
-const invoiceGenerate = async(req,res)=>{
-    try {
-        
-    } catch (error) {
-        
+const invoiceGenerate = async (req, res) => {
+    const orderId = req.query.orderId;
+    const order = await Order.findById(orderId).populate('items.productId');
+
+    if (!order) {
+        return res.status(404).send('Order not found');
     }
-}
+    const doc = new PDFDocument();
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=Invoice-${order.orderId}.pdf`);
+
+    doc.pipe(res);
+
+    doc
+        .image("logo.png", 50, 45, { width: 150 })
+        .fillColor("#444444")
+        .fontSize(20)
+        .fontSize(10)
+        .text("Chanel One", 200, 50, { align: "right" })
+        .text("Balussery", 200, 65, { align: "right" })
+        .text("Kozhikode,673612", 200, 80, { align: "right" })
+        .moveDown();
+
+    doc
+        .fillColor("#444444")
+        .fontSize(20)
+        .text("Invoice", 50, 160);
+
+    generateHr(doc, 185);
+
+    const customerInformationTop = 200;
+
+    doc
+        .fontSize(10)
+        .text("Invoice Number:", 50, customerInformationTop)
+        .font("Helvetica-Bold")
+        .text(order.orderId, 150, customerInformationTop)
+        .font("Helvetica")
+        .text("Invoice Date:", 50, customerInformationTop + 15)
+        .text(formatDate(new Date()), 150, customerInformationTop + 15)
+        .text("Payment Method:", 50, customerInformationTop + 30)
+        .text(order.paymentMethod, 150, customerInformationTop + 30)
+        .font("Helvetica-Bold")
+        .text(order.address.name, 300, customerInformationTop)
+        .font("Helvetica")
+        .text(order.address.fullAddress, 300, customerInformationTop + 15)
+        .text(order.address.city + ", " + order.address.state + ", " + order.address.pincode, 300, customerInformationTop + 30)
+        .moveDown();
+
+    generateHr(doc, 252);
+
+    let i;
+    const invoiceTableTop = 330;
+
+    doc.font("Helvetica-Bold");
+    generateTableRow(
+        doc,
+        invoiceTableTop,
+        "Item",
+        "Description",
+        "Price",
+        "Quantity",
+        "Total"
+    );
+
+    generateHr(doc, invoiceTableTop + 20);
+    doc.font("Helvetica");
+
+    for (i = 0; i < order.items.length; i++) {
+        const item = order.items[i];
+        const position = invoiceTableTop + (i + 1) * 30;
+        generateTableRow(
+            doc,
+            position,
+            item.productId.productName,
+            item.productId.description,
+            item.price.toFixed(2),
+            item.quantity,
+            (item.quantity * item.price).toFixed(2)
+        );
+
+        generateHr(doc, position + 20);
+    }
+
+    const subtotalPosition = invoiceTableTop + (i + 1) * 30;
+    generateTableRow(doc, subtotalPosition, "", "", "Subtotal", "", order.totalAmount.toFixed(2));
+
+    const paidToDatePosition = subtotalPosition + 20;
+    generateTableRow(doc, paidToDatePosition, "", "", "Discount", "", order.discount.toFixed(2));
+
+    const duePosition = paidToDatePosition + 25;
+    doc.font("Helvetica-Bold");
+    generateTableRow(doc, duePosition, "", "", "Final Amount", "",order.finalAmount.toFixed(2));
+    doc.font("Helvetica");
+
+    generateFooter(doc);
+
+
+    function generateHr(doc, y) {
+        doc
+            .strokeColor("#aaaaaa")
+            .lineWidth(1)
+            .moveTo(50, y)
+            .lineTo(550, y)
+            .stroke();
+    }
+
+    function formatDate(date) {
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+
+        return year + "/" + month + "/" + day;
+    }
+
+    function generateTableRow(
+        doc,
+        y,
+        item,
+        description,
+        unitCost,
+        quantity,
+        lineTotal
+    ) {
+        doc
+            .fontSize(10)
+            .text(item, 50, y)
+            .text(description, 150, y)
+            .text(unitCost, 280, y, { width: 90, align: "right" })
+            .text(quantity, 370, y, { width: 90, align: "right" })
+            .text(lineTotal, 0, y, { align: "right" });
+    }
+
+    function generateFooter(doc) {
+        doc
+          .fontSize(10)
+          .text("Thank you for purchasing from Chanel One! Hope you enjoy your purchase.", 50, doc.page.height-90,{ align: "center", width: 500 });
+      }
+
+    doc.end();
+};
 
 
 module.exports = {

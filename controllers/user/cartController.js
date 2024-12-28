@@ -1,7 +1,6 @@
 const Cart = require('../../models/cartSchema');
 const User = require('../../models/userSchema');
 const Product = require('../../models/productSchema');
-const Wallet = require('../../models/walletSchema');
 
 
 const addToCart = async (req, res) => {

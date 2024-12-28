@@ -87,7 +87,7 @@ router.post('/cancelOrder/:id',orderController.cancelOrder);
 router.post('/returnOrder/:id',orderController.returnOrder);
 // router.post('/create-order', paymentController.createOrder);
 router.post('/verify-payment', paymentController.verifyPayment);
-router.get('/generateInvoice',profileAuth,userAuth,orderController.invoiceGenerate);
+router.get('/generateInvoice',orderController.invoiceGenerate);
 
 
 //Wallet Management
