@@ -150,7 +150,7 @@ const placeOrder = async (req, res) => {
             });
             console.log('Generated Order ID:', newOrder.orderId);
             await newOrder.save();
-            return res.status(200).json({
+            res.status(200).json({
                 success: true,
                 message: 'Order placed successfully',
                 orderId: newOrder.orderId

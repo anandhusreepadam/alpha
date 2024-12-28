@@ -124,40 +124,124 @@ const salesReport = async (req, res) => {
     }
 }
 
+
 const generatePdf = async (req, res) => {
     const { startDate, endDate, filterType, orders, totalSalesCount, totalOrderAmount, totalDiscounts } = req.body;
-    const doc = new PDFDocument();
 
+    // Validate required inputs
+    if (!startDate || !endDate || !orders || !Array.isArray(orders)) {
+        return res.status(400).send('Invalid input data.');
+    }
+
+    const doc = new PDFDocument({ margin: 30 });
+
+    // Set response headers for PDF
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename="sales_report.pdf"');
 
+    // Pipe the document to the response
     doc.pipe(res);
-    doc.fontSize(18).text('Sales Report', { align: 'center' });
-    doc.fontSize(12).text(`Date Range: ${startDate} to ${endDate}`, { align: 'center' });
-    doc.moveDown(1);
-    doc.fontSize(12).text(`Total Sales Count: ${totalSalesCount}`);
-    doc.text(`Total Order Amount: ₹${totalOrderAmount}`);
-    doc.text(`Total Discounts: ₹${totalDiscounts}`);
-    doc.moveDown(1);
-    doc.text('Order Details:', { fontSize: 14, underline: true });
-    doc.moveDown(0.5);
 
-    const tableHeaders = ['No.', 'Order ID', 'Order Date', 'Total Amount', 'Discount Applied', 'Final Amount'];
-    tableHeaders.forEach((header, index) => {
-        doc.text(header, { continued: index !== tableHeaders.length - 1 });
-        if (index < tableHeaders.length - 1) doc.text(' | ', { continued: true });
-    });
-    doc.moveDown(0.5);
+    // Title and Date Range
+    doc.fontSize(18)
+       .text('Sales Report', { align: 'center' })
+       .moveDown(0.5);
+
+    doc.fontSize(12)
+       .text(`Date Range: ${startDate} to ${endDate}`, { align: 'center' });
+    
+    if (filterType) {
+        doc.text(`Filter Type: ${filterType}`, { align: 'center' });
+    }
+    doc.moveDown(1);
+
+    // Summary Information in a box
+    doc.rect(30, doc.y, doc.page.width - 60, 50)
+       .stroke()
+       .moveDown(0.2);
+
+    doc.fontSize(12)
+       .text(`Total Sales Count: ${totalSalesCount}`, 40, doc.y)
+       .text(`Total Order Amount: ₹${totalOrderAmount}`, 40)
+       .text(`Total Discounts: ₹${totalDiscounts}`, 40)
+       .moveDown(1);
+
+    // Create table header
+    const tableTop = doc.y + 20;
+    const columnWidths = {
+        no: 40,
+        orderId: 160,
+        date: 90,
+        total: 90,
+        discount: 90,
+        final: 90
+    };
+
+    // Draw table headers
+    doc.font('Helvetica-Bold')
+       .fontSize(10);
+
+    let xPos = 30;
+    doc.text('No.', xPos, tableTop);
+    xPos += columnWidths.no;
+    doc.text('Order ID', xPos, tableTop);
+    xPos += columnWidths.orderId;
+    doc.text('Order Date', xPos, tableTop);
+    xPos += columnWidths.date;
+    doc.text('Total Amount', xPos, tableTop);
+    xPos += columnWidths.total;
+    doc.text('Discount', xPos, tableTop);
+    xPos += columnWidths.discount;
+    doc.text('Final Amount', xPos, tableTop);
+
+    // Draw table rows
+    let yPos = tableTop + 20;
+    doc.font('Helvetica')
+       .fontSize(10);
+
     orders.forEach((order, index) => {
-        doc.text(`${index + 1}. ${order.orderId}`, { continued: true });
-        doc.text(` | ${new Date(order.date).toLocaleDateString()}`, { continued: true });
-        doc.text(` | ₹${order.totalAmount}`, { continued: true });
-        doc.text(` | ₹${order.discount}`, { continued: true });
-        doc.text(` | ₹${order.finalAmount}`);
+        // Check if we need a new page
+        if (yPos > doc.page.height - 50) {
+            doc.addPage();
+            yPos = 50;
+        }
+
+        xPos = 30;
+        doc.text(String(index + 1), xPos, yPos);
+        xPos += columnWidths.no;
+        doc.text(order.orderId, xPos, yPos);
+        xPos += columnWidths.orderId;
+        doc.text(new Date(order.date).toLocaleDateString(), xPos, yPos);
+        xPos += columnWidths.date;
+        doc.text(`₹${order.totalAmount.toFixed(2)}`, xPos, yPos);
+        xPos += columnWidths.total;
+        doc.text(`₹${order.discount.toFixed(2)}`, xPos, yPos);
+        xPos += columnWidths.discount;
+        doc.text(`₹${order.finalAmount.toFixed(2)}`, xPos, yPos);
+
+        yPos += 20;
     });
 
+    // Add footer with page numbers
+    const pages = doc.bufferedPageRange();
+    for (let i = 0; i < pages.count; i++) {
+        doc.switchToPage(i);
+        doc.fontSize(8)
+           .text(
+               `Page ${i + 1} of ${pages.count}`,
+               0,
+               doc.page.height - 50,
+               { align: 'center' }
+           );
+    }
+
+    // Finalize the PDF
     doc.end();
-}
+};
+
+
+
+
 
 const generateExcel = async (req, res) => {
     const { startDate, endDate, filterType, orders, totalSalesCount, totalOrderAmount, totalDiscounts } = req.body;

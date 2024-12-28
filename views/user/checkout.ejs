@@ -141,29 +141,31 @@
                     <div class="position-relative d-flex mb-3" style="width: 100%;">
                         <span id="clearCouponField" class="clear-icon position-absolute">&times;</span>
                         <input id="couponCodeInput" type="text" class="form-control" placeholder="Enter coupon code">
-                        <button id="applyCouponBtn" class="ml-2 flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">Apply</button>
+                        <button id="applyCouponBtn"
+                            class="ml-2 flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">Apply</button>
                     </div>
                     <div id="couponMessage" class="text-danger"></div>
                 </div>
-                
+
                 <style>
-                .clear-icon {
-                    top: 50%;
-                    right: 52%;
-                    transform: translateY(-50%);
-                    font-size: 18px;
-                    color: #aaa;
-                    cursor: pointer;
-                    display: none;
-                }
-                .clear-icon:hover {
-                    color: #000;
-                }
-                .position-relative input {
-                    padding-right: 30px;
-                }
+                    .clear-icon {
+                        top: 50%;
+                        right: 52%;
+                        transform: translateY(-50%);
+                        font-size: 18px;
+                        color: #aaa;
+                        cursor: pointer;
+                        display: none;
+                    }
+
+                    .clear-icon:hover {
+                        color: #000;
+                    }
+
+                    .position-relative input {
+                        padding-right: 30px;
+                    }
                 </style>
-                
 
                 <div class="bor10 p-lr-40 p-t-30 p-b-40">
                     <h4 class="mtext-109 cl2 p-b-30">Cart Totals</h4>
@@ -207,251 +209,251 @@
         </div>
     </div>
     <%- include("../../views/partials/user/footer") %>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-    <script>
+        <script>
 
-        document.getElementById('addressForm').addEventListener('submit', async function (event) {
-            event.preventDefault();
+            document.getElementById('addressForm').addEventListener('submit', async function (event) {
+                event.preventDefault();
 
-            const errorMessages = this.querySelectorAll('.error-message');
-            errorMessages.forEach((span) => (span.textContent = ''));
+                const errorMessages = this.querySelectorAll('.error-message');
+                errorMessages.forEach((span) => (span.textContent = ''));
 
-            const nameField = this.querySelector('input[name="name"]');
-            const phoneField = this.querySelector('input[name="phone"]');
-            const addressField = this.querySelector('textarea[name="fullAddress"]');
-            const cityField = this.querySelector('input[name="city"]');
-            const stateField = this.querySelector('input[name="state"]');
-            const pincodeField = this.querySelector('input[name="pincode"]');
+                const nameField = this.querySelector('input[name="name"]');
+                const phoneField = this.querySelector('input[name="phone"]');
+                const addressField = this.querySelector('textarea[name="fullAddress"]');
+                const cityField = this.querySelector('input[name="city"]');
+                const stateField = this.querySelector('input[name="state"]');
+                const pincodeField = this.querySelector('input[name="pincode"]');
 
-            const name = nameField.value.trim();
-            const phone = phoneField.value.trim();
-            const fullAddress = addressField.value.trim();
-            const city = cityField.value.trim();
-            const state = stateField.value.trim();
-            const pincode = pincodeField.value.trim();
+                const name = nameField.value.trim();
+                const phone = phoneField.value.trim();
+                const fullAddress = addressField.value.trim();
+                const city = cityField.value.trim();
+                const state = stateField.value.trim();
+                const pincode = pincodeField.value.trim();
 
-            const phoneRegex = /^[6-9]\d{9}$/;
-            const pincodeRegex = /^\d{6}$/;
+                const phoneRegex = /^[6-9]\d{9}$/;
+                const pincodeRegex = /^\d{6}$/;
 
-            let isValid = true;
+                let isValid = true;
 
-            if (!name) {
-                nameField.nextElementSibling.textContent = 'Name is required.';
-                isValid = false;
-            }
-
-            if (!phone || !phoneRegex.test(phone)) {
-                phoneField.nextElementSibling.textContent = 'Enter a valid 10-digit phone number starting with 6-9.';
-                isValid = false;
-            }
-
-            if (!fullAddress) {
-                addressField.nextElementSibling.textContent = 'Address is required.';
-                isValid = false;
-            }
-
-            if (!city) {
-                cityField.nextElementSibling.textContent = 'City is required.';
-                isValid = false;
-            }
-
-            if (!state) {
-                stateField.nextElementSibling.textContent = 'State is required.';
-                isValid = false;
-            }
-
-            if (!pincode || !pincodeRegex.test(pincode)) {
-                pincodeField.nextElementSibling.textContent = 'Enter a valid 6-digit pin code.';
-                isValid = false;
-            }
-
-            if (!isValid) return;
-
-            const formData = new FormData(this);
-            const data = {
-                addressType: formData.get('addressType'),
-                name: name,
-                phone: phone,
-                address: formData.get('address'),
-                city: city,
-                fullAddress: fullAddress,
-                state: state,
-                pincode: pincode,
-            };
-
-            try {
-                const response = await fetch('/addAddress', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    swal({
-                        icon: 'success',
-                        title: 'Added',
-                        text: 'Address has been successfully added'
-                    }).then(() => {
-                        location.reload();
-                    });
-                } else {
-                    swal({
-                        icon: 'error',
-                        title: 'Error',
-                        text: result.message || 'An error occurred while adding address.'
-                    });
+                if (!name) {
+                    nameField.nextElementSibling.textContent = 'Name is required.';
+                    isValid = false;
                 }
-            } catch (error) {
-                console.error('Error adding address:', error);
-                swal({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Something went wrong. Please try again.'
-                });
-            }
-        });
 
-        document.getElementById('placeOrderBtn').addEventListener('click', async function (event) {
-            event.preventDefault();
+                if (!phone || !phoneRegex.test(phone)) {
+                    phoneField.nextElementSibling.textContent = 'Enter a valid 10-digit phone number starting with 6-9.';
+                    isValid = false;
+                }
 
-            const selectedAddress = document.querySelector('input[name="savedAddress"]:checked');
-            const paymentMethods = document.querySelector('input[name="paymentMethod"]:checked');
-            const couponCode = document.getElementById('couponCodeInput').value;
-            if (!selectedAddress || !paymentMethods) {
-                swal({
-                    icon: 'error',
-                    title: 'Required Field',
-                    text: 'Please Select Address and Payment Method'
-                })
-                return;
-            }
+                if (!fullAddress) {
+                    addressField.nextElementSibling.textContent = 'Address is required.';
+                    isValid = false;
+                }
 
-            const orderData = {
-                addressId: selectedAddress.value,
-                paymentMethod: paymentMethods.value,
-                couponCode,
-            };
+                if (!city) {
+                    cityField.nextElementSibling.textContent = 'City is required.';
+                    isValid = false;
+                }
 
-            try {
-                const response = await fetch('/placeOrder', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(orderData),
-                });
+                if (!state) {
+                    stateField.nextElementSibling.textContent = 'State is required.';
+                    isValid = false;
+                }
 
-                const data = await response.json();
+                if (!pincode || !pincodeRegex.test(pincode)) {
+                    pincodeField.nextElementSibling.textContent = 'Enter a valid 6-digit pin code.';
+                    isValid = false;
+                }
 
-                if (data.success) {
-                    if (paymentMethods.value == 'razorpay') {
-                        const options = {
-                            key: data.key,
-                            amount: data.amount,
-                            currency: 'INR',
-                            name: 'Chanel One',
-                            description: 'Payment for your order on Chanel One',
-                            order_id: data.razorpayOrderId,
-                            handler: async function (response) {
-                                const verifyResponse = await fetch('/verify-payment', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify(response),
-                                });
-                                const verifyResult = await verifyResponse.json();
-                                if (verifyResult.success) {
-                                    window.location.href = '/orderPlaced';
-                                } else {
-                                    alert('Payment Verification Failed.');
-                                }
-                            },
-                            prefill: {
-                                name: data.user?.name || 'Guest',
-                                email: data.user?.email || 'guest@example.com',
-                                contact: data.user?.phone || '0000000000',
-                            },
-                            theme: {
-                                color: '#3399cc',
-                            },
-                        };
-                        const rzp1 = new Razorpay(options);
-                        rzp1.open();
+                if (!isValid) return;
+
+                const formData = new FormData(this);
+                const data = {
+                    addressType: formData.get('addressType'),
+                    name: name,
+                    phone: phone,
+                    address: formData.get('address'),
+                    city: city,
+                    fullAddress: fullAddress,
+                    state: state,
+                    pincode: pincode,
+                };
+
+                try {
+                    const response = await fetch('/addAddress', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        swal({
+                            icon: 'success',
+                            title: 'Added',
+                            text: 'Address has been successfully added'
+                        }).then(() => {
+                            location.reload();
+                        });
                     } else {
-                        window.location.href = '/orderPlaced';
+                        swal({
+                            icon: 'error',
+                            title: 'Error',
+                            text: result.message || 'An error occurred while adding address.'
+                        });
                     }
-                } else {
+                } catch (error) {
+                    console.error('Error adding address:', error);
                     swal({
                         icon: 'error',
                         title: 'Error',
-                        text: data.message || 'An error occured while placing order'
+                        text: 'Something went wrong. Please try again.'
+                    });
+                }
+            });
+
+            document.getElementById('placeOrderBtn').addEventListener('click', async function (event) {
+                event.preventDefault();
+
+                const selectedAddress = document.querySelector('input[name="savedAddress"]:checked');
+                const paymentMethods = document.querySelector('input[name="paymentMethod"]:checked');
+                const couponCode = document.getElementById('couponCodeInput').value;
+                if (!selectedAddress || !paymentMethods) {
+                    swal({
+                        icon: 'error',
+                        title: 'Required Field',
+                        text: 'Please Select Address and Payment Method'
                     })
+                    return;
                 }
-            } catch (error) {
-                console.error('Error placing order:', error);
-                alert('Something went wrong. Please try again.');
-            }
-        });
 
-        document.getElementById('applyCouponBtn').addEventListener('click', async () => {
-            const couponCode = document.getElementById('couponCodeInput').value;
-            const orderTotal = parseFloat(document.getElementById('subTotal').innerText.replace('₹', ''));
-            const userId = "<%= user._id %>";
+                const orderData = {
+                    addressId: selectedAddress.value,
+                    paymentMethod: paymentMethods.value,
+                    couponCode,
+                };
 
-            if (!couponCode) {
-                document.getElementById('couponMessage').innerText = 'Please enter a coupon code.';
-                return;
-            }
+                try {
+                    const response = await fetch('/placeOrder', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(orderData),
+                    });
 
-            try {
-                const response = await fetch('/applyCoupon', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ couponCode, userId, orderTotal }),
+                    const data = await response.json();
+
+                    if (data.success) {
+                        if (paymentMethods.value == 'razorpay') {
+                            const options = {
+                                key: data.key,
+                                amount: data.amount,
+                                currency: 'INR',
+                                name: 'Chanel One',
+                                description: 'Payment for your order on Chanel One',
+                                order_id: data.razorpayOrderId,
+                                handler: async function (response) {
+                                    const verifyResponse = await fetch('/verify-payment', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify(response),
+                                    });
+                                    const verifyResult = await verifyResponse.json();
+                                    if (verifyResult.success) {
+                                        window.location.href = '/orderPlaced';
+                                    } else {
+                                        alert('Payment Verification Failed.');
+                                    }
+                                },
+                                prefill: {
+                                    name: data.user?.name || 'Guest',
+                                    email: data.user?.email || 'guest@example.com',
+                                    contact: data.user?.phone || '0000000000',
+                                },
+                                theme: {
+                                    color: '#3399cc',
+                                },
+                            };
+                            const rzp1 = new Razorpay(options);
+                            rzp1.open();
+                        } else {
+                            window.location.href = '/orderPlaced';
+                        }
+                    } else {
+                        swal({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message || 'An error occured while placing order'
+                        })
+                    }
+                } catch (error) {
+                    console.error('Error placing order:', error);
+                    alert('Something went wrong. Please try again.');
+                }
+            });
+
+            document.getElementById('applyCouponBtn').addEventListener('click', async () => {
+                const couponCode = document.getElementById('couponCodeInput').value;
+                const orderTotal = parseFloat(document.getElementById('subTotal').innerText.replace('₹', ''));
+                const userId = "<%= user._id %>";
+
+                if (!couponCode) {
+                    document.getElementById('couponMessage').innerText = 'Please enter a coupon code.';
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/applyCoupon', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ couponCode, userId, orderTotal }),
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        const discountedTotal = orderTotal - result.discount;
+                        document.getElementById('total').innerText = `₹${discountedTotal.toFixed(2)}`;
+                        document.getElementById('couponDiscount').innerText = `₹${result.discount.toFixed(2)}`
+                        document.getElementById('couponMessage').innerText = 'Coupon applied successfully!';
+                        document.getElementById('couponMessage').classList.remove('text-danger');
+                        document.getElementById('couponMessage').classList.add('text-success');
+                    } else {
+                        document.getElementById('couponMessage').innerText = result.message;
+                        document.getElementById('couponMessage').classList.add('text-danger');
+                    }
+                } catch (error) {
+                    console.error('Error applying coupon:', error);
+                    document.getElementById('couponMessage').innerText = 'An error occurred while applying the coupon.';
+                }
+            });
+
+            document.addEventListener("DOMContentLoaded", function () {
+                const couponInput = document.getElementById("couponCodeInput");
+                const clearIcon = document.getElementById("clearCouponField");
+                const orderTotal = parseFloat(document.getElementById('subTotal').innerText.replace('₹', ''));
+
+                couponInput.addEventListener("input", function () {
+                    if (this.value) {
+                        clearIcon.style.display = "block";
+                    } else {
+                        clearIcon.style.display = "none";
+                    }
                 });
-                const result = await response.json();
-                if (result.success) {
-                    const discountedTotal = orderTotal - result.discount;
-                    document.getElementById('total').innerText = `₹${discountedTotal.toFixed(2)}`;
-                    document.getElementById('couponDiscount').innerText = `₹${result.discount.toFixed(2)}`
-                    document.getElementById('couponMessage').innerText = 'Coupon applied successfully!';
-                    document.getElementById('couponMessage').classList.remove('text-danger');
-                    document.getElementById('couponMessage').classList.add('text-success');
-                } else {
-                    document.getElementById('couponMessage').innerText = result.message;
-                    document.getElementById('couponMessage').classList.add('text-danger');
-                }
-            } catch (error) {
-                console.error('Error applying coupon:', error);
-                document.getElementById('couponMessage').innerText = 'An error occurred while applying the coupon.';
-            }
-        });
-    
-        document.addEventListener("DOMContentLoaded", function () {
-    const couponInput = document.getElementById("couponCodeInput");
-    const clearIcon = document.getElementById("clearCouponField");
 
-    // Show or hide the clear icon
-    couponInput.addEventListener("input", function () {
-        if (this.value) {
-            clearIcon.style.display = "block";
-        } else {
-            clearIcon.style.display = "none";
-        }
-    });
+                clearIcon.addEventListener("click", function () {
+                    couponInput.value = "";
+                    clearIcon.style.display = "none"; 
+                    couponInput.focus();
+                    document.getElementById('total').innerText = `₹${orderTotal.toFixed(2)}`;
+                    document.getElementById('couponMessage').innerText = '';
+                    document.getElementById('couponDiscount').innerText = `₹0.00`
+                });
+            });
 
-    // Clear the input field on clicking the clear icon
-    clearIcon.addEventListener("click", function () {
-        couponInput.value = "";
-        clearIcon.style.display = "none";
-        couponInput.focus(); // Optionally refocus on the input field
-    });
-});
-
-    </script>
-
-
+        </script>
