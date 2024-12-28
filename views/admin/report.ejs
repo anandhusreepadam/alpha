@@ -29,7 +29,7 @@
                         </select>
                     </div>
                     <div class="col-md-3 align-self-end">
-                        <button type="button" class="btn btn-primary" onclick="generateReport()">Generate Report</button>
+                        <button id="generateBtn" type="button" class="btn btn-primary" onclick="generateReport()">Generate Report</button>
                     </div>
                 </div>
             </form>
@@ -100,7 +100,7 @@
             Swal.fire('Error', 'Start date cannot be later than end date.', 'error');
             return;
         }
-        const generateButton = document.querySelector('button[type="button"]');
+        const generateButton = document.getElementById('generateBtn');
         generateButton.disabled = true;
         generateButton.textContent = 'Generating Report...';
 

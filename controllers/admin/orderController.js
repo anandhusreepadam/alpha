@@ -83,6 +83,7 @@ const updateStatus = async (req, res) => {
                 const wallet = await Wallet.findOne({ userId: userId });
                 if (!wallet) {
                     const wallet = new Wallet({
+                        order:updatedOrder._id,
                         userId,
                         balance: 0,
                         transactions: [],
@@ -91,6 +92,7 @@ const updateStatus = async (req, res) => {
                 const refundAmount = updatedOrder.finalAmount;
                 wallet.balance += refundAmount;
                 wallet.transactions.unshift({
+                    order:updatedOrder._id,
                     orderId: updatedOrder.orderId,
                     type: 'refund',
                     amount: refundAmount,

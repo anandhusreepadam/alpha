@@ -23,10 +23,18 @@ const productSchema = new Schema({
         type: Number,
         required: true,
     },
+    normalPrice: {
+        type: Number,
+        required: true,
+    },
     salePrice: {
         type: Number,
     },
     productOffer: {
+        type: Number,
+        default: 0,
+    },
+    categoryOffer: {
         type: Number,
         default: 0,
     },
@@ -52,11 +60,29 @@ const productSchema = new Schema({
         required: true,
         default: "Available"
     },
-    isDeleted:{
-        type:Boolean,
-        default:false
+    isDeleted: {
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true });
+
+
+productSchema.pre('save', function (next) {
+    if (this.productOffer > 0 || this.categoryOffer > 0) {
+        if (this.productOffer > this.categoryOffer) {
+            this.salePrice = this.normalPrice - Math.floor((this.normalPrice * this.productOffer) / 100);
+        } else {
+            this.salePrice = this.normalPrice - Math.floor((this.normalPrice * this.categoryOffer) / 100);
+        }
+    }
+    else {
+        this.salePrice = this.normalPrice;
+    }
+    next();
+});
+
+
+
 const Product = mongoose.model("Product", productSchema);
 
 module.exports = Product;

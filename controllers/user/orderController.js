@@ -271,6 +271,7 @@ const cancelOrder = async (req, res) => {
             const wallet = await Wallet.findOne({ userId: user._id });
             if (!wallet) {
                 const wallet = new Wallet({
+                    order:updatedOrder._id,
                     userId: user._id,
                     balance: 0,
                     transactions: [],
@@ -319,6 +320,13 @@ const returnOrder = async (req, res) => {
     }
 };
 
+const invoiceGenerate = async(req,res)=>{
+    try {
+        
+    } catch (error) {
+        
+    }
+}
 
 
 module.exports = {
@@ -328,5 +336,6 @@ module.exports = {
     loadOrders,
     loadOrderDetails,
     cancelOrder,
-    returnOrder
+    returnOrder,
+    invoiceGenerate,
 }

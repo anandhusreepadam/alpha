@@ -52,6 +52,7 @@ const addProducts = async (req, res) => {
                 // brand:products.brands,
                 category: categoryId._id,
                 regularPrice: products.regularPrice,
+                normalPrice: products.salePrice,
                 salePrice: products.salePrice,
                 createdOn: new Date(),
                 quantity: products.quantity,
@@ -118,7 +119,6 @@ const addProductOffer = async (req, res) => {
         if (findCategory.categoryOffer > percentage) {
             return res.json({ status: false, message: 'This product category already has a higher category offer'})
         }
-        findProduct.salePrice = findProduct.salePrice - Math.floor(findProduct.regularPrice * (percentage / 100));
         findProduct.productOffer = parseInt(percentage);
         await findProduct.save();
         res.json({ status: true });
@@ -132,12 +132,11 @@ const removeProductOffer = async (req, res) => {
     try {
         const { productId } = req.body;
         const findProduct = await Product.findOne({ _id: productId });
-        const percentage = findProduct.productOffer;
-        findProduct.salePrice = findProduct.salePrice + Math.floor(findProduct.regularPrice * (percentage / 100));
         findProduct.productOffer = 0;
         await findProduct.save();
         res.json({ status: true })
     } catch (error) {
+        console.log(error);
         res.redirect('/pageError');
     }
 }
@@ -200,6 +199,7 @@ const editProduct = async (req, res) => {
             description: data.description,
             category: data.category,
             regularPrice: data.regularPrice,
+            normalPrice: data.salePrice,
             salePrice: data.salePrice,
             quantity: data.quantity,
             size: data.size,
