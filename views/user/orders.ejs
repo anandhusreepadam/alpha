@@ -11,6 +11,7 @@
         <meta property="og:image" content="" />
 
         <link href="assets/css/main.css?v=1.1" rel="stylesheet" type="text/css" />
+
         <style>
             .content-main {
                 background: none;
@@ -71,80 +72,115 @@
             .btn-view:hover {
                 background-color: #0056b3;
             }
+
             /* Style for displaying product images horizontally */
             .order-card {
-    position: relative;
-    border: 1px solid #ddd;
-    padding: 20px;
-    margin-bottom: 20px;
-    background-color: #f9f9f9;
-}
+                position: relative;
+                border: 1px solid #ddd;
+                padding: 20px;
+                margin-bottom: 20px;
+                background-color: #f9f9f9;
+            }
 
-.order-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 15px;
-}
+            .order-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 15px;
+            }
 
-.order-info {
-    display: flex;
-    flex-direction: column;
-}
+            .order-info {
+                display: flex;
+                flex-direction: column;
+            }
 
-.order-status {
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 18px;
-    text-align: center;
-}
+            .order-status {
+                padding: 5px 10px;
+                border-radius: 5px;
+                font-weight: bold;
+                font-size: 18px;
+                text-align: center;
+            }
 
-.order-details {
-    margin-top: 15px;
-}
+            .order-details {
+                margin-top: 15px;
+            }
 
-.order-total {
-    font-size: 16px;
-    font-weight: bold;
-    margin-left: 0;
-    text-align: left;
-    margin-top: 10px;
-}
+            .order-total {
+                font-size: 16px;
+                font-weight: bold;
+                margin-left: 0;
+                text-align: left;
+                margin-top: 10px;
+            }
 
-.order-products {
-    display: flex;
-    justify-content: flex-start;
-    margin-top: 20px;
-}
+            .order-products {
+                display: flex;
+                justify-content: flex-start;
+                margin-top: 20px;
+            }
 
-.product-item {
-    text-align: center;
-    margin-right: 15px;
-}
+            .product-item {
+                text-align: center;
+                margin-right: 15px;
+            }
 
-.product-image {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 5%;
-}
+            .product-image {
+                width: 80px;
+                height: 80px;
+                object-fit: cover;
+                border-radius: 5%;
+            }
 
-.order-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-}
+            .order-actions {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 20px;
+            }
 
-.order-actions .btn {
-    margin-left: 10px;
-}
+            .order-actions .btn {
+                margin-left: 10px;
+            }
 
+            .btn-danger {
+                background-color: #dc3545;
+                color: #fff;
+                border: none;
+            }
 
+            .btn-danger:disabled {
+                background-color: #f5c6cb;
+                cursor: not-allowed;
+            }
 
+            .btn-primary {
+                background-color: #007bff;
+                color: #fff;
+                border: none;
+            }
 
+            .btn-primary:disabled {
+                background-color: #cce5ff;
+                cursor: not-allowed;
+            }
+
+            .btn-secondary {
+                background-color: #6c757d;
+                color: #fff;
+                border: none;
+            }
+
+            .btn-secondary:hover {
+                background-color: #5a6268;
+            }
+
+            .order-status {
+                font-weight: bold;
+                color: #333;
+            }
         </style>
     </head>
+
     <body>
         <div class="spacer">
         </div>
@@ -159,125 +195,100 @@
                         <div class="col-lg-9">
                             <section class="content-body">
                                 <h2 class="section-title">Your Orders</h2>
-                                <% if (orders && orders.length > 0) { %>
-                                    <% orders.forEach(order => { %>
-                                        <div class="order-card">
-                                            <!-- Order Header -->
-                                            <div class="order-header">
-                                                <div class="order-info">
-                                                    <h5>Order ID: <%= order.orderId %></h5>
-                                                    <p>Date: <%= new Date(order.createdAt).toLocaleDateString() %></p>
-                                                </div>
-                                                <div class="order-status">
-                                                    <% if (order.status === 'Returned') { %>
-                                                        <span class="badge rounded-pill alert-warning">Returned</span>
-                                                    <% }else if (order.status === 'Return Request') { %>
-                                                        <span class="badge rounded-pill alert-warning">Return Request</span>
-                                                    <% }else if (order.status === 'Pending') { %>
-                                                        <span class="badge rounded-pill alert-warning">Pending</span>
-                                                    <% } else if (order.status === 'Cancelled') { %>
-                                                        <span class="badge rounded-pill alert-danger">Cancelled</span>
-                                                    <% } else if (order.status === 'Shipped') { %>
-                                                        <span class="badge rounded-pill alert-primary">Shipped</span>
-                                                    <% } else if (order.status === 'Delivered') { %>
-                                                        <span class="badge rounded-pill alert-success">Delivered</span>
-                                                    <% } else { %>
-                                                        <span class="badge rounded-pill alert-secondary"><%= order.status %></span>
-                                                    <% } %>
-                                                </div>
-                                            </div>                               
-                    
-                                            <!-- Products Section (Images aligned at start) -->
-                                            <div class="order-products">
-                                                <% order.items.forEach(item => { %>
-                                                    <div class="product-item">
-                                                        <img src="/uploads/re-image/<%= item.productId.productImage[0] %>" alt="<%= item.productId.productName %>" class="product-image">
-                                                        <p><%= item.productId.productName %></p>
-                                                    </div>
-                                                <% }) %>
+                                <% if (orders && orders.length> 0) { %>
+                                    <% orders.forEach(order=> { %>
+                                    <div class="order-card">
+                                        <!-- Order Header -->
+                                        <div class="order-header">
+                                            <div class="order-info">
+                                                <h5>Order ID: <%= order.orderId %></h5>
+                                                <p>Date: <%= new Date(order.createdAt).toLocaleDateString() %></p>
                                             </div>
-                            
-                                            <!-- Action Buttons -->
-                                            <div class="order-actions">
-                                                <div class="order-details">
-                                                    <div class="order-total">
-                                                        <p>Total: ₹<%= order.finalAmount %></p>
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                <% if (order.status === 'Delivered') { %>
-                                                    <!-- Return Button -->
-                                                    <button class="btn btn-primary" onclick="returnOrder('<%= order._id %>')">
-                                                        Return
-                                                    </button>
-                                                <% } else if (order.status === 'Shipped' || order.status === 'Pending') { %>
-                                                     <!-- Order Details (Total Amount at bottom left) -->
-                                            
-                                                    <!-- Cancel Button -->
-                                                    <button class="btn btn-danger" onclick="cancelOrder('<%= order._id %>')">
-                                                        Cancel
-                                                    </button>
+                                            <div class="order-status">
+                                                Payment :
+                                                <% if (order.paymentStatus==='Pending' ) { %>
+                                                <span class="badge rounded-pill alert-danger">Pending</span>
+                                                <% } else if (order.paymentStatus==='Refunded' ) { %>
+                                                <span class="badge rounded-pill alert-primary">Refunded</span>
+                                                <% } else { %>
+                                                <span class="badge rounded-pill alert-success">Paid</span>
                                                 <% } %>
-                            
-                                                <!-- View Details Button -->
-                                                <button class="btn btn-secondary" onclick="viewOrderDetails('<%= order._id %>')">
-                                                    View Details
-                                                </button>
                                             </div>
+                                            <div class="order-status">
+                                                Order :
+                                                <% if (order.status==='Returned' ) { %>
+                                                    <span class="badge rounded-pill alert-warning">Returned</span>
+                                                <% }else if (order.status==='Return Request' ) { %>
+                                                    <span class="badge rounded-pill alert-warning">Return Request</span>
+                                                <% }else if (order.status==='Pending' ) { %>
+                                                    <span class="badge rounded-pill alert-warning">Pending</span>
+                                                <% } else if (order.status==='Cancelled' ) { %>
+                                                    <span class="badge rounded-pill alert-danger">Cancelled</span>
+                                                <% } else if (order.status==='Shipped' ) { %>
+                                                    <span class="badge rounded-pill alert-primary">Shipped</span>
+                                                <% } else if (order.status==='Delivered' ) { %>
+                                                    <span class="badge rounded-pill alert-success">Delivered</span>
+                                                <% } else { %>
+                                                    <span class="badge rounded-pill alert-secondary"> <%= order.status %></span> 
+                                                <% } %>
                                             </div>
                                         </div>
-                                    <% }) %>
+                                        <!-- Products Section (Images aligned at start) -->
+                                        <div class="order-products">
+                                        <% order.items.forEach(item=> { %>
+                                            <div class="product-item">
+                                                <img src="/uploads/re-image/<%= item.productId.productImage[0] %>" alt="<%= item.productId.productName %>" class="product-image">
+                                                <p><%= item.productId.productName %></p>
+                                            </div>
+                                        <% }) %>
+                                    </div>
+
+                                    <!-- Action Buttons -->
+                                    <div class="order-actions">
+                                        <div class="order-details">
+                                            <div class="order-total">
+                                                <p>Total: ₹<%= order.finalAmount %> </p>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <% if (order.paymentStatus==='Pending' ) { %>
+                                                <button class="btn btn-primary"
+                                                    onclick="retryPayment('<%= order._id %>')">
+                                                    Retry Payment
+                                                </button>
+                                            <% } %>
+
+                                            <% if (order.status==='Delivered' ) { %>
+                                                <!-- Return Button -->
+                                                <button class="btn btn-primary"
+                                                    onclick="returnOrder('<%= order._id %>')">
+                                                    Return
+                                                </button>
+                                            <% } else if (order.status==='Shipped' || order.status==='Pending' ) { %>
+                                                <!-- Order Details (Total Amount at bottom left) -->
+                                                <!-- Cancel Button -->
+                                                <button class="btn btn-danger"
+                                                    onclick="cancelOrder('<%= order._id %>')">
+                                                    Cancel
+                                                </button>
+                                            <% } %>
+                                                <!-- View Details Button -->
+                                                <button class="btn btn-secondary"
+                                                    onclick="viewOrderDetails('<%= order._id %>')">
+                                                    View Details
+                                                </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% }) %>
                                 <% } else { %>
                                     <p>No orders found.</p>
                                 <% } %>
                             </section>
-                            
-                            
-                            
                         </div>
-                        
-                        <style>
-                        
-                            .btn-danger {
-                                background-color: #dc3545;
-                                color: #fff;
-                                border: none;
-                            }
-                        
-                            .btn-danger:disabled {
-                                background-color: #f5c6cb;
-                                cursor: not-allowed;
-                            }
-                        
-                            .btn-primary {
-                                background-color: #007bff;
-                                color: #fff;
-                                border: none;
-                            }
-                        
-                            .btn-primary:disabled {
-                                background-color: #cce5ff;
-                                cursor: not-allowed;
-                            }
-                        
-                            .btn-secondary {
-                                background-color: #6c757d;
-                                color: #fff;
-                                border: none;
-                            }
-                        
-                            .btn-secondary:hover {
-                                background-color: #5a6268;
-                            }
-                        
-                            .order-status {
-                                font-weight: bold;
-                                color: #333;
-                            }
-                        </style>
-                    </div>         
-                </div>       
-            </div>     
+                    </div>
+                </div>
+            </div>
         </section>
 
         <script src="assets/js/vendors/jquery-3.6.0.min.js"></script>
@@ -292,92 +303,165 @@
     </html>
 
     <%-include("../../views/partials/user/footer")%>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+        <script>
 
-        async function cancelOrder(orderId) {
-            try {
-                const confirmation = await Swal.fire({
-                    title: "Are you sure?",
-                    text: "Do you really want to cancel this order?",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#d33",
-                    cancelButtonColor: "#3085d6",
-                    confirmButtonText: "Yes, Cancel",
-                    cancelButtonText: "No"
-                });
-    
-                if (confirmation.isConfirmed) {
-                    const response = await fetch(`/cancelOrder/${orderId}`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" }
+            async function cancelOrder(orderId) {
+                try {
+                    const confirmation = await Swal.fire({
+                        title: "Are you sure?",
+                        text: "Do you really want to cancel this order?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: "Yes, Cancel",
+                        cancelButtonText: "No"
                     });
-    
-                    const result = await response.json();
-    
-                    if (result.success) {
-                        await Swal.fire({
-                            title: "Order Cancelled",
-                            text: "Your order has been Cancelled.",
-                            icon: "success"
-                        });    
-                        window.location.reload();    
-                    } else {
-                        throw new Error(result.message);
-                    }
-                }
-            } catch (err) {
-                console.error('Error canceling order:', err.message);
-                await Swal.fire("Oops!", "Internal server error occurred.", "error");
-            }
-        }
-    
-        async function returnOrder(orderId) {
-            try {
-                const confirmation = await Swal.fire({
-            title: "Return Order",
-            text: "Please provide a reason for returning this item:",
-            input: "textarea",
-            inputPlaceholder: "Enter your reason here...",
-            showCancelButton: true,
-            confirmButtonColor: "#28a745",
-            cancelButtonColor: "#3085d6",
-            confirmButtonText: "Submit",
-            cancelButtonText: "Cancel",
-            inputValidator: (value) => {
-                if (!value) {
-                    return "You need to provide a reason!";
-                }
-            }
-        });   
-                if (confirmation.isConfirmed) {
-                    const reason = confirmation.value;
-                    const response = await fetch(`/returnOrder/${orderId}`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ reason })
-                    });    
-                    const result = await response.json();    
-                    if (result.success) {
-                        await Swal.fire({
-                            title: "Requested",
-                            text: "Your Return Order Requested" ,
-                            icon: "success"
+
+                    if (confirmation.isConfirmed) {
+                        const response = await fetch(`/cancelOrder/${orderId}`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" }
                         });
-                        window.location.reload();    
-                    } else {
-                        throw new Error(result.message);
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            await Swal.fire({
+                                title: "Order Cancelled",
+                                text: "Your order has been Cancelled.",
+                                icon: "success"
+                            });
+                            window.location.reload();
+                        } else {
+                            throw new Error(result.message);
+                        }
                     }
+                } catch (err) {
+                    console.error('Error canceling order:', err.message);
+                    await Swal.fire("Oops!", "Internal server error occurred.", "error");
                 }
-            } catch (err) {
-                console.error('Error returning order:', err.message);
-                await Swal.fire("Oops!", "Internal server error occurred.", "error");
             }
-        }
-               
-        function viewOrderDetails(orderId) {
-             window.location.href = `/orderDetails?id=${orderId}`;
-         }
-     
-    </script>
+
+            async function returnOrder(orderId) {
+                try {
+                    const confirmation = await Swal.fire({
+                        title: "Return Order",
+                        text: "Please provide a reason for returning this item:",
+                        input: "textarea",
+                        inputPlaceholder: "Enter your reason here...",
+                        showCancelButton: true,
+                        confirmButtonColor: "#28a745",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: "Submit",
+                        cancelButtonText: "Cancel",
+                        inputValidator: (value) => {
+                            if (!value) {
+                                return "You need to provide a reason!";
+                            }
+                        }
+                    });
+                    if (confirmation.isConfirmed) {
+                        const reason = confirmation.value;
+                        const response = await fetch(`/returnOrder/${orderId}`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ reason })
+                        });
+                        const result = await response.json();
+                        if (result.success) {
+                            await Swal.fire({
+                                title: "Requested",
+                                text: "Your Return Order Requested",
+                                icon: "success"
+                            });
+                            window.location.reload();
+                        } else {
+                            throw new Error(result.message);
+                        }
+                    }
+                } catch (err) {
+                    console.error('Error returning order:', err.message);
+                    await Swal.fire("Oops!", "Internal server error occurred.", "error");
+                }
+            }
+
+            async function retryPayment(orderId){
+                try {
+                    const response = await fetch(`/retryPayment?orderId=${orderId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                            const options = {
+                                key: data.key,
+                                amount: data.amount,
+                                currency: 'INR',
+                                name: 'Chanel One',
+                                description: 'Payment for your order on Chanel One',
+                                order_id: data.razorpayOrderId,
+                                handler: async function (response) {
+                                    const verifyResponse = await fetch('/verify-payment', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify(response),
+                                    });
+                                    
+                                    const verifyResult = await verifyResponse.json();
+                                    if (verifyResult.success) {
+                                        window.location.href = '/orderPlaced';
+                                    } else {
+                                        alert('Payment Verification Failed.');
+                                    }
+                                },
+                                modal: {
+                                    ondismiss: function () {
+                                        Swal.fire({
+                                            title: 'Payment Failed!',
+                                            text: 'Your last payment was failed',
+                                            icon: 'error',
+                                            confirmButtonText: 'Go to Orders'
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                window.location.href = "/orders";
+                                            }
+                                        });
+                                    }
+                                },
+                                prefill: {
+                                    name: data.user?.name || 'Guest',
+                                    email: data.user?.email || 'guest@example.com',
+                                    contact: data.user?.phone || '0000000000',
+                                },
+                                theme: {
+                                    color: '#3399cc',
+                                },
+                            };
+                            const rzp1 = new Razorpay(options);
+                            rzp1.open();
+                    } else {
+                        swal({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message || 'An error occured while placing order'
+                        })
+                    }
+                } catch (error) {
+                    console.error('Error placing order:', error);
+                    alert('Something went wrong. Please try again.');
+                }
+            }
+
+            function viewOrderDetails(orderId) {
+                window.location.href = `/orderDetails?id=${orderId}`;
+            }
+
+            
+        </script>

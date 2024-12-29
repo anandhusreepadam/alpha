@@ -1,28 +1,30 @@
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
+const Order = require('../../models/orderSchema');
 
+const razorpay = require('../../config/razorpay');
 
-const createOrder =  async(req, res)=> {
+const retryPayment =  async(req, res)=> {
+    console.log('hii')
+    const {orderId} = req.query;
+    const user = req.session.user;
         try {
-            const razorpay = new Razorpay({
-                key_id: process.env.RAZORPAY_KEY_ID,
-                key_secret: process.env.RAZORPAY_KEY_SECRET,
-            });
-            const amount = req.body.amount;
-            const currency = 'INR';
-
-            const options = {
-                amount: amount * 100,
-                currency,
-                receipt: `receipt_${Date.now()}`,
-            };
-            const order = await razorpay.orders.create(options);
+            const order = await Order.findOne({_id:orderId});
+            const razorpayOrder = await razorpay.orders.create({
+                currency: 'INR',
+                receipt: `${user._id}_${Date.now()}`,
+                amount: order.finalAmount * 100,
+            })
+            order.razorpayOrderId = razorpayOrder.id;
+            await order.save();
             res.status(200).json({
                 success: true,
-                razorpayOrderId: order.id,
-                amount: order.amount,
+                user: user,
+                razorpayOrderId: razorpayOrder.id,
+                amount: razorpayOrder.amount,
                 key: process.env.RAZORPAY_KEY_ID,
             });
+
         } catch (error) {
             console.error('Error creating Razorpay order:', error);
             res.status(500).json({ success: false, message: 'Failed to create order.' });
@@ -39,6 +41,7 @@ const createOrder =  async(req, res)=> {
                 .digest('hex');
 
             if (expectedSignature === razorpay_signature) {
+                await Order.findOneAndUpdate({razorpayOrderId:razorpay_order_id},{paymentStatus:'Paid'});
                 res.status(200).json({ success: true, message: 'Payment verified successfully.' });
             } else {
                 res.status(400).json({ success: false, message: 'Payment verification failed.' });
@@ -53,6 +56,6 @@ const createOrder =  async(req, res)=> {
 
 
     module.exports ={
-        createOrder,
+        retryPayment,
         verifyPayment
     }

@@ -85,7 +85,7 @@ router.get('/orders',profileAuth,userAuth,orderController.loadOrders)
 router.get('/orderDetails',profileAuth,userAuth,orderController.loadOrderDetails)
 router.post('/cancelOrder/:id',orderController.cancelOrder);
 router.post('/returnOrder/:id',orderController.returnOrder);
-// router.post('/create-order', paymentController.createOrder);
+router.post('/retryPayment', paymentController.retryPayment);
 router.post('/verify-payment', paymentController.verifyPayment);
 router.get('/generateInvoice',orderController.invoiceGenerate);
 

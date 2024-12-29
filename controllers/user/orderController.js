@@ -87,9 +87,6 @@ const placeOrder = async (req, res) => {
 
             user.usedCoupons.push(coupon._id);
             await user.save();
-
-
-
         }
 
         const finalAmount = totalAmount - discount;
@@ -109,18 +106,17 @@ const placeOrder = async (req, res) => {
                     receipt: `${user._id}_${Date.now()}`,
                     amount: finalAmount * 100,
                 })
-                console.log(discount)
                 const newOrder = new Order({
                     userId: user._id,
                     razorpayOrderId: razorpayOrder.id,
                     address: selectedAddress,
                     items: cartItems.items,
                     paymentMethod,
+                    paymentStatus:'Pending',
                     totalAmount,
                     finalAmount,
                     couponCode,
                     discount
-
                 });
                 console.log('Generated Order ID:', newOrder.orderId);
                 console.log('RazorPay ID:', razorpayOrder.id);
@@ -137,6 +133,9 @@ const placeOrder = async (req, res) => {
                 res.status(500).json({ success: false, message: 'Failed to create order.' });
             }
         } else if (paymentMethod == 'COD') {
+            if(finalAmount>1000){
+                return res.status(400).json({success:false,message:'Cash on Delivery is not available for Orders above ₹1000!'})
+            }
             const newOrder = new Order({
                 userId: user._id,
                 address: selectedAddress,

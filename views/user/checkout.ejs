@@ -372,6 +372,20 @@
                                         alert('Payment Verification Failed.');
                                     }
                                 },
+                                modal: {
+                                    ondismiss: function () {
+                                        Swal.fire({
+                                            title: 'Payment Failed!',
+                                            text: 'Your last payment was failed',
+                                            icon: 'error',
+                                            confirmButtonText: 'Go to Orders'
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                window.location.href = "/orders";
+                                            }
+                                        });
+                                    }
+                                },
                                 prefill: {
                                     name: data.user?.name || 'Guest',
                                     email: data.user?.email || 'guest@example.com',
@@ -448,7 +462,7 @@
 
                 clearIcon.addEventListener("click", function () {
                     couponInput.value = "";
-                    clearIcon.style.display = "none"; 
+                    clearIcon.style.display = "none";
                     couponInput.focus();
                     document.getElementById('total').innerText = `₹${orderTotal.toFixed(2)}`;
                     document.getElementById('couponMessage').innerText = '';
