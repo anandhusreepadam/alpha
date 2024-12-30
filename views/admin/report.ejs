@@ -1,132 +1,153 @@
 <%- include("../../views/partials/admin/header") %>
 
-<head>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
-</head>
+    <head>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+    </head>
 
-<section class="content-main">
-    <div class="content-header">
-        <h2 class="content-title card-title">Sales Report</h2>
-    </div>
-
-    <!-- Filters Section -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <form id="filterForm">
-                <div class="row">
-                    <div class="col-md-3">
-                        <label for="dateRange" class="form-label">Custom Date Range</label>
-                        <input type="date" id="startDate" class="form-control mb-2" placeholder="Start Date" required>
-                        <input type="date" id="endDate" class="form-control" placeholder="End Date" required>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="filterType" class="form-label">Quick Filters</label>
-                        <select id="filterType" class="form-control">
-                            <option value="">Select Filter</option>
-                            <option value="daily">Last 1 Day</option>
-                            <option value="weekly">Last 1 Week</option>
-                            <option value="monthly">Last 1 Month</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3 align-self-end">
-                        <button id="generateBtn" type="button" class="btn btn-primary" onclick="generateReport()">Generate Report</button>
-                    </div>
-                </div>
-            </form>
+    <section class="content-main">
+        <div class="content-header">
+            <h2 class="content-title card-title">Sales Report</h2>
         </div>
-    </div>
 
-    <!-- Report Section -->
-    <div class="card">
-        <div class="card-body">
-            <div class="row mb-4">
-                <div class="col-md-3">
-                    <div class="info-box">
-                        <h5>Total Sales Count</h5>
-                        <p id="totalSalesCount">0</p>
+        <!-- Filters Section -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form id="filterForm">
+                    <div class="row">
+                        <!-- Quick Filters -->
+                        <div class="col-md-3">
+                            <label for="filterType" class="form-label">Quick Filters</label>
+                            <select id="filterType" class="form-control" onchange="toggleCustomDateFields()">
+                                <option value="">Select Filter</option>
+                                <option value="daily">Last 1 Day</option>
+                                <option value="weekly">Last 1 Week</option>
+                                <option value="monthly">Last 1 Month</option>
+                                <option value="custom">Custom Date Range</option>
+                            </select>
+                        </div>
+                        <!-- Custom Date Range -->
+                        <div class="col-md-6" id="customDateRange" style="display: none;">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <label for="startDate" class="form-label">From</label>
+                                    <input type="date" id="startDate" class="form-control" placeholder="Start Date">
+                                </div>
+                                <div>
+                                    <label for="endDate" class="form-label">To</label>
+                                    <input type="date" id="endDate" class="form-control" placeholder="End Date">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Generate Report Button -->
+                        <div class="col-md-3 align-self-end">
+                            <button id="generateBtn" type="button" class="btn btn-primary"
+                                onclick="generateReport()">Generate Report</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+
+        <!-- Report Section -->
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="info-box">
+                            <h5>Total Sales Count</h5>
+                            <p id="totalSalesCount">0</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="info-box">
+                            <h5>Total Order Amount</h5>
+                            <p id="totalOrderAmount">₹0</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="info-box">
+                            <h5>Total Discounts</h5>
+                            <p id="totalDiscounts">₹0</p>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="info-box">
-                        <h5>Total Order Amount</h5>
-                        <p id="totalOrderAmount">₹0</p>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Order ID</th>
+                            <th>Order Date</th>
+                            <th>Total Amount</th>
+                            <th>Discount Applied</th>
+                            <th>Final Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportTable">
+                        <!-- Rows will be dynamically populated -->
+                    </tbody>
+                </table>
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <button class="btn btn-primary" onclick="downloadPDF()">Download PDF</button>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="info-box">
-                        <h5>Total Discounts</h5>
-                        <p id="totalDiscounts">₹0</p>
+                    <div class="col-md-3">
+                        <button class="btn btn-primary" onclick="downloadExcel()">Download Excel</button>
                     </div>
                 </div>
             </div>
-
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>No.</th>
-                        <th>Order ID</th>
-                        <th>Order Date</th>
-                        <th>Total Amount</th>
-                        <th>Discount Applied</th>
-                        <th>Final Amount</th>
-                    </tr>
-                </thead>
-                <tbody id="reportTable">
-                    <!-- Rows will be dynamically populated -->
-                </tbody>
-            </table>
-            <div class="row mb-4">
-                <div class="col-md-3">
-                    <button class="btn btn-primary" onclick="downloadPDF()">Download PDF</button>
-                </div>
-                <div class="col-md-3">
-                    <button class="btn btn-primary" onclick="downloadExcel()">Download Excel</button>
-                </div>
-            </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<%- include("../../views/partials/admin/footer") %>
+    <%- include("../../views/partials/admin/footer") %>
 
-<script>
+        <script>
 
-    async function generateReport() {
-        const startDate = document.getElementById('startDate').value;
-        const endDate = document.getElementById('endDate').value;
-        const filterType = document.getElementById('filterType').value;
+            async function generateReport() {
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                const filterType = document.getElementById('filterType').value;
 
-        if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
-            Swal.fire('Error', 'Start date cannot be later than end date.', 'error');
-            return;
-        }
-        const generateButton = document.getElementById('generateBtn');
-        generateButton.disabled = true;
-        generateButton.textContent = 'Generating Report...';
+                if (filterType === "custom") {
+                    if(!startDate || !endDate){
+                        Swal.fire('Error', 'Please select both start and end dates.', 'error');
+                        return;
+                    }
+                    if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+                        Swal.fire('Error', 'Start date cannot be later than end date.', 'error');
+                        return;
+                    }
+                }
 
-        try {
-            const response = await fetch('/admin/salesReport', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ startDate, endDate, filterType }),
-            });
+                const generateButton = document.getElementById('generateBtn');
+                generateButton.disabled = true;
+                generateButton.textContent = 'Generating Report...';
 
-            const result = await response.json();
-            if (result.success) {
-                document.getElementById('totalSalesCount').textContent = result.totalSalesCount;
-                document.getElementById('totalOrderAmount').textContent = `₹${result.totalOrderAmount}`;
-                document.getElementById('totalDiscounts').textContent = `₹${result.totalDiscounts}`;
+                try {
+                    const response = await fetch('/admin/salesReport', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ startDate, endDate, filterType }),
+                    });
 
-                const reportTable = document.getElementById('reportTable');
-                reportTable.innerHTML = '';
+                    const result = await response.json();
+                    if (result.success) {
+                        document.getElementById('totalSalesCount').textContent = result.totalSalesCount;
+                        document.getElementById('totalOrderAmount').textContent = `₹${result.totalOrderAmount}`;
+                        document.getElementById('totalDiscounts').textContent = `₹${result.totalDiscounts}`;
 
-                if (result.orders.length === 0) {
-                    reportTable.innerHTML = '<tr><td colspan="6" class="text-center">No orders found for the selected filters.</td></tr>';
-                } else {
-                    result.orders.forEach((order, index) => {
-                        const row = `<tr>
+                        const reportTable = document.getElementById('reportTable');
+                        reportTable.innerHTML = '';
+
+                        if (result.orders.length === 0) {
+                            reportTable.innerHTML = '<tr><td colspan="6" class="text-center">No orders found for the selected filters.</td></tr>';
+                        } else {
+                            result.orders.forEach((order, index) => {
+                                const row = `<tr>
                             <td>${index + 1}</td>
                             <td>${order.orderId}</td>
                             <td>${new Date(order.date).toLocaleDateString()}</td>
@@ -134,129 +155,147 @@
                             <td>₹${order.discount}</td>
                             <td>₹${order.finalAmount}</td>
                         </tr>`;
-                        reportTable.innerHTML += row;
-                    });
+                                reportTable.innerHTML += row;
+                            });
+                        }
+                    } else {
+                        Swal.fire('Error', result.message, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error generating report:', error);
+                    Swal.fire('Error', 'Something went wrong while generating the report.', 'error');
+                } finally {
+                    generateButton.disabled = false;
+                    generateButton.textContent = 'Generate Report';
                 }
-            } else {
-                Swal.fire('Error', result.message, 'error');
             }
-        } catch (error) {
-            console.error('Error generating report:', error);
-            Swal.fire('Error', 'Something went wrong while generating the report.', 'error');
-        } finally {
-            generateButton.disabled = false;
-            generateButton.textContent = 'Generate Report';
-        }
-    }
 
-    async function downloadPDF() {
-        console.log('button clicked')
-        const startDate = document.getElementById('startDate').value;
-        const endDate = document.getElementById('endDate').value;
-        const filterType = document.getElementById('filterType').value;
+            async function downloadPDF() {
+                console.log('button clicked')
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                const filterType = document.getElementById('filterType').value;
 
 
-        const orders = [];
-        const rows = document.querySelectorAll('#reportTable tr');
-        rows.forEach(row => {
-            const orderData = row.querySelectorAll('td');
-            if (orderData.length > 0) {
-                orders.push({
-                    orderId: orderData[1].textContent,
-                    date: orderData[2].textContent,
-                    totalAmount: parseFloat(orderData[3].textContent.replace('₹', '')),
-                    discount: parseFloat(orderData[4].textContent.replace('₹', '')),
-                    finalAmount: parseFloat(orderData[5].textContent.replace('₹', ''))
+                const orders = [];
+                const rows = document.querySelectorAll('#reportTable tr');
+                rows.forEach(row => {
+                    const orderData = row.querySelectorAll('td');
+                    if (orderData.length > 0) {
+                        orders.push({
+                            orderId: orderData[1].textContent,
+                            date: orderData[2].textContent,
+                            totalAmount: parseFloat(orderData[3].textContent.replace('₹', '')),
+                            discount: parseFloat(orderData[4].textContent.replace('₹', '')),
+                            finalAmount: parseFloat(orderData[5].textContent.replace('₹', ''))
+                        });
+                    }
                 });
+
+                const totalSalesCount = orders.length;
+                const totalOrderAmount = orders.reduce((sum, order) => sum + order.totalAmount, 0);
+                const totalDiscounts = orders.reduce((sum, order) => sum + order.discount, 0);
+
+                const requestData = {
+                    startDate,
+                    endDate,
+                    filterType,
+                    orders,
+                    totalSalesCount,
+                    totalOrderAmount,
+                    totalDiscounts
+                };
+
+                try {
+                    const response = await fetch('/admin/generate-pdf', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(requestData)
+                    });
+
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(blob);
+                        link.download = 'sales_report.pdf';
+                        link.click();
+                    } else {
+                        Swal.fire('Error', 'Failed to generate PDF.', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error downloading PDF:', error);
+                    Swal.fire('Error', 'Something went wrong while downloading the report.', 'error');
+                }
             }
-        });
 
-        const totalSalesCount = orders.length;
-        const totalOrderAmount = orders.reduce((sum, order) => sum + order.totalAmount, 0);
-        const totalDiscounts = orders.reduce((sum, order) => sum + order.discount, 0);
-
-        const requestData = {
-            startDate,
-            endDate,
-            filterType,
-            orders,
-            totalSalesCount,
-            totalOrderAmount,
-            totalDiscounts
-        };
-
-        try {
-            const response = await fetch('/admin/generate-pdf', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(requestData)
-            });
-
-            if (response.ok) {
-                const blob = await response.blob();
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = 'sales_report.pdf';
-                link.click();
-            } else {
-                Swal.fire('Error', 'Failed to generate PDF.', 'error');
-            }
-        } catch (error) {
-            console.error('Error downloading PDF:', error);
-            Swal.fire('Error', 'Something went wrong while downloading the report.', 'error');
-        }
-    }
-
-    async function downloadExcel() {
-        const startDate = document.getElementById('startDate').value;
-        const endDate = document.getElementById('endDate').value;
-        const filterType = document.getElementById('filterType').value;
-        const orders = [];
-        const rows = document.querySelectorAll('#reportTable tr');
-        rows.forEach(row => {
-            const orderData = row.querySelectorAll('td');
-            if (orderData.length > 0) {
-                orders.push({
-                    orderId: orderData[1].textContent,
-                    date: orderData[2].textContent,
-                    totalAmount: parseFloat(orderData[3].textContent.replace('₹', '')),
-                    discount: parseFloat(orderData[4].textContent.replace('₹', '')),
-                    finalAmount: parseFloat(orderData[5].textContent.replace('₹', ''))
+            async function downloadExcel() {
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                const filterType = document.getElementById('filterType').value;
+                const orders = [];
+                const rows = document.querySelectorAll('#reportTable tr');
+                rows.forEach(row => {
+                    const orderData = row.querySelectorAll('td');
+                    if (orderData.length > 0) {
+                        orders.push({
+                            orderId: orderData[1].textContent,
+                            date: orderData[2].textContent,
+                            totalAmount: parseFloat(orderData[3].textContent.replace('₹', '')),
+                            discount: parseFloat(orderData[4].textContent.replace('₹', '')),
+                            finalAmount: parseFloat(orderData[5].textContent.replace('₹', ''))
+                        });
+                    }
                 });
-            }
-        });
-        const totalSalesCount = orders.length;
-        const totalOrderAmount = orders.reduce((sum, order) => sum + order.totalAmount, 0);
-        const totalDiscounts = orders.reduce((sum, order) => sum + order.discount, 0);
-        const requestData = {
-            startDate,
-            endDate,
-            filterType,
-            orders,
-            totalSalesCount,
-            totalOrderAmount,
-            totalDiscounts
-        };
-        try {
-            const response = await fetch('/admin/generate-excel', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(requestData)
-            });
+                const totalSalesCount = orders.length;
+                const totalOrderAmount = orders.reduce((sum, order) => sum + order.totalAmount, 0);
+                const totalDiscounts = orders.reduce((sum, order) => sum + order.discount, 0);
+                const requestData = {
+                    startDate,
+                    endDate,
+                    filterType,
+                    orders,
+                    totalSalesCount,
+                    totalOrderAmount,
+                    totalDiscounts
+                };
+                try {
+                    const response = await fetch('/admin/generate-excel', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(requestData)
+                    });
 
-            if (response.ok) {
-                const blob = await response.blob();
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = 'sales_report.xlsx';
-                link.click();
-            } else {
-                Swal.fire('Error', 'Failed to generate Excel file.', 'error');
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(blob);
+                        link.download = 'sales_report.xlsx';
+                        link.click();
+                    } else {
+                        Swal.fire('Error', 'Failed to generate Excel file.', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error downloading Excel:', error);
+                    Swal.fire('Error', 'Something went wrong while downloading the report.', 'error');
+                }
             }
-        } catch (error) {
-            console.error('Error downloading Excel:', error);
-            Swal.fire('Error', 'Something went wrong while downloading the report.', 'error');
-        }
-    }
 
-</script>
+            function toggleCustomDateFields() {
+                const filterType = document.getElementById("filterType").value;
+                const customDateRange = document.getElementById("customDateRange");
+
+                if (filterType === "custom") {
+                    customDateRange.style.display = "block";
+                    document.getElementById("startDate").required = true;
+                    document.getElementById("endDate").required = true;
+                } else {
+                    customDateRange.style.display = "none";
+                    document.getElementById("startDate").required = false;
+                    document.getElementById("endDate").required = false;
+                    document.getElementById("startDate").value = "";
+                    document.getElementById("endDate").value = "";
+                }
+            }
+
+
+        </script>

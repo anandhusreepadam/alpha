@@ -124,13 +124,13 @@ const salesReport = async (req, res) => {
     }
 }
 
-
 const generatePdf = async (req, res) => {
+    console.log('hiii in generate pdf')
     const { startDate, endDate, filterType, orders, totalSalesCount, totalOrderAmount, totalDiscounts } = req.body;
 
     // Validate required inputs
-    if (!startDate || !endDate || !orders || !Array.isArray(orders)) {
-        return res.status(400).send('Invalid input data.');
+    if ( !orders || !Array.isArray(orders)) {
+        return res.status(400).json({message:'Invalid input data.'});
     }
 
     const doc = new PDFDocument({ margin: 30 });

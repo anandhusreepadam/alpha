@@ -251,7 +251,7 @@
                                             </div>
                                         </div>
                                         <div>
-                                            <% if (order.paymentStatus==='Pending' ) { %>
+                                            <% if (order.paymentStatus==='Pending' && order.paymentMethod==='razorpay' ) { %>
                                                 <button class="btn btn-primary"
                                                     onclick="retryPayment('<%= order._id %>')">
                                                     Retry Payment

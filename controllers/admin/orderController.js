@@ -107,6 +107,9 @@ const updateStatus = async (req, res) => {
                 });
             }
             res.status(200).json({ success: true, message: 'Order successfully Cancelled' });
+        }else if (status=='Delivered'){
+            updatedOrder.paymentStatus = 'Paid';
+            updatedOrder.save();
         }
         res.status(200).json({ success: true, message: 'Order status updated successfully' });
     } catch (error) {
