@@ -32,9 +32,9 @@
                             <th>Order ID</th>
                             <th>Customer</th>
                             <th>Total</th>
-                            <th>Status</th>
+                            <th>Payment Status</th>
                             <th>Order Date</th>
-                            <th class="text-end">Action</th>
+                            <th class="text-end">Order Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -64,21 +64,13 @@
                                     <td>₹<%= orders[i].finalAmount.toFixed(2) %></td>                                
                                     <!-- Status -->
                                     <td>
-                                        <% if (orders[i].status === 'Returned') { %>
-                                            <span class="badge rounded-pill alert-warning">Returned</span>
-                                        <% }else if (orders[i].status === 'Return Request') { %>
-                                            <span class="badge rounded-pill alert-warning">Return Request</span>
-                                        <% }else if (orders[i].status === 'Pending') { %>
-                                            <span class="badge rounded-pill alert-warning">Pending</span>
-                                        <% } else if (orders[i].status === 'Cancelled') { %>
-                                            <span class="badge rounded-pill alert-danger">Cancelled</span>
-                                        <% } else if (orders[i].status === 'Shipped') { %>
-                                            <span class="badge rounded-pill alert-primary">Shipped</span>
-                                        <% } else if (orders[i].status === 'Delivered') { %>
-                                            <span class="badge rounded-pill alert-success">Delivered</span>
+                                        <% if (orders[i].paymentStatus === 'Paid') { %>
+                                            <span class="badge rounded-pill alert-success">Paid</span>                                            
+                                        <% }else if (orders[i].paymentStatus === 'Pending') { %>  
+                                            <span class="badge rounded-pill alert-danger">Pending</span>
                                         <% } else { %>
-                                            <span class="badge rounded-pill alert-secondary"><%= orders[i].status %></span>
-                                        <% } %>
+                                            <span class="badge rounded-pill alert-primary">Refunded</span>                                             
+                                            <% } %>                                        
                                     </td>
                                     
                                     <!-- Order Date -->
@@ -87,11 +79,47 @@
                                     <!-- Action Buttons -->
                                     <td class="text-end">
                                         <a href="/admin/viewOrder?id=<%= orders[i]._id %>" class="btn btn-sm btn-light">View</a>
-                                        <% if (orders[i].status !== 'Cancelled' && orders[i].status !== 'Delivered' && orders[i].status !=='Returned') { %>
-                                            <a href="javascript:void(0)" 
-                                               onclick="updateOrderStatus('<%= orders[i]._id %>','<%= user._id%>')" 
-                                               class="btn btn-sm btn-brand">Update</a>
-                                               <% } %>                                               
+                                        
+                                        <% if (orders[i].paymentStatus == 'Pending' && orders[i].paymentMethod == 'razorpay' ) { %>
+                                            <a  onclick="paymentNotDone()" class="btn btn-sm btn-danger">
+                                            <span >Pending</span>
+                                        <%} else if (orders[i].status !== 'Cancelled' && orders[i].status !== 'Delivered' && orders[i].status !=='Returned') { %>
+                                            <a href="javascript:void(0)" onclick="updateOrderStatus('<%= orders[i]._id %>','<%= user._id%>')" class="btn btn-sm btn-brand">
+                                                <% if (orders[i].status === 'Returned') { %>
+                                                    <span >Returned</span>
+                                                <% }else if (orders[i].status === 'Return Request') { %>
+                                                    <span >Return Request</span>
+                                                <% }else if (orders[i].status === 'Pending') { %>
+                                                    <span >Pending</span>
+                                                <% } else if (orders[i].status === 'Cancelled') { %>
+                                                    <span >Cancelled</span>
+                                                <% } else if (orders[i].status === 'Shipped') { %>
+                                                    <span >Shipped</span>
+                                                <% } else if (orders[i].status === 'Delivered') { %>
+                                                    <span >Delivered</span>
+                                                <% } else { %>
+                                                    <span ><%= orders[i].status %></span>
+                                                <% } %>
+                                            </a>
+                                        <% }else{ %>
+                                            <a  class="btn btn-sm btn-light">
+                                                <% if (orders[i].status === 'Returned') { %>
+                                                    <span >Returned</span>
+                                                <% }else if (orders[i].status === 'Return Request') { %>
+                                                    <span >Return Request</span>
+                                                <% }else if (orders[i].status === 'Pending') { %>
+                                                    <span >Pending</span>
+                                                <% } else if (orders[i].status === 'Cancelled') { %>
+                                                    <span >Cancelled</span>
+                                                <% } else if (orders[i].status === 'Shipped') { %>
+                                                    <span >Shipped</span>
+                                                <% } else if (orders[i].status === 'Delivered') { %>
+                                                    <span >Delivered</span>
+                                                <% } else { %>
+                                                    <span ><%= orders[i].status %></span>
+                                                <% } %>
+                                            </a>
+                                        <% } %>                                               
                                     </td>
                                 </tr>
                             <% } %>
@@ -166,6 +194,10 @@
                 });
             }
         });
+    }
+
+    function paymentNotDone(){
+        Swal.fire('error','Payment Still Pending','error')
     }
 
 </script>

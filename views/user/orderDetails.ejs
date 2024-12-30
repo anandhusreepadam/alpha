@@ -133,6 +133,14 @@
                         <p><strong>Payment Method:</strong>
                             <%= order.paymentMethod %>
                         </p>
+                                <strong>Payment Status : </strong>
+                                <% if (order.paymentStatus==='Pending' ) { %>
+                                <span>Pending</span>
+                                <% } else if (order.paymentStatus==='Refunded' ) { %>
+                                <span>Refunded</span>
+                                <% } else { %>
+                                <span>Paid</span>
+                                <% } %>
                     </div>
                     <div>
                         <p><strong>Total Amount:</strong> ₹<%= order.totalAmount %>
@@ -219,6 +227,12 @@
 
             <!-- Action Buttons -->
             <div class="order-actions d-flex justify-content-end mb-3">
+                <% if (order.paymentStatus==='Pending' && order.paymentMethod==='razorpay' ) { %>
+                    <button class="btn btn-primary me-2"
+                        onclick="retryPayment('<%= order._id %>')">
+                        Retry Payment
+                    </button>
+                <% } %>
                 <% if (order.status==='Delivered' ) { %>
                     <a id="invoice-btn" class="btn btn-primary me-2"
                         href="/generateInvoice?orderId=<%= order._id %>">Download Invoice</a>
@@ -235,7 +249,7 @@
 
     <%- include("../../views/partials/user/footer") %>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
         <script>
 
             function goBack() {
@@ -323,6 +337,77 @@
                 } catch (err) {
                     console.error('Error returning order:', err.message);
                     await Swal.fire("Oops!", "Internal server error occurred.", "error");
+                }
+            }
+
+            async function retryPayment(orderId){
+                try {
+                    const response = await fetch(`/retryPayment?orderId=${orderId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                            const options = {
+                                key: data.key,
+                                amount: data.amount,
+                                currency: 'INR',
+                                name: 'Chanel One',
+                                description: 'Payment for your order on Chanel One',
+                                order_id: data.razorpayOrderId,
+                                handler: async function (response) {
+                                    const verifyResponse = await fetch('/verify-payment', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify(response),
+                                    });
+                                    
+                                    const verifyResult = await verifyResponse.json();
+                                    if (verifyResult.success) {
+                                        window.location.href = '/orderPlaced';
+                                    } else {
+                                        alert('Payment Verification Failed.');
+                                    }
+                                },
+                                modal: {
+                                    ondismiss: function () {
+                                        Swal.fire({
+                                            title: 'Payment Failed!',
+                                            text: 'Your last payment was failed',
+                                            icon: 'error',
+                                            confirmButtonText: 'Go to Orders'
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                window.location.href = "/orders";
+                                            }
+                                        });
+                                    }
+                                },
+                                prefill: {
+                                    name: data.user?.name || 'Guest',
+                                    email: data.user?.email || 'guest@example.com',
+                                    contact: data.user?.phone || '0000000000',
+                                },
+                                theme: {
+                                    color: '#3399cc',
+                                },
+                            };
+                            const rzp1 = new Razorpay(options);
+                            rzp1.open();
+                    } else {
+                        swal({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message || 'An error occured while placing order'
+                        })
+                    }
+                } catch (error) {
+                    console.error('Error placing order:', error);
+                    alert('Something went wrong. Please try again.');
                 }
             }
 

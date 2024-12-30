@@ -30,6 +30,12 @@ router.post('/login',adminController.login);
 router.get('/',adminAuth,adminController.loadDashboard)
 router.get('/logout',adminController.logout);
 
+//Dashboard
+router.get('/sales-data',adminController.dashboard)
+
+
+
+
 //User Management
 router.get('/users',adminAuth,customerController.customerInfo);
 router.get('/blockCustomer',adminAuth,customerController.customerBlocked);

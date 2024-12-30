@@ -57,7 +57,7 @@ const orderDetails = async (req, res) => {
 }
 
 const updateStatus = async (req, res) => {
-    const { orderId, status,userId } = req.body;
+    const { orderId, status, userId } = req.body;
     try {
         if (!orderId || !status) {
             return res.status(400).json({ success: false, message: 'Invalid data' });
@@ -83,7 +83,7 @@ const updateStatus = async (req, res) => {
                 const wallet = await Wallet.findOne({ userId: userId });
                 if (!wallet) {
                     const wallet = new Wallet({
-                        order:updatedOrder._id,
+                        order: updatedOrder._id,
                         userId,
                         balance: 0,
                         transactions: [],
@@ -92,7 +92,7 @@ const updateStatus = async (req, res) => {
                 const refundAmount = updatedOrder.finalAmount;
                 wallet.balance += refundAmount;
                 wallet.transactions.unshift({
-                    order:updatedOrder._id,
+                    order: updatedOrder._id,
                     orderId: updatedOrder.orderId,
                     type: 'refund',
                     amount: refundAmount,
@@ -100,14 +100,21 @@ const updateStatus = async (req, res) => {
                     date: new Date(),
                 });
                 await wallet.save();
+
+                    updatedOrder.paymentStatus = "Refunded";
+                    updatedOrder.save();
+
                 return res.status(200).json({
                     success: true,
-                    message: 'Order cancelled and amount refunded to wallet.',
-                    walletBalance: wallet.balance,
+                    message: `Order ${status} and amount refunded to wallet.`,
                 });
             }
-            res.status(200).json({ success: true, message: 'Order successfully Cancelled' });
-        }else if (status=='Delivered'){
+
+            updatedOrder.paymentStatus = "Refunded";
+            updatedOrder.save();
+
+            return res.status(200).json({ success: true, message: `Order successfully ${status}` });
+        } else if (status == 'Delivered') {
             updatedOrder.paymentStatus = 'Paid';
             updatedOrder.save();
         }

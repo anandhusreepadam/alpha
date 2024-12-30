@@ -209,6 +209,7 @@
         </div>
     </div>
     <%- include("../../views/partials/user/footer") %>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
         <script>
@@ -325,7 +326,7 @@
                 const paymentMethods = document.querySelector('input[name="paymentMethod"]:checked');
                 const couponCode = document.getElementById('couponCodeInput').value;
                 if (!selectedAddress || !paymentMethods) {
-                    swal({
+                    Swal.fire({
                         icon: 'error',
                         title: 'Required Field',
                         text: 'Please Select Address and Payment Method'
@@ -372,8 +373,9 @@
                                         alert('Payment Verification Failed.');
                                     }
                                 },
-                                modal: {
+                                modal: {                                    
                                     ondismiss: function () {
+                                        console.log('inside modal on dismiss')
                                         Swal.fire({
                                             title: 'Payment Failed!',
                                             text: 'Your last payment was failed',
@@ -401,7 +403,7 @@
                             window.location.href = '/orderPlaced';
                         }
                     } else {
-                        swal({
+                        Swal.fire({
                             icon: 'error',
                             title: 'Error',
                             text: data.message || 'An error occured while placing order'

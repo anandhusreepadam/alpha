@@ -1,8 +1,10 @@
 const User = require('../../models/userSchema');
 const Order = require('../../models/orderSchema');
+const Product = require('../../models/productSchema');
 const PDFDocument = require('pdfkit');
 const ExcelJS = require('exceljs');
 const bcrypt = require('bcrypt');
+const mongoose = require('mongoose');
 
 
 
@@ -47,14 +49,42 @@ const login = async (req, res) => {
 }
 
 const loadDashboard = async (req, res) => {
-    if (req.session.admin) {
-        try {
-            res.render('dashBoard');
+    try {
+        // Calculate total revenue
+        const totalRevenue = await Order.aggregate([
+            { $group: { _id: null, total: { $sum: '$finalAmount' } } }
+        ]);
+        const totalDiscounts = await Order.aggregate([
+            { $group: { _id: null, total: { $sum: '$discount' } } }
+        ]);
 
-        } catch (error) {
-            res.redirect('/pageerror')
-        }
+
+        // Count orders
+        const totalOrders = await Order.countDocuments();
+
+        // Count products
+        // const totalProducts = await Product.countDocuments(); // Assuming a `Product` model exists
+
+        // Calculate monthly earnings
+        const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+        const monthlyEarnings = await Order.aggregate([
+            { $match: { createdAt: { $gte: startOfMonth } } },
+            { $group: { _id: null, total: { $sum: '$finalAmount' } } }
+        ]);
+
+        res.render('dashboard', {
+            data: {
+                revenue: totalRevenue[0]?.total || 0,
+                orders: totalOrders,
+                discount: totalDiscounts[0]?.total||0,
+                monthlyEarning: monthlyEarnings[0]?.total || 0,
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Server Error' });
     }
+
 }
 
 const logout = async (req, res) => {
@@ -73,8 +103,62 @@ const logout = async (req, res) => {
 }
 
 
-//Sales Report
+//Dashboard
+const dashboard = async (req, res) => {
 
+    // Aggregation Endpoint for Sales Data
+        try {
+            const { filter } = req.query; // Accept 'day', 'week', or 'month' as a query parameter
+    
+            let dateRange = {};
+    
+            if (filter === 'day') {
+                dateRange = { $gte: new Date(new Date().setHours(0, 0, 0, 0)) }; // Start of today
+            } else if (filter === 'week') {
+                const today = new Date();
+                const firstDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+                dateRange = { $gte: new Date(firstDayOfWeek.setHours(0, 0, 0, 0)) }; // Start of the week
+            } else if (filter === 'month') {
+                dateRange = { $gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1) }; // Start of the month
+            }
+    
+            const productQuantities = await Order.aggregate([
+                { $match: { createdAt: dateRange } }, // Filter by date range
+                { $unwind: '$items' },
+                {
+                    $group: {
+                        _id: '$items.productId',
+                        totalQuantity: { $sum: '$items.quantity' },
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'products',
+                        localField: '_id',
+                        foreignField: '_id',
+                        as: 'product',
+                    },
+                },
+                { $unwind: '$product' },
+                {
+                    $project: {
+                        _id: 0,
+                        productName: '$product.name',
+                        totalQuantity: 1,
+                    },
+                },
+                { $sort: { totalQuantity: -1 } },
+            ]);
+            console.log(productQuantities)
+            res.json({ success: true, data: productQuantities });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ success: false, message: 'Server Error' });
+        }
+}
+
+
+//Sales Report
 const loadReport = async (req, res) => {
     try {
         res.render('report')
@@ -129,8 +213,8 @@ const generatePdf = async (req, res) => {
     const { startDate, endDate, filterType, orders, totalSalesCount, totalOrderAmount, totalDiscounts } = req.body;
 
     // Validate required inputs
-    if ( !orders || !Array.isArray(orders)) {
-        return res.status(400).json({message:'Invalid input data.'});
+    if (!orders || !Array.isArray(orders)) {
+        return res.status(400).json({ message: 'Invalid input data.' });
     }
 
     const doc = new PDFDocument({ margin: 30 });
@@ -144,12 +228,12 @@ const generatePdf = async (req, res) => {
 
     // Title and Date Range
     doc.fontSize(18)
-       .text('Sales Report', { align: 'center' })
-       .moveDown(0.5);
+        .text('Sales Report', { align: 'center' })
+        .moveDown(0.5);
 
     doc.fontSize(12)
-       .text(`Date Range: ${startDate} to ${endDate}`, { align: 'center' });
-    
+        .text(`Date Range: ${startDate} to ${endDate}`, { align: 'center' });
+
     if (filterType) {
         doc.text(`Filter Type: ${filterType}`, { align: 'center' });
     }
@@ -157,14 +241,14 @@ const generatePdf = async (req, res) => {
 
     // Summary Information in a box
     doc.rect(30, doc.y, doc.page.width - 60, 50)
-       .stroke()
-       .moveDown(0.2);
+        .stroke()
+        .moveDown(0.2);
 
     doc.fontSize(12)
-       .text(`Total Sales Count: ${totalSalesCount}`, 40, doc.y)
-       .text(`Total Order Amount: ₹${totalOrderAmount}`, 40)
-       .text(`Total Discounts: ₹${totalDiscounts}`, 40)
-       .moveDown(1);
+        .text(`Total Sales Count: ${totalSalesCount}`, 40, doc.y)
+        .text(`Total Order Amount: ₹${totalOrderAmount}`, 40)
+        .text(`Total Discounts: ₹${totalDiscounts}`, 40)
+        .moveDown(1);
 
     // Create table header
     const tableTop = doc.y + 20;
@@ -179,7 +263,7 @@ const generatePdf = async (req, res) => {
 
     // Draw table headers
     doc.font('Helvetica-Bold')
-       .fontSize(10);
+        .fontSize(10);
 
     let xPos = 30;
     doc.text('No.', xPos, tableTop);
@@ -197,7 +281,7 @@ const generatePdf = async (req, res) => {
     // Draw table rows
     let yPos = tableTop + 20;
     doc.font('Helvetica')
-       .fontSize(10);
+        .fontSize(10);
 
     orders.forEach((order, index) => {
         // Check if we need a new page
@@ -227,21 +311,17 @@ const generatePdf = async (req, res) => {
     for (let i = 0; i < pages.count; i++) {
         doc.switchToPage(i);
         doc.fontSize(8)
-           .text(
-               `Page ${i + 1} of ${pages.count}`,
-               0,
-               doc.page.height - 50,
-               { align: 'center' }
-           );
+            .text(
+                `Page ${i + 1} of ${pages.count}`,
+                0,
+                doc.page.height - 50,
+                { align: 'center' }
+            );
     }
 
     // Finalize the PDF
     doc.end();
 };
-
-
-
-
 
 const generateExcel = async (req, res) => {
     const { startDate, endDate, filterType, orders, totalSalesCount, totalOrderAmount, totalDiscounts } = req.body;
@@ -293,4 +373,5 @@ module.exports = {
     salesReport,
     generatePdf,
     generateExcel,
+    dashboard
 }

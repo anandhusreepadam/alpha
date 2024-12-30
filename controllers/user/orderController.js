@@ -35,6 +35,7 @@ const loadCheckout = async (req, res) => {
 };
 
 const placeOrder = async (req, res) => {
+    console.log('in place order')
     try {
         const user = await User.findOne({ _id: req.session.user._id })
         const { addressId, paymentMethod, couponCode } = req.body;
@@ -198,6 +199,7 @@ const placeOrder = async (req, res) => {
                 walletBalance: wallet.balance,
             });
         }
+
         await Cart.findOneAndUpdate({ userId: user._id }, { $set: { items: [] } });
 
     } catch (error) {
@@ -252,7 +254,7 @@ const cancelOrder = async (req, res) => {
         const orderId = req.params.id;
         const updatedOrder = await Order.findByIdAndUpdate(
             orderId,
-            { status: 'Cancelled' },
+            { status: 'Cancelled',paymentStatus:'Refunded' },
             { new: true }
         );
         if (!updatedOrder) {
