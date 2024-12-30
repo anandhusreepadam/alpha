@@ -8,17 +8,18 @@
         <header class="card-header">
             <div class="row gx-3">
                 <div class="col-lg-4 col-md-6 me-auto">
-                    <input type="text" placeholder="Search Orders..." class="form-control" oninput="searchOrders(this.value)" />
+                    <input type="text" placeholder="Search" value="<%=search%>" class="form-control" oninput="debounceSearch(this.value)"/>
                 </div>
                 <div class="col-lg-2 col-md-3 col-6">
                     <select class="form-select" onchange="filterOrderStatus(this.value)">
-                        <option value="">Status</option>
-                        <option value="pending">Pending</option>
-                        <option value="shipped">Shipped</option>
-                        <option value="delivered">Delivered</option>
-                        <option value="processing">Return Request</option>
-                        <option value="cancelled">Returned</option>
-                        <option value="cancelled">Cancelled</option>
+                        <option value=""><%=statusFilter||'All'%></option>
+                        <option value="">All</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Return Request">Return Request</option>
+                        <option value="Returned">Returned</option>
+                        <option value="Cancelled">Cancelled</option>
                     </select>
                 </div>
             </div>
@@ -197,7 +198,30 @@
     }
 
     function paymentNotDone(){
-        Swal.fire('error','Payment Still Pending','error')
+        Swal.fire('Oops','Payment Still Pending','error')
     }
+
+    let debounceTimeout;
+
+function debounceSearch(query) {
+    clearTimeout(debounceTimeout);
+
+    debounceTimeout = setTimeout(() => {
+        searchOrders(query);
+    }, 700); // Adjust the delay (in milliseconds) as needed
+}
+
+function searchOrders(query) {
+    const searchParams = new URLSearchParams(window.location.search);
+
+    if (query) {
+        searchParams.set('search', query); // Set the search query
+    } else {
+        searchParams.delete('search'); // Remove the search query if empty
+    }
+
+    searchParams.set('page', 1); // Reset to the first page
+    window.location.search = searchParams.toString(); // Reload the page with updated query params
+}
 
 </script>

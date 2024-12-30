@@ -19,7 +19,7 @@
                         <div class="text">
                             <h6 class="mb-1 card-title">Revenue</h6>
                             <span>₹<%=data.revenue%></span>
-                            <span class="text-sm">Total Revenue  </span>
+                            <span class="text-sm">Total Revenue </span>
                         </div>
                     </article>
                 </div>
@@ -31,8 +31,10 @@
                                 class="text-success material-icons md-local_shipping"></i></span>
                         <div class="text">
                             <h6 class="mb-1 card-title">Orders</h6>
-                            <span><%=data.orders%></span>
-                            <span class="text-sm">Total Orders till now  </span>
+                            <span>
+                                <%=data.orders%>
+                            </span>
+                            <span class="text-sm">Total Orders till now </span>
                         </div>
                     </article>
                 </div>
@@ -64,419 +66,126 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-xl-8 col-lg-12">
-                <div class="card mb-4">
-                    <article class="card-body">
-                        <h5 class="card-title">Sale statistics</h5>
-                        <canvas id="myChart" height="120px"></canvas>
-                    </article>
-                </div>
-                <div class="row">
-                    <div class="col-lg-5">
-                        <div class="card mb-4">
-                            <article class="card-body">
-                                <h5 class="card-title">New Members</h5>
-                                <div class="new-member-list">
-                                    <div class="d-flex align-items-center justify-content-between mb-4">
-                                        <div class="d-flex align-items-center">
-                                            <img src="assets/imgs/people/avatar-4.png" alt="" class="avatar" />
-                                            <div>
-                                                <h6>Patric Adams</h6>
-                                                <p class="text-muted font-xs">Sanfrancisco</p>
-                                            </div>
-                                        </div>
-                                        <a href="#" class="btn btn-xs"><i class="material-icons md-add"></i> Add</a>
-                                    </div>
-                                    <div class="d-flex align-items-center justify-content-between mb-4">
-                                        <div class="d-flex align-items-center">
-                                            <img src="assets/imgs/people/avatar-2.png" alt="" class="avatar" />
-                                            <div>
-                                                <h6>Dilan Specter</h6>
-                                                <p class="text-muted font-xs">Sanfrancisco</p>
-                                            </div>
-                                        </div>
-                                        <a href="#" class="btn btn-xs"><i class="material-icons md-add"></i> Add</a>
-                                    </div>
-                                    <div class="d-flex align-items-center justify-content-between mb-4">
-                                        <div class="d-flex align-items-center">
-                                            <img src="assets/imgs/people/avatar-3.png" alt="" class="avatar" />
-                                            <div>
-                                                <h6>Tomas Baker</h6>
-                                                <p class="text-muted font-xs">Sanfrancisco</p>
-                                            </div>
-                                        </div>
-                                        <a href="#" class="btn btn-xs"><i class="material-icons md-add"></i> Add</a>
-                                    </div>
-                                </div>
-                            </article>
-                        </div>
-                    </div>
-                    <div class="col-lg-7">
-                        <div class="card mb-4">
-                            <article class="card-body">
-                                <h5 class="card-title">Recent activities</h5>
-                                <ul class="verti-timeline list-unstyled font-sm">
-                                    <li class="event-list">
-                                        <div class="event-timeline-dot">
-                                            <i class="material-icons md-play_circle_outline font-xxl"></i>
-                                        </div>
-                                        <div class="media">
-                                            <div class="me-3">
-                                                <h6><span>Today</span> <i
-                                                        class="material-icons md-trending_flat text-brand ml-15 d-inline-block"></i>
-                                                </h6>
-                                            </div>
-                                            <div class="media-body">
-                                                <div>Lorem ipsum dolor sit amet consectetur</div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="event-list active">
-                                        <div class="event-timeline-dot">
-                                            <i
-                                                class="material-icons md-play_circle_outline font-xxl animation-fade-right"></i>
-                                        </div>
-                                        <div class="media">
-                                            <div class="me-3">
-                                                <h6><span>17 May</span> <i
-                                                        class="material-icons md-trending_flat text-brand ml-15 d-inline-block"></i>
-                                                </h6>
-                                            </div>
-                                            <div class="media-body">
-                                                <div>Debitis nesciunt voluptatum dicta reprehenderit</div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="event-list">
-                                        <div class="event-timeline-dot">
-                                            <i class="material-icons md-play_circle_outline font-xxl"></i>
-                                        </div>
-                                        <div class="media">
-                                            <div class="me-3">
-                                                <h6><span>13 May</span> <i
-                                                        class="material-icons md-trending_flat text-brand ml-15 d-inline-block"></i>
-                                                </h6>
-                                            </div>
-                                            <div class="media-body">
-                                                <div>Accusamus voluptatibus voluptas.</div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="event-list">
-                                        <div class="event-timeline-dot">
-                                            <i class="material-icons md-play_circle_outline font-xxl"></i>
-                                        </div>
-                                        <div class="media">
-                                            <div class="me-3">
-                                                <h6><span>05 April</span> <i
-                                                        class="material-icons md-trending_flat text-brand ml-15 d-inline-block"></i>
-                                                </h6>
-                                            </div>
-                                            <div class="media-body">
-                                                <div>At vero eos et accusamus et iusto odio dignissi</div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="event-list">
-                                        <div class="event-timeline-dot">
-                                            <i class="material-icons md-play_circle_outline font-xxl"></i>
-                                        </div>
-                                        <div class="media">
-                                            <div class="me-3">
-                                                <h6><span>26 Mar</span> <i
-                                                        class="material-icons md-trending_flat text-brand ml-15 d-inline-block"></i>
-                                                </h6>
-                                            </div>
-                                            <div class="media-body">
-                                                <div>Responded to need “Volunteer Activities</div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </article>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-4 col-lg-12">
-                <div class="card mb-4">
-                    <article class="card-body">
-                        <h5 class="card-title">Revenue Base on Area</h5>
-                        <canvas id="myChart2" height="217"></canvas>
-                    </article>
-                </div>
-                <div class="card mb-4">
-                    <article class="card-body">
-                        <h5 class="card-title">Marketing Chanel</h5>
-                        <span class="text-muted font-xs">Facebook</span>
-                        <div class="progress mb-3">
-                            <div class="progress-bar" role="progressbar" style="width: 15%">15%</div>
-                        </div>
-                        <span class="text-muted font-xs">Instagram</span>
-                        <div class="progress mb-3">
-                            <div class="progress-bar" role="progressbar" style="width: 65%">65%</div>
-                        </div>
-                        <span class="text-muted font-xs">Google</span>
-                        <div class="progress mb-3">
-                            <div class="progress-bar" role="progressbar" style="width: 51%">51%</div>
-                        </div>
-                        <span class="text-muted font-xs">Twitter</span>
-                        <div class="progress mb-3">
-                            <div class="progress-bar" role="progressbar" style="width: 80%">80%</div>
-                        </div>
-                        <span class="text-muted font-xs">Other</span>
-                        <div class="progress mb-3">
-                            <div class="progress-bar" role="progressbar" style="width: 80%">80%</div>
-                        </div>
-                    </article>
-                </div>
-            </div>
-        </div>
+
+        <style>
+            #categoryChart {
+                max-width: 400px;
+                /* Set a maximum width */
+                max-height: 400px;
+                /* Set a maximum height */
+            }
+
+            #salesChart {
+                max-width: 500px;
+                max-height: 400px;
+            }
+        </style>
+
         <div class="card mb-4">
-            <header class="card-header">
-                <h4 class="card-title">Latest orders</h4>
-                <div class="row align-items-center">
-                    <div class="col-md-3 col-12 me-auto mb-md-0 mb-3">
-                        <div class="custom_select">
-                            <select class="form-select select-nice">
-                                <option selected>All Categories</option>
-                                <option>Women's Clothing</option>
-                                <option>Men's Clothing</option>
-                                <option>Cellphones</option>
-                                <option>Computer & Office</option>
-                                <option>Consumer Electronics</option>
-                                <option>Jewelry & Accessories</option>
-                                <option>Home & Garden</option>
-                                <option>Luggage & Bags</option>
-                                <option>Shoes</option>
-                                <option>Mother & Kids</option>
+            <article class="card-body">
+                <canvas id="salesChart" width="300" height="150"></canvas>
+                <div class="my-4 mx-4">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <select id="filter" class="form-control" onchange="fetchSalesData()">
+                                <option value="day">Today</option>
+                                <option value="week" selected>This Week</option>
+                                <option value="month">This Month</option>
+                                <option value="year">This Year</option>
+                                <option value="custom">Custom Date Range</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="col-md-2 col-6">
-                        <input type="date" value="02.05.2021" class="form-control" />
-                    </div>
-                    <div class="col-md-2 col-6">
-                        <div class="custom_select">
-                            <select class="form-select select-nice">
-                                <option selected>Status</option>
-                                <option>All</option>
-                                <option>Paid</option>
-                                <option>Chargeback</option>
-                                <option>Refund</option>
-                            </select>
+                        <div class="col-md-6" id="customDateRange" style="display: none;">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <input type="date" class="form-control" id="startDate" />
+                                </div>
+                                <div>
+                                    <input type="date" class="form-control" id="endDate" />
+                                </div>
+                                <div class="col-md-3 ms-3 align-self-end">
+                                    <button type="button" class="btn btn-primary"
+                                        onclick="fetchSalesData()">Apply</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </header>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <div class="table-responsive">
-                        <table class="table align-middle table-nowrap mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th scope="col" class="text-center">
-                                        <div class="form-check align-middle">
-                                            <input class="form-check-input" type="checkbox" id="transactionCheck01" />
-                                            <label class="form-check-label" for="transactionCheck01"></label>
-                                        </div>
-                                    </th>
-                                    <th class="align-middle" scope="col">Order ID</th>
-                                    <th class="align-middle" scope="col">Billing Name</th>
-                                    <th class="align-middle" scope="col">Date</th>
-                                    <th class="align-middle" scope="col">Total</th>
-                                    <th class="align-middle" scope="col">Payment Status</th>
-                                    <th class="align-middle" scope="col">Payment Method</th>
-                                    <th class="align-middle" scope="col">View Details</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="text-center">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="transactionCheck02" />
-                                            <label class="form-check-label" for="transactionCheck02"></label>
-                                        </div>
-                                    </td>
-                                    <td><a href="#" class="fw-bold">#SK2540</a></td>
-                                    <td>Neal Matthews</td>
-                                    <td>07 Oct, 2021</td>
-                                    <td>$400</td>
-                                    <td>
-                                        <span class="badge badge-pill badge-soft-success">Paid</span>
-                                    </td>
-                                    <td><i class="material-icons md-payment font-xxl text-muted mr-5"></i> Mastercard
-                                    </td>
-                                    <td>
-                                        <a href="#" class="btn btn-xs"> View details</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="transactionCheck03" />
-                                            <label class="form-check-label" for="transactionCheck03"></label>
-                                        </div>
-                                    </td>
-                                    <td><a href="#" class="fw-bold">#SK2541</a></td>
-                                    <td>Jamal Burnett</td>
-                                    <td>07 Oct, 2021</td>
-                                    <td>$380</td>
-                                    <td>
-                                        <span class="badge badge-pill badge-soft-danger">Chargeback</span>
-                                    </td>
-                                    <td><i class="material-icons md-payment font-xxl text-muted mr-5"></i> Visa</td>
-                                    <td>
-                                        <a href="#" class="btn btn-xs"> View details</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="transactionCheck04" />
-                                            <label class="form-check-label" for="transactionCheck04"></label>
-                                        </div>
-                                    </td>
-                                    <td><a href="#" class="fw-bold">#SK2542</a></td>
-                                    <td>Juan Mitchell</td>
-                                    <td>06 Oct, 2021</td>
-                                    <td>$384</td>
-                                    <td>
-                                        <span class="badge badge-pill badge-soft-success">Paid</span>
-                                    </td>
-                                    <td><i class="material-icons md-payment font-xxl text-muted mr-5"></i> Paypal</td>
-                                    <td>
-                                        <a href="#" class="btn btn-xs"> View details</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="transactionCheck05" />
-                                            <label class="form-check-label" for="transactionCheck05"></label>
-                                        </div>
-                                    </td>
-                                    <td><a href="#" class="fw-bold">#SK2543</a></td>
-                                    <td>Barry Dick</td>
-                                    <td>05 Oct, 2021</td>
-                                    <td>$412</td>
-                                    <td>
-                                        <span class="badge badge-pill badge-soft-success">Paid</span>
-                                    </td>
-                                    <td><i class="material-icons md-payment font-xxl text-muted mr-5"></i> Mastercard
-                                    </td>
-                                    <td>
-                                        <a href="#" class="btn btn-xs"> View details</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="transactionCheck06" />
-                                            <label class="form-check-label" for="transactionCheck06"></label>
-                                        </div>
-                                    </td>
-                                    <td><a href="#" class="fw-bold">#SK2544</a></td>
-                                    <td>Ronald Taylor</td>
-                                    <td>04 Oct, 2021</td>
-                                    <td>$404</td>
-                                    <td>
-                                        <span class="badge badge-pill badge-soft-warning">Refund</span>
-                                    </td>
-                                    <td><i class="material-icons md-payment font-xxl text-muted mr-5"></i> Visa</td>
-                                    <td>
-                                        <a href="#" class="btn btn-xs"> View details</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="transactionCheck07" />
-                                            <label class="form-check-label" for="transactionCheck07"></label>
-                                        </div>
-                                    </td>
-                                    <td><a href="#" class="fw-bold">#SK2545</a></td>
-                                    <td>Jacob Hunter</td>
-                                    <td>04 Oct, 2021</td>
-                                    <td>$392</td>
-                                    <td>
-                                        <span class="badge badge-pill badge-soft-success">Paid</span>
-                                    </td>
-                                    <td><i class="material-icons md-payment font-xxl text-muted mr-5"></i> Paypal</td>
-                                    <td>
-                                        <a href="#" class="btn btn-xs"> View details</a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <!-- table-responsive end// -->
-            </div>
+            </article>
         </div>
-        <div class="pagination-area mt-30 mb-50">
-            <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-start">
-                    <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                    <li class="page-item"><a class="page-link" href="#">02</a></li>
-                    <li class="page-item"><a class="page-link" href="#">03</a></li>
-                    <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                    <li class="page-item"><a class="page-link" href="#">16</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a>
-                    </li>
-                </ul>
-            </nav>
+
+
+
+        <div class="card mb-4">
+            <article class="card-body">
+                <canvas id="categoryChart" width="80" height="80"></canvas>
+                <div class="my-4 mx-4">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <select id="categoryFilter" class="form-control" onchange="fetchCategorySalesData()">
+                                <option value="day">Today</option>
+                                <option value="week" selected>This Week</option>
+                                <option value="month">This Month</option>
+                                <option value="year">This Year</option>
+                                <option value="custom">Custom Date Range</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6" id="categoryCustomDateRange" style="display: none;">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <input type="date" class="form-control" id="categoryStartDate" />
+                                </div>
+                                <div>
+                                    <input type="date" class="form-control" id="categoryEndDate" />
+                                </div>
+                                <div class="col-md-3 ms-3 align-self-end">
+                                    <button type="button" class="btn btn-primary"
+                                        onclick="fetchCategorySalesData()">Apply</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </div>
+
+        <div class="card mb-4">
+            <article class="card-body">
+                <h5 class="card-title">Top 5 Best-Selling Products</h5>
+                <table class="table ">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Product Name</th>
+                            <th>Total Sold</th>
+                        </tr>
+                    </thead>
+                    <tbody id="topSellingProductsTable">
+                        <!-- Dynamic Rows Inserted Here -->
+                    </tbody>
+                </table>
+            </article>
+        </div>
+
+        <div class="card mb-4">
+            <article class="card-body">
+                <h5 class="card-title">Top 5 Best-Selling Categories</h5>
+                <table class="table ">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Category Name</th>
+                            <th>Total Sold</th>
+                        </tr>
+                    </thead>
+                    <tbody id="topSellingCategoriesTable">
+                        <!-- Dynamic Rows Inserted Here -->
+                    </tbody>
+                </table>
+            </article>
         </div>
     </section>
     <!-- content-main end// -->
-
-    <!DOCTYPE html>
-    <html lang="en">
-
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Admin Dashboard</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                margin: 0;
-                padding: 20px;
-            }
-
-            .dashboard {
-                max-width: 800px;
-                margin: auto;
-            }
-
-            .controls {
-                margin-bottom: 20px;
-            }
-        </style>
-    </head>
-
-    <body>
-        <div class="dashboard">
-            <h1>Admin Dashboard</h1>
-            <div class="controls">
-                <label for="timeRange">Select Time Range: </label>
-                <select id="timeRange">
-                    <option value="day">Day</option>
-                    <option value="month">Month</option>
-                    <option value="year">Year</option>
-                </select>
-            </div>
-            <canvas id="salesChart"></canvas>
-        </div>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script src="script.js"></script>
-    </body>
-
-    </html>
-
-
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <%-include("../../views/partials/admin/footer")%>
@@ -484,61 +193,189 @@
 
 
         <script>
-            const ctx = document.getElementById('salesChart').getContext('2d');
 
-            // Initialize Chart with empty data
-            let chart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'Product Sales',
-                        data: [],
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
+            let chart;
+
+            async function fetchSalesData() {
+                const filter = document.getElementById('filter').value;
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+
+                const params = new URLSearchParams({ filter });
+                if (filter === 'custom') {
+                    if (startDate) params.append('startDate', startDate);
+                    if (endDate) params.append('endDate', endDate);
                 }
-            });
 
-            // Fetch Data and Update Chart
-            async function updateChart(range) {
-                try {
-                    const response = await fetch(`/admin/sales-data?range=${range}`);
-                    const result = await response.json();
+                const response = await fetch(`/admin/product/sales-data?${params.toString()}`);
+                const data = await response.json();
 
-                    if (result.success) {
-                        const salesData = result.data;
-
-                        // Extract labels and data from API response
-                        const labels = salesData.map(item => item._id);
-                        const data = salesData.map(item => item.totalSales);
-
-                        // Update chart
-                        chart.data.labels = labels;
-                        chart.data.datasets[0].data = data;
-                        chart.update();
-                    }
-                } catch (error) {
-                    console.error('Error fetching sales data:', error);
-                }
+                renderChart(data);
             }
 
-            // Listen for time range changes
-            document.getElementById('timeRange').addEventListener('change', function () {
-                const selectedRange = this.value;
-                updateChart(selectedRange);
-            });
+            function renderChart(data) {
+                const labels = data.map((item) => item.productName || 'Unknown Product');
+                const quantities = data.map((item) => item.totalQuantity);
 
-            // Initialize chart with default range (day)
-            updateChart('day');
+                const ctx = document.getElementById('salesChart').getContext('2d');
+                if (chart) chart.destroy();
+
+                chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels,
+                        datasets: [
+                            {
+                                label: 'Products Sold',
+                                data: quantities,
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1,
+                            },
+                        ],
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                            },
+                        },
+                    },
+                });
+            }
+            // Show/Hide Custom Date Range Inputs
+            document.getElementById('filter').addEventListener('change', function () {
+                const customDateRange = document.getElementById('customDateRange');
+                customDateRange.style.display = this.value === 'custom' ? 'block' : 'none';
+            });
+            // Initial Load
+            fetchSalesData();
+
+
+            let categoryChart;
+
+            async function fetchCategorySalesData() {
+                const filter = document.getElementById('categoryFilter').value;
+                const startDate = document.getElementById('categoryStartDate').value;
+                const endDate = document.getElementById('categoryEndDate').value;
+
+                const params = new URLSearchParams({ filter });
+                if (filter === 'custom') {
+                    if (startDate) params.append('startDate', startDate);
+                    if (endDate) params.append('endDate', endDate);
+                }
+
+                const response = await fetch(`/admin/category/sales-data?${params.toString()}`);
+                const data = await response.json();
+
+                renderCategoryChart(data);
+            }
+
+            function renderCategoryChart(data) {
+                const labels = data.map((item) => item._id);
+                const sales = data.map((item) => item.totalSales);
+
+                const ctx = document.getElementById('categoryChart').getContext('2d');
+                if (categoryChart) categoryChart.destroy();
+
+                categoryChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels,
+                        datasets: [
+                            {
+                                label: 'Category Sales',
+                                data: sales,
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 0.2)',
+                                    'rgba(54, 162, 235, 0.2)',
+                                    'rgba(255, 206, 86, 0.2)',
+                                    'rgba(75, 192, 192, 0.2)',
+                                    'rgba(153, 102, 255, 0.2)',
+                                    'rgba(255, 159, 64, 0.2)',
+                                ],
+                                borderColor: [
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)',
+                                ],
+                                borderWidth: 1,
+                            },
+                        ],
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                        },
+                    },
+                });
+            }
+            // Show/Hide Custom Date Range Inputs
+            document.getElementById('categoryFilter').addEventListener('change', function () {
+                const customDateRange = document.getElementById('categoryCustomDateRange');
+                customDateRange.style.display = this.value === 'custom' ? 'block' : 'none';
+            });
+            // Initial Load
+            fetchCategorySalesData();
+
+
+            const fetchTopSellingProducts = async () => {
+                try {
+                    const response = await fetch('/admin/top-selling-products'); // Replace with your actual API route
+                    const data = await response.json();
+
+                    const tableBody = document.getElementById("topSellingProductsTable");
+                    tableBody.innerHTML = ""; // Clear existing rows
+
+                    data.topSellingProducts.forEach((product, index) => {
+                        const row = `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${product.productName}</td>
+                    <td>${product.totalSold}</td>
+                </tr>
+            `;
+                        tableBody.innerHTML += row;
+                    });
+                } catch (error) {
+                    console.error("Error fetching top-selling products:", error);
+                }
+            };
+            // Fetch top-selling products when the page loads
+            document.addEventListener("DOMContentLoaded", fetchTopSellingProducts);
+
+
+            const fetchTopSellingCategories = async () => {
+                try {
+                    const response = await fetch('/admin/top-selling-categories'); // Replace with your actual API route
+                    const data = await response.json();
+
+                    const tableBody = document.getElementById("topSellingCategoriesTable");
+                    tableBody.innerHTML = ""; // Clear existing rows
+
+                    data.topSellingCategories.forEach((category, index) => {
+                        const row = `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${category._id}</td>
+                    <td>${category.totalSold}</td>
+                </tr>
+            `;
+                        tableBody.innerHTML += row;
+                    });
+                } catch (error) {
+                    console.error("Error fetching top-selling categories:", error);
+                }
+            };
+            // Fetch top-selling categories when the page loads
+            document.addEventListener("DOMContentLoaded", fetchTopSellingCategories);
+
 
         </script>

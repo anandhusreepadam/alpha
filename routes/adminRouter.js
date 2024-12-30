@@ -31,8 +31,10 @@ router.get('/',adminAuth,adminController.loadDashboard)
 router.get('/logout',adminController.logout);
 
 //Dashboard
-router.get('/sales-data',adminController.dashboard)
-
+router.get('/product/sales-data',adminController.productDashboard)
+router.get('/category/sales-data',adminController.categoryDashboard)
+router.get('/top-selling-products',adminController.topSellingProducts)
+router.get('/top-selling-categories',adminController.topSellingCategories)
 
 
 

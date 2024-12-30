@@ -100,6 +100,7 @@ const getAllProducts = async (req, res) => {
                 currentPage: page,
                 totalPages: totalPages,
                 cat: category,
+                search,
                 // brand:brand
             })
 

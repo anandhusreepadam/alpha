@@ -46,10 +46,10 @@
 						<button class="size-113 flex-c-m fs-16 cl2 hov-cl1 trans-04">
 							<i class="zmdi zmdi-search"></i>
 						</button>
-						<form action="" method="get">
-							<input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" id="search" name="search"
+
+							<input class="mtext-107 cl2 size-114 plh2 p-r-15" oninput="debounceSearch(this.value)" type="text" id="search" name="search"
 								placeholder="Search" value="<%= search || '' %>">
-						</form>
+
 					</div>
 				</div>
 
@@ -446,4 +446,28 @@
 			
 			});
 
+			let debounceTimeout;
+
+function debounceSearch(query) {
+    clearTimeout(debounceTimeout);
+
+    debounceTimeout = setTimeout(() => {
+        searchOrders(query);
+    }, 700); // Adjust the delay (in milliseconds) as needed
+}
+
+function searchOrders(query) {
+    const searchParams = new URLSearchParams(window.location.search);
+
+    if (query) {
+        searchParams.set('search', query); // Set the search query
+    } else {
+        searchParams.delete('search'); // Remove the search query if empty
+    }
+
+    searchParams.set('page', 1); // Reset to the first page
+    window.location.search = searchParams.toString(); // Reload the page with updated query params
+}
+
+			
 		</script>

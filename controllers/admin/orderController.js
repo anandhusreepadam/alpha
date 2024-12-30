@@ -30,6 +30,8 @@ const loadOrders = async (req, res) => {
             orders,
             currentPage: page,
             totalPages,
+            search,
+            statusFilter    
         });
     } catch (error) {
         console.error('Error fetching orders:', error);
@@ -54,7 +56,7 @@ const orderDetails = async (req, res) => {
         console.error('Error fetching order details:', error);
         res.status(500).send('Internal Server Error');
     }
-}
+};
 
 const updateStatus = async (req, res) => {
     const { orderId, status, userId } = req.body;
@@ -123,7 +125,7 @@ const updateStatus = async (req, res) => {
         console.error('Error updating order status:', error);
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
-}
+};
 
 module.exports = {
     loadOrders,

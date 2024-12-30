@@ -1,10 +1,10 @@
 const User = require('../../models/userSchema');
 const Order = require('../../models/orderSchema');
-const Product = require('../../models/productSchema');
+
 const PDFDocument = require('pdfkit');
 const ExcelJS = require('exceljs');
 const bcrypt = require('bcrypt');
-const mongoose = require('mongoose');
+
 
 
 
@@ -104,26 +104,64 @@ const logout = async (req, res) => {
 
 
 //Dashboard
-const dashboard = async (req, res) => {
+const productDashboard = async (req, res) => {
 
-    // Aggregation Endpoint for Sales Data
+    
         try {
-            const { filter } = req.query; // Accept 'day', 'week', or 'month' as a query parameter
+            const { filter, startDate, endDate } = req.query;
     
-            let dateRange = {};
+            // Base query
+            let match = {};
     
-            if (filter === 'day') {
-                dateRange = { $gte: new Date(new Date().setHours(0, 0, 0, 0)) }; // Start of today
-            } else if (filter === 'week') {
-                const today = new Date();
-                const firstDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
-                dateRange = { $gte: new Date(firstDayOfWeek.setHours(0, 0, 0, 0)) }; // Start of the week
-            } else if (filter === 'month') {
-                dateRange = { $gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1) }; // Start of the month
+            // Date Filters
+            const today = new Date();
+            switch (filter) {
+                case 'day':
+                    match.createdAt = {
+                        $gte: new Date(today.setHours(0, 0, 0, 0)),
+                        $lt: new Date(today.setHours(23, 59, 59, 999)),
+                    };
+                    break;
+    
+                case 'week':
+                    const weekStart = new Date(today);
+                    weekStart.setDate(today.getDate() - today.getDay());
+                    weekStart.setHours(0, 0, 0, 0);
+    
+                    const weekEnd = new Date(weekStart);
+                    weekEnd.setDate(weekStart.getDate() + 6);
+                    weekEnd.setHours(23, 59, 59, 999);
+    
+                    match.createdAt = { $gte: weekStart, $lt: weekEnd };
+                    break;
+    
+                case 'month':
+                    match.createdAt = {
+                        $gte: new Date(today.getFullYear(), today.getMonth(), 1),
+                        $lt: new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999),
+                    };
+                    break;
+    
+                case 'year':
+                    match.createdAt = {
+                        $gte: new Date(today.getFullYear(), 0, 1),
+                        $lt: new Date(today.getFullYear(), 11, 31, 23, 59, 59, 999),
+                    };
+                    break;
+    
+                case 'custom':
+                    if (startDate && endDate) {
+                        match.createdAt = {
+                            $gte: new Date(startDate),
+                            $lt: new Date(endDate),
+                        };
+                    }
+                    break;
             }
     
-            const productQuantities = await Order.aggregate([
-                { $match: { createdAt: dateRange } }, // Filter by date range
+            // Group by product and calculate total quantity sold
+            const salesData = await Order.aggregate([
+                { $match: match },
                 { $unwind: '$items' },
                 {
                     $group: {
@@ -139,23 +177,182 @@ const dashboard = async (req, res) => {
                         as: 'product',
                     },
                 },
-                { $unwind: '$product' },
                 {
                     $project: {
-                        _id: 0,
-                        productName: '$product.name',
+                        _id: 1,
                         totalQuantity: 1,
+                        productName: { $arrayElemAt: ['$product.productName', 0] },
                     },
                 },
-                { $sort: { totalQuantity: -1 } },
             ]);
-            console.log(productQuantities)
-            res.json({ success: true, data: productQuantities });
+    
+            res.json(salesData);
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ success: false, message: 'Server Error' });
+            console.error('Error fetching sales data:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
         }
 }
+
+const categoryDashboard = async(req,res)=>{
+        try {
+            const { filter, startDate, endDate } = req.query;
+    
+            let match = {};
+    
+            const today = new Date();
+            switch (filter) {
+                case 'day':
+                    match.createdAt = {
+                        $gte: new Date(today.setHours(0, 0, 0, 0)),
+                        $lt: new Date(today.setHours(23, 59, 59, 999)),
+                    };
+                    break;
+                case 'week':
+                    const weekStart = new Date(today);
+                    weekStart.setDate(today.getDate() - today.getDay());
+                    weekStart.setHours(0, 0, 0, 0);
+    
+                    const weekEnd = new Date(weekStart);
+                    weekEnd.setDate(weekStart.getDate() + 6);
+                    weekEnd.setHours(23, 59, 59, 999);
+    
+                    match.createdAt = { $gte: weekStart, $lt: weekEnd };
+                    break;
+                case 'month':
+                    match.createdAt = {
+                        $gte: new Date(today.getFullYear(), today.getMonth(), 1),
+                        $lt: new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999),
+                    };
+                    break;
+                case 'year':
+                    match.createdAt = {
+                        $gte: new Date(today.getFullYear(), 0, 1),
+                        $lt: new Date(today.getFullYear(), 11, 31, 23, 59, 59, 999),
+                    };
+                    break;
+                case 'custom':
+                    if (startDate && endDate) {
+                        match.createdAt = {
+                            $gte: new Date(startDate),
+                            $lt: new Date(endDate),
+                        };
+                    }
+                    break;
+            }
+    
+            const categorySales = await Order.aggregate([
+                { $match: match },
+                { $unwind: '$items' },
+                {
+                    $lookup: {
+                        from: 'products',
+                        localField: 'items.productId',
+                        foreignField: '_id',
+                        as: 'product',
+                    },
+                },
+                { $unwind: '$product' },
+                {
+                    $lookup: {
+                        from: 'categories',
+                        localField: 'product.category',
+                        foreignField: '_id',
+                        as: 'category',
+                    },
+                },
+                { $unwind: '$category' },
+                {
+                    $group: {
+                        _id: '$category.name',
+                        totalSales: { $sum: '$items.quantity' },
+                    },
+                },
+                { $sort: { totalSales: -1 } },
+            ]);
+    
+            res.json(categorySales);
+        } catch (error) {
+            console.error('Error fetching category sales data:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }        
+}
+
+const topSellingProducts = async (req, res) => {
+    try {
+        const topSellingProducts = await Order.aggregate([
+            { $unwind: "$items" }, // Deconstruct items array
+            {
+                $group: {
+                    _id: "$items.productId",
+                    totalSold: { $sum: "$items.quantity" },
+                },
+            },
+            { $sort: { totalSold: -1 } }, // Sort by totalSold in descending order
+            { $limit: 5 }, // Take the top 5 products
+            {
+                $lookup: {
+                    from: "products", // Collection name of products
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "productDetails",
+                },
+            },
+            { $unwind: "$productDetails" }, // Deconstruct productDetails array
+            {
+                $project: {
+                    productName: "$productDetails.productName",
+                    totalSold: 1,
+                },
+            },
+        ]);
+
+        res.json({ topSellingProducts });
+    } catch (error) {
+        console.error("Error fetching top-selling products:", error);
+        res.status(500).send("Internal Server Error");
+    }
+};
+
+const topSellingCategories = async (req, res) => {
+    try {
+        const topSellingCategories = await Order.aggregate([
+            { $unwind: "$items" }, // Deconstruct items array
+            {
+                $lookup: {
+                    from: "products", // Collection name of products
+                    localField: "items.productId",
+                    foreignField: "_id",
+                    as: "productDetails",
+                },
+            },
+            { $unwind: "$productDetails" }, // Deconstruct productDetails array
+            {
+                $lookup: {
+                    from: "categories", // Collection name of categories
+                    localField: "productDetails.category",
+                    foreignField: "_id",
+                    as: "categoryDetails",
+                },
+            },
+            { $unwind: "$categoryDetails" }, // Deconstruct categoryDetails array
+            {
+                $group: {
+                    _id: "$categoryDetails.name",
+                    totalSold: { $sum: "$items.quantity" },
+                },
+            },
+            { $sort: { totalSold: -1 } }, // Sort by totalSold in descending order
+            { $limit: 5 }, // Take the top 5 categories
+        ]);
+
+        res.json({ topSellingCategories });
+    } catch (error) {
+        console.error("Error fetching top-selling categories:", error);
+        res.status(500).send("Internal Server Error");
+    }
+};
+
+
 
 
 //Sales Report
@@ -166,7 +363,7 @@ const loadReport = async (req, res) => {
         console.log(error)
         res.status(500).json(error);
     }
-}
+};
 
 const salesReport = async (req, res) => {
     const { startDate, endDate, filterType } = req.body;
@@ -206,7 +403,7 @@ const salesReport = async (req, res) => {
         console.error('Error generating sales report:', error);
         res.status(500).json({ success: false, message: 'Failed to generate report.' });
     }
-}
+};
 
 const generatePdf = async (req, res) => {
     console.log('hiii in generate pdf')
@@ -359,7 +556,7 @@ const generateExcel = async (req, res) => {
 
     await workbook.xlsx.write(res);
     res.end();
-}
+};
 
 
 
@@ -373,5 +570,8 @@ module.exports = {
     salesReport,
     generatePdf,
     generateExcel,
-    dashboard
+    productDashboard,
+    categoryDashboard,
+    topSellingProducts,
+    topSellingCategories
 }

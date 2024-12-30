@@ -12,14 +12,13 @@
     <div class="card">
         <div class="card-body">
     <header class="card-header text-center mb-20">
-        <form action="" method="get" class="d-inline">
+
             <div class="input-group input-group-sm border border-1 border-grey rounded-pill"
                 style="width: 500px; margin-left: 230px;">
-                <input type="text" class="form-control border-0 rounded-pill" placeholder="Search products"
+                <input type="text" value="<%=search%>" oninput="debounceSearch(this.value)" class="form-control border-0 rounded-pill" placeholder="Search products"
                     name="search">
-                <button class="btn  border-0" type="submit">Search</button>
             </div>
-        </form>
+
     </header>
     <div class="right mt-5">
         <table class="table">
@@ -297,5 +296,28 @@
                     }
                 }
             }
+
+            let debounceTimeout;
+
+function debounceSearch(query) {
+    clearTimeout(debounceTimeout);
+
+    debounceTimeout = setTimeout(() => {
+        searchOrders(query);
+    }, 700); // Adjust the delay (in milliseconds) as needed
+}
+
+function searchOrders(query) {
+    const searchParams = new URLSearchParams(window.location.search);
+
+    if (query) {
+        searchParams.set('search', query); // Set the search query
+    } else {
+        searchParams.delete('search'); // Remove the search query if empty
+    }
+
+    searchParams.set('page', 1); // Reset to the first page
+    window.location.search = searchParams.toString(); // Reload the page with updated query params
+}
 
         </script>
