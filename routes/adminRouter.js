@@ -31,17 +31,17 @@ router.get('/',adminAuth,adminController.loadDashboard)
 router.get('/logout',adminController.logout);
 
 //Dashboard
-router.get('/product/sales-data',adminController.productDashboard)
-router.get('/category/sales-data',adminController.categoryDashboard)
-router.get('/top-selling-products',adminController.topSellingProducts)
-router.get('/top-selling-categories',adminController.topSellingCategories)
-
+router.get('/product/sales-data',adminAuth,adminController.productDashboard)
+router.get('/category/sales-data',adminAuth,adminController.categoryDashboard)
+router.get('/top-selling-products',adminAuth,adminController.topSellingProducts)
+router.get('/top-selling-categories',adminAuth,adminController.topSellingCategories)
 
 
 //User Management
 router.get('/users',adminAuth,customerController.customerInfo);
 router.get('/blockCustomer',adminAuth,customerController.customerBlocked);
 router.get('/unBlockCustomer',adminAuth,customerController.customerUnblocked);
+
 
 //Category Management
 router.get('/category',adminAuth,categoryController.categoryInfo);
@@ -66,7 +66,7 @@ router.get('/unblockProduct',adminAuth,productController.unblockProduct);
 router.get('/editProduct',adminAuth,productController.getEditProduct);
 router.post('/editProduct/:id',adminAuth,uploads.array('images',4),productController.editProduct);
 router.post('/deleteImage',adminAuth,productController.deleteSingleImage);
-router.post('/deleteProduct/:id',working,adminAuth,productController.deleteProduct);
+router.post('/deleteProduct/:id',adminAuth,productController.deleteProduct);
 
 
 //Order Management

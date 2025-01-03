@@ -221,8 +221,8 @@ const loadOrders = async (req, res) => {
     try {
         const user = req.session.user;
         const orders = await Order.find({ userId: user._id }).sort({ createdAt: -1 }).populate('items.productId');
-        const cart = user ? await Cart.findOne({ userId: user._id }) : { items: [] };
-        res.render('orders', { orders, title: "Orders", user, cart: cart, currentPage: 'orders' })
+        const cart = user ? await Cart.findOne({ userId: user._id }) : null;
+        res.render('orders', { orders, title: "Orders", user, cart: cart||{ items: [] }, currentPage: 'orders' })
     } catch (error) {
         console.error('Error fetching orders:', error);
         res.status(500).render('pageerror');
@@ -267,7 +267,7 @@ const cancelOrder = async (req, res) => {
             },
         }));
         await Product.bulkWrite(bulkOps);
-        if (updatedOrder.paymentMethod != 'COD') {
+        if (updatedOrder.paymentMethod != 'COD' && updatedOrder.paymentStatus=='Paid') {
             const wallet = await Wallet.findOne({ userId: user._id });
             if (!wallet) {
                 const wallet = new Wallet({

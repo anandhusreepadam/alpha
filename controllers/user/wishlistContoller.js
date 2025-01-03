@@ -10,7 +10,7 @@ const loadWishlist = async (req, res) => {
     try {
         const userSession = req.session.user;
         const user = userSession ? await User.findById(userSession._id) : null;
-        const cart = user ? await Cart.findOne({ userId: user._id }) : { items: [] };
+        const cart = user ? await Cart.findOne({ userId: user._id }) : null;
         const wishlist = await Wishlist.findOne({ userId: user._id }).populate('items.productId');
         let wishlistItems = [];
         let messages = [];
@@ -37,7 +37,7 @@ const loadWishlist = async (req, res) => {
         res.render('wishlist', {
             user,
             title: 'Wishlist',
-            cart: cart,
+            cart: cart||{ items: [] },
             wishlist: { items: wishlistItems },
             messages
         });

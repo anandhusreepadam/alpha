@@ -274,7 +274,7 @@ const loadShopping = async (req, res) => {
         const limit = 8;
         const userSession = req.session.user;
         const user = userSession ? await User.findById(userSession._id) : null;
-        const cart =user? await Cart.findOne({ userId: user._id }):{ items: [] };
+        const cart =user? await Cart.findOne({ userId: user._id }):null;
         const category = await Category.find({ isDeleted: false, isListed: true })
         const allProducts = await Product.find({
             isBlocked: false,
@@ -291,7 +291,7 @@ const loadShopping = async (req, res) => {
         }).countDocuments();
 
         const totalPages = Math.ceil(count/limit)
-        return res.render('shop', { user, allProducts,category, title: "Shop", cart: cart,currentPage: page,
+        return res.render('shop', { user, allProducts,category, title: "Shop", cart: cart||{ items: [] },currentPage: page,
             totalPages: totalPages,search:search});
     } catch (error) {
         console.log('Shopping page not loading:', error);
@@ -368,8 +368,8 @@ const loadProfile = async (req, res) => {
     try {
         const userSession = req.session.user;
         const user = userSession ? await User.findById(userSession._id) : null;
-        const cart = user ? await Cart.findOne({ userId: user._id }).populate('items.productId') : {items:[]} ;
-        res.render('profile', { user, title: "Profile",cart:cart,currentPage: 'profile'})
+        const cart = user ? await Cart.findOne({ userId: user._id }).populate('items.productId') : null ;
+        res.render('profile', { user, title: "Profile",cart:cart||{items:[]},currentPage: 'profile'})
     } catch (error) {
         console.log('Failed to Load Profile', error)
     }

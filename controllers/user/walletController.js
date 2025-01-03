@@ -4,7 +4,7 @@ const Cart = require('../../models/cartSchema');
 
 const loadWallet = async (req, res) => {
     const user = req.session.user;
-    const cart = user ? await Cart.findOne({ userId: user._id }) : { items: [] };
+    const cart = user ? await Cart.findOne({ userId: user._id }) : null;
     const wallet = await Wallet.findOne({ userId: user._id });
     try {
         if (!wallet) {
@@ -18,7 +18,7 @@ const loadWallet = async (req, res) => {
                 title: 'Wallet',
                 currentPage: 'wallet',
                 user,
-                cart,
+                cart:cart||{ items: [] },
                 wallet:newWallet,
             });
         }
@@ -26,7 +26,7 @@ const loadWallet = async (req, res) => {
             title: 'Wallet',
             currentPage: 'wallet',
             user,
-            cart,
+            cart:cart||{ items: [] },
             wallet,
         });
     } catch (error) {

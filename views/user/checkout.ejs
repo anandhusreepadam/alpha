@@ -295,7 +295,7 @@
                     const result = await response.json();
 
                     if (response.ok) {
-                        swal({
+                        Swal.fire({
                             icon: 'success',
                             title: 'Added',
                             text: 'Address has been successfully added'
@@ -303,7 +303,7 @@
                             location.reload();
                         });
                     } else {
-                        swal({
+                        Swal.fire({
                             icon: 'error',
                             title: 'Error',
                             text: result.message || 'An error occurred while adding address.'
@@ -311,7 +311,7 @@
                     }
                 } catch (error) {
                     console.error('Error adding address:', error);
-                    swal({
+                    Swal.fire({
                         icon: 'error',
                         title: 'Error',
                         text: 'Something went wrong. Please try again.'
