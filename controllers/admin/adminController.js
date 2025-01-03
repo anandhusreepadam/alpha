@@ -381,7 +381,7 @@ const salesReport = async (req, res) => {
                 filter.createdAt = { $gte: new Date(now.setMonth(now.getMonth() - 1)) };
             }
         }
-        const orders = await Order.find(filter);
+        const orders = await Order.find(filter).sort({ createdAt: -1 });
         const totalSalesCount = orders.length;
         const totalOrderAmount = orders.reduce((sum, order) => sum + order.totalAmount, 0);
         const totalDiscounts = orders.reduce((sum, order) => sum + (order.discount || 0), 0);
