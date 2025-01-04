@@ -1,16 +1,214 @@
-signup password show
-profile page mob number validation
-change password validation
-profile address validation special characters
-edit address typo -- partials aside
-admin add product publish loading spinner add
-add to Wishlist without login showing success in error
-about & contact us pages
-show coupons
-remove invoice in failed order
-in failed order retry reload to order not necessary
-Wishlist items badge.
-Wishlist item again add swal showing success instead of oops
-empty cart showing shipping charge
-query param to path param (edit adress)
-signup page loading after login session
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error Listing & Reporting</title>
+    <style>
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Header */
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: #007BFF;
+}
+
+/* Section Titles */
+section h2 {
+    margin-top: 20px;
+    font-size: 1.4rem;
+    color: #333;
+    border-bottom: 2px solid #007BFF;
+    padding-bottom: 5px;
+}
+
+/* List Styles */
+ul {
+    padding: 0;
+    list-style: none;
+    margin: 15px 0;
+}
+
+ul li {
+    background: #f4f4f4;
+    margin: 5px 0;
+    padding: 10px 15px;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+ul li strong {
+    color: #007BFF;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Hover Effects */
+ul li:hover {
+    background: #e8f0ff;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .container {
+        padding: 15px;
+    }
+
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    section h2 {
+        font-size: 1.2rem;
+    }
+
+    ul li {
+        font-size: 0.9rem;
+    }
+}
+/* Form Styles */
+form {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+}
+
+form select, form textarea, form button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+form textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+form button {
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+form button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>Error Listing & Reporting</h1>
+            <p>Here you can see the known issues and report any new ones you’ve found.</p>
+        </header>
+
+        <!-- Known Errors -->
+        <section>
+            <h2>Known Issues</h2>
+            <ul>
+                <li><strong>Signup:</strong> Password not visible toggle missing.</li>
+                <li><strong>Profile Page:</strong> Mobile number validation required.</li>
+                <li><strong>Change Password:</strong> Validation issues.</li>
+                <li><strong>Profile Address:</strong> Validation needed for special characters.</li>
+                <li><strong>Edit Address:</strong> Typos and partials for aside content.</li>
+                <li><strong>Admin Add Product:</strong> Publish button needs a loading spinner.</li>
+                <li><strong>Add to Wishlist:</strong> Showing success on errors.</li>
+                <li><strong>About & Contact Us:</strong> Pages need enhancement.</li>
+                <li><strong>Show Coupons:</strong> Not visible on certain conditions.</li>
+                <li><strong>Failed Orders:</strong> Remove invoice display.</li>
+                <li><strong>Failed Orders Retry:</strong> Unnecessary reloads.</li>
+                <li><strong>Wishlist Badge:</strong> Not updating correctly.</li>
+                <li><strong>Empty Cart:</strong> Showing incorrect shipping charges.</li>
+                <li><strong>Signup:</strong> Page reloading after login session.</li>
+            </ul>
+        </section>
+
+        <!-- User Error Submission Form -->
+        <section>
+            <h2>Submit an Error</h2>
+            <form action="/submitError" method="POST" id="errorForm">
+                <label for="errorType">Error Type:</label>
+                <select id="errorType" name="errorType" required>
+                    <option value="">Select an error type</option>
+                    <option value="signup">Signup</option>
+                    <option value="profile">Profile Page</option>
+                    <option value="wishlist">Wishlist</option>
+                    <option value="orders">Orders</option>
+                    <option value="admin">Admin Panel</option>
+                    <option value="general">General Issue</option>
+                </select>
+
+                <label for="description">Error Description:</label>
+                <textarea id="description" name="description" placeholder="Describe the error in detail..." rows="5" required></textarea>
+
+                <button type="submit">Submit Error</button>
+            </form>
+        </section>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Optional: Add client-side validation or form behavior
+        const form = document.getElementById('errorForm');
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (!form.errorType.value || !form.description.value.trim()) {
+                alert('Please fill out all fields before submitting.');
+            }
+            Swal.fire('success','Thank you for submitting','success').then(()=>{
+                location.reload()
+            })
+        });
+    </script>
+</body>
+</html>

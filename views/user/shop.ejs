@@ -286,7 +286,6 @@
 			let category;
 
 			async function addToCart(productId) {
-				console.log('hiii')
 				const quantity = 1;
 				try {
 					const response = await fetch('/addToCart', {
@@ -447,7 +446,7 @@
 
 			let debounceTimeout;
 
-function debounceSearch(query) {
+			function debounceSearch(query) {
     clearTimeout(debounceTimeout);
 
     debounceTimeout = setTimeout(() => {
@@ -455,7 +454,7 @@ function debounceSearch(query) {
     }, 700); // Adjust the delay (in milliseconds) as needed
 }
 
-function searchOrders(query) {
+			function searchOrders(query) {
     const searchParams = new URLSearchParams(window.location.search);
 
     if (query) {
