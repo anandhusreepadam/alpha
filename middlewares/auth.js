@@ -45,8 +45,17 @@ const adminAuth = (req, res, next) => {
         })
 }
 
+const signupAuth=(req,res,next)=>{
+    const {user} = req.session;
+    if(user){
+        return res.redirect('/');
+    }
+    next();
+}
+
 module.exports = {
     userAuth,
     adminAuth,
-    profileAuth
+    profileAuth,
+    signupAuth
 }

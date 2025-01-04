@@ -398,6 +398,15 @@ const pageNotFound = async (req, res) => {
     }
 };
 
+const errors = async(req,res) =>{
+    try {
+        res.render('errors')
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+
 module.exports = {
     loadHomepage,
     pageNotFound,
@@ -416,5 +425,6 @@ module.exports = {
     verifyForgotOtp,
     loadResetPassword,
     resetPassword,
-    loadProducts
+    loadProducts,
+    errors
 };

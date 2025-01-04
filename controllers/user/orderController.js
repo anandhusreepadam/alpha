@@ -82,15 +82,14 @@ const placeOrder = async (req, res) => {
                 return res.status(400).json({ success: false, message: 'Coupon already used.' });
             }
 
-            discount = coupon.discountType === 'percentage'
-                ? (totalAmount * coupon.discountValue) / 100
-                : Math.min(coupon.discountValue, totalAmount);
+            discount = coupon.discountType === 'percentage' ? (totalAmount * coupon.discountValue) / 100
+                : Math.min(coupon.discountValue, totalAmount-1);
 
             user.usedCoupons.push(coupon._id);
             await user.save();
         }
 
-        const finalAmount = totalAmount - discount;
+        const finalAmount = Number((totalAmount - discount).toFixed(2));
 
         const bulkOps = cartItems.items.map(item => ({
             updateOne: {
@@ -463,6 +462,27 @@ const invoiceGenerate = async (req, res) => {
     doc.end();
 };
 
+const cancelSingle = async(req,res) =>{
+
+    const {productId,orderId} = req.params;
+    try {
+        const order = await Order.findByIdAndUpdate({_id:orderId},{$pull:{items:{productId:productId}}},{ new: true });
+        if(order){
+            const totalAmount = order.items.reduce((total, item) => total + (item.price * item.quantity), 0)
+            const discount = Math.min(order.discount||0, totalAmount-1)
+            order.totalAmount=totalAmount;
+            order.discount = discount;
+            order.finalAmount = totalAmount-discount;
+            await order.save();
+            return res.status(200).json({success:true,message:"Successfully cancelled product"})
+        }
+        res.status(400).json({success:false,message:'failed to cancell'});
+    } catch (error) {
+        console.error('Error cancelling product from order',error);
+        res.status(500).json({message:error});
+    }
+}
+
 
 module.exports = {
     loadCheckout,
@@ -473,4 +493,5 @@ module.exports = {
     cancelOrder,
     returnOrder,
     invoiceGenerate,
+    cancelSingle
 }

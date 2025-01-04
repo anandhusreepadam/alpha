@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const { userAuth, profileAuth } = require('../middlewares/auth');
+const { userAuth, profileAuth ,signupAuth} = require('../middlewares/auth');
 const multer = require('multer');
 const upload = multer();
 
@@ -30,7 +30,7 @@ router.get('/pageNotFound',userAuth,userController.pageNotFound);
 ///Load Authentication pages
 router.get('/login',userController.loadLogin);
 router.post('/login',userController.login);
-router.get('/signup',userController.loadSignup);
+router.get('/signup',signupAuth,userController.loadSignup);
 router.post('/signup',userController.signup);
 router.post('/verify-otp',userController.verifyOtp);
 router.post('/resend-otp',userController.resendOtp);
@@ -51,7 +51,7 @@ router.get('/',userAuth,userController.loadHomepage);
 router.get('/shop',userAuth,userController.loadShopping);
 router.get('/shop/products',userAuth,userController.loadProducts)
 router.get('/product/:id',userAuth,userController.loadProductPage);
-
+router.get('/errors',userController.errors)
 
 
 //Profile Management
@@ -88,6 +88,7 @@ router.post('/returnOrder/:id',orderController.returnOrder);
 router.post('/retryPayment', paymentController.retryPayment);
 router.post('/verify-payment', paymentController.verifyPayment);
 router.get('/generateInvoice',orderController.invoiceGenerate);
+router.get('/cancelSingle/:orderId/:productId',orderController.cancelSingle)
 
 
 //Wallet Management

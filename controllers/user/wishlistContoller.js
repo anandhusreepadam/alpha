@@ -42,7 +42,7 @@ const loadWishlist = async (req, res) => {
             messages
         });
     } catch (error) {
-        console.log('Failed to load Wishlist', error)
+        console.log('Failed to load Wishlist', error);
     }
 };
 
@@ -50,10 +50,10 @@ const addToWishlist = async(req,res)=>{
     const {productId} = req.body;
     try {
         if (!req.session.user) {
-            return res.status(400).json({ redirect: '/login', message: 'Please Login First' })
+            return res.status(400).json({ redirect: '/login', message: 'Please Login First' });
         }
         const userId = req.session.user._id;
-        let wishlist = await Wishlist.findOne({userId})
+        let wishlist = await Wishlist.findOne({userId});
         if(!wishlist){
             wishlist = new Wishlist({
                userId,
@@ -61,7 +61,7 @@ const addToWishlist = async(req,res)=>{
            })
        }
 
-        const product = await Product.findOne({_id:productId})
+        const product = await Product.findOne({_id:productId});
         if (!product) {
             return res.status(400).json({ success: false, message: 'Product Not Found' });
         }

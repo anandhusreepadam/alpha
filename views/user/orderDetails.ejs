@@ -220,9 +220,15 @@
                                 <p><strong>Subtotal:</strong> ₹<%= item.productId.salePrice * item.quantity %>
                                 </p>
                             </div>
+                            <div class="d-flex justify-content-between">
+                                <button class="btn btn-danger"
+                                onclick="cancelSingle('<%= order._id %>','<%= item.productId._id %>')">
+                                Cancel
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <% }) %>
+                <% }) %>
             </div>
 
             <!-- Action Buttons -->
@@ -408,6 +414,37 @@
                 } catch (error) {
                     console.error('Error placing order:', error);
                     alert('Something went wrong. Please try again.');
+                }
+            }
+
+            async function cancelSingle(orderId,productId){
+
+                try {
+                    const confirmation = await Swal.fire({
+                        title: "Are you sure?",
+                        text: "Do you really want to cancel this order?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: "Yes, Cancel",
+                        cancelButtonText: "No"
+                    });
+                    if(confirmation.isConfirmed){
+
+                    const response = await fetch(`/cancelSingle/${orderId}/${productId}`,{
+                        method:'GET',
+                    })
+                    const result = await response.json()
+                    if(response.ok){
+                        Swal.fire('success','Product Cancelled successfully','success')
+                    }else{
+                        Swal.fire('error',result.message,'error')
+                    }
+                                            
+                }
+                } catch (error) {
+                    console.error(error)
                 }
             }
 
