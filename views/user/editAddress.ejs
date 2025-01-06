@@ -19,19 +19,12 @@
 
         <section class="content-main">
             <div class="content-header">
-                <h2 class="content-title">Edit Addresse</h2>
+                <h2 class="content-title">Edit Address</h2>
             </div>
             <div class="card">
                 <div class="card-body">
                     <div class="row gx-5">
-                        <aside class="col-lg-3 border-end">
-                            <nav class="nav nav-pills flex-lg-column mb-4">
-                                <a class="nav-link" href="/profile">General</a>
-                                <a class="nav-link active" aria-current="page" href="/address">Addresses</a>
-                                <a class="nav-link" href="#">Admin account</a>
-                                <a class="nav-link" href="#">SEO settings</a>
-                            </nav>
-                        </aside>
+                        <%-include("../../views/partials/user/profileAside")%>
                         <div class="col-lg-9">
                             <section class="content-body p-xl-4">
                                 <!-- Address Management Section -->
@@ -76,6 +69,7 @@
                                         </div>
                                     </div>
                                     <button class="btn btn-primary" type="submit">Save Address</button>
+                                    <a onclick="window.history.back()" class="btn btn-secondary ">Back</a>
                                 </form>
                             </section>
                         </div>

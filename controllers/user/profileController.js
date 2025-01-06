@@ -147,7 +147,7 @@ const loadEditAddress = async (req, res) => {
             return res.redirect('/pageNotFound')
         }
 
-        res.render('editAddress', { address: addressData, user, title: 'Edit Address',cart:cart||{items:[]} });
+        res.render('editAddress', { address: addressData, user, title: 'Edit Address',cart:cart||{items:[]},currentPage: 'address'});
 
     } catch (error) {
         console.log(error);
