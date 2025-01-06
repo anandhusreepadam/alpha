@@ -1,12 +1,27 @@
-<%-include("../../views/partials/user/header")%>
-<div class="spacer">
-</div>
-<div class="spacer">
-</div>
+<%- include("../../views/partials/user/header") %>
+
+<div class="spacer"></div>
 
 
-    <div class="page-not">
-        <h1>Oops Page Not Found</h1>
+<!-- 404 Page Content -->
+<div class="container d-flex flex-column justify-content-center align-items-center p-t-50 p-b-50" style="height: 100vh;">
+    <div class="row text-center">
+        <div class="col-md-12">
+            <h1 class="display-1 cl8">404</h1>
+            <h3 class="cl4 m-b-20">Oops! The page you're looking for isn't here.</h3>
+            <p class="stext-115 cl4 m-b-40">
+                It seems the page you were trying to reach doesn't exist, or may have been moved.
+            </p>
+            <div class="d-flex gap-2 justify-content-center">
+                <a href="/" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer m-tb-10" style="width: auto; padding: 10px 20px;">
+                    Go to Homepage
+                </a>
+                <a href="/shop" class="flex-c-m stext-101 cl2 size-116 bg8 bor14 hov-btn3 p-lr-15 trans-04 pointer m-tb-10" style="width: auto; padding: 10px 20px;">
+                    Browse Products
+                </a>
+            </div>
+        </div>
     </div>
+</div>
 
-    <%-include("../../views/partials/user/footer")%>
+<%- include("../../views/partials/user/footer") %>

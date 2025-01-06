@@ -91,6 +91,7 @@ router.post('/salesReport',adminController.salesReport);
 router.post('/generate-pdf', adminController.generatePdf);
 router.post('/generate-excel', adminController.generateExcel);
 
-
+//Page 404
+router.use(adminController.pageError)
 
 module.exports=router

@@ -105,14 +105,14 @@ router.post('/removeFromWishlist',wishlistController.removeFromWishlist);
 router.post('/applyCoupon',couponController.applyCoupon)
 
 
-
-
-
-
 //For testing only
 router.get('/test',(req,res)=>{
     res.render('test',{addresses:[],title:'test',user:null,cart:{items:[]},orderSummary:[]})
 })
+
+
+//Page 404
+router.use(userController.pageNotFound)
 
 
 module.exports=router

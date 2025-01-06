@@ -256,7 +256,7 @@ const loadHomepage = async (req, res) => {
         req.session.user = req.user?req.user:req.session.user;
         const userSession = req.session.user;
         const user = userSession ? await User.findById(userSession._id) : null;
-        const cart = user ? await Cart.findOne({ userId: user._id }).populate('items.productId') : null;
+        const cart = user ? await Cart.findOne({ userId: user._id }) : null;
         const allProducts = await getAllProducts()
         allProducts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         res.render('home', { user, allProducts, title: "Chanel One", cart: cart || { items: [] } });
@@ -392,9 +392,12 @@ const logout = async (req, res) => {
 
 const pageNotFound = async (req, res) => {
     try {
-        res.render('page-404', { title: "404", user: null })
+        const user = req.session.user;
+        const cart = user ? await Cart.findOne({ userId: user._id }) : null;
+        res.render('page-404', { user, title: "404", cart: cart || { items: [] }});
     } catch (error) {
-        res.redirect('/pageNotFound')
+        console.error(error);
+        res.redirect('/pageNotFound');
     }
 };
 
