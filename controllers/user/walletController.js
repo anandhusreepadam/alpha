@@ -30,7 +30,7 @@ const loadWallet = async (req, res) => {
             wallet,
         });
     } catch (error) {
-        console.log(error);
+        console.error(error);
         res.redirect('/pageError')
     }
 }
@@ -52,7 +52,7 @@ const addToWallet = async (req, res) => {
         await wallet.save();
         res.status(200).json({ success: true, message: 'Money added successfully' });
     } catch (error) {
-        console.log(error)
+        console.error(error)
 
     }
 }

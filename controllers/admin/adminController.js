@@ -43,7 +43,7 @@ const login = async (req, res) => {
             return res.redirect('/admin/login')
         }
     } catch (error) {
-        console.log('login error', error);
+        console.error('login error', error);
         return res.redirect('/pageError')
     }
 }
@@ -91,13 +91,13 @@ const logout = async (req, res) => {
     try {
         req.session.destroy(err => {
             if (err) {
-                console.log('Error destroying session', err);
+                console.error('Error destroying session', err);
                 return res.redirect('/pageError')
             }
             res.redirect('/admin/login')
         });
     } catch (error) {
-        console.log("Unexpected error during logout", error)
+        console.error("Unexpected error during logout", error)
         res.redirect('/pageError')
     }
 }
@@ -360,7 +360,7 @@ const loadReport = async (req, res) => {
     try {
         res.render('report')
     } catch (error) {
-        console.log(error)
+        console.error(error)
         res.status(500).json(error);
     }
 };
@@ -406,7 +406,6 @@ const salesReport = async (req, res) => {
 };
 
 const generatePdf = async (req, res) => {
-    console.log('hiii in generate pdf')
     const { startDate, endDate, filterType, orders, totalSalesCount, totalOrderAmount, totalDiscounts } = req.body;
 
     // Validate required inputs

@@ -41,7 +41,7 @@ const addToCart = async (req, res) => {
         await cart.save();
         res.json({ success: true, cart });
     } catch (error) {
-        console.log(error);
+        console.error(error);
         res.status(500).json({ success: false, message: 'Failed to Add to cart' })
     }
 }
@@ -130,7 +130,6 @@ const updateCart = async (req, res) => {
 const checkStock = async (req, res) => {
     const { cartItems } = req.body;
     const stockIssues = [];
-    console.log(cartItems)
     for (const item of cartItems) {
         const product = await Product.findById(item.productId);
         if (product.stock < item.quantity) {
@@ -161,7 +160,7 @@ const deleteCart = async (req, res) => {
             res.status(400).json({ success: false })
         }
     } catch (error) {
-        console.log(error);
+        console.error(error);
         res.status(500).json({ success: false, message: "Failed to remove item from cart" });
     }
 }

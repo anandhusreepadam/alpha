@@ -35,7 +35,7 @@ async function sendVerificationEmail(email, otp) {
         return info.accepted.length > 0
 
     } catch (error) {
-        console.log("Error sending Email", error)
+        console.error("Error sending Email", error)
         return false;
     }
 };
@@ -55,7 +55,7 @@ async function getAllProducts() {
         const response = await Product.find({ isDeleted: false, isBlocked: false })
         return response;
     } catch (error) {
-        console.log(error.message)
+        console.error(error.message)
     }
 };
 
@@ -103,7 +103,7 @@ const loadSignup = async (req, res) => {
     try {
         return res.render('signup')
     } catch (error) {
-        console.log('Home page not loading:', error);
+        console.error('Home page not loading:', error);
         res.status(500).send('Server Error');
     }
 };
@@ -153,7 +153,7 @@ const verifyOtp = async (req, res) => {
             res.status(400).json({ success: false, message: 'Invalid OTP, Please try again' })
         }
     } catch (error) {
-        console.log("Error Verifying OTP", error);
+        console.error("Error Verifying OTP", error);
         res.status(500).json({ success: false, message: "An error occured" })
     }
 };
@@ -220,7 +220,7 @@ const verifyForgotOtp = async (req, res) => {
             res.status(400).json({ success: false, message: 'Invalid OTP, Please try again' })
         }
     } catch (error) {
-        console.log("Error Verifying OTP", error);
+        console.error("Error Verifying OTP", error);
         res.status(500).json({ success: false, message: "An error occured" })
     }
 };
@@ -246,7 +246,7 @@ const resetPassword = async (req, res) => {
             res.render('resetPassword', { message: "Password Does not match" });
         }
     } catch (error) {
-        console.log("An error occured", error)
+        console.error("An error occured", error)
         res.redirect('/pageNotFound')
     }
 };
@@ -261,7 +261,7 @@ const loadHomepage = async (req, res) => {
         allProducts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         res.render('home', { user, allProducts, title: "Chanel One", cart: cart || { items: [] } });
     } catch (error) {
-        console.log('Home Page not found');
+        console.error('Home Page not found');
         res.status(500).send('Server Error');
     }
 };
@@ -294,7 +294,7 @@ const loadShopping = async (req, res) => {
         return res.render('shop', { user, allProducts,category, title: "Shop", cart: cart||{ items: [] },currentPage: page,
             totalPages: totalPages,search:search});
     } catch (error) {
-        console.log('Shopping page not loading:', error);
+        console.error('Shopping page not loading:', error);
         res.status(500).send('Server Error');
     }
 };
@@ -371,7 +371,7 @@ const loadProfile = async (req, res) => {
         const cart = user ? await Cart.findOne({ userId: user._id }).populate('items.productId') : null ;
         res.render('profile', { user, title: "Profile",cart:cart||{items:[]},currentPage: 'profile'})
     } catch (error) {
-        console.log('Failed to Load Profile', error)
+        console.error('Failed to Load Profile', error)
     }
 };
 
@@ -379,13 +379,13 @@ const logout = async (req, res) => {
     try {
         req.session.destroy((err) => {
             if (err) {
-                console.log('Session destroy error', err.message);
+                console.error('Session destroy error', err.message);
                 return res.redirect("/pageNotFound");
             }
             return res.redirect('/login');
         })
     } catch (error) {
-        console.log('Logout Error'.error);
+        console.error('Logout Error'.error);
         res.redirect('/pageNotFound');
     }
 };

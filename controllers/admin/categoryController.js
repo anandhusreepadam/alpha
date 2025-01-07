@@ -27,7 +27,7 @@ const categoryInfo = async (req, res) => {
 
 
     } catch (error) {
-        console.log(error)
+        console.error(error)
         res.redirect('/pageError')
     }
 }
@@ -129,7 +129,7 @@ const getEditCategory = async (req, res) => {
         const category = await Category.findOne({ _id: id });
         res.render('edit-category', { category: category, error: error });
     } catch (error) {
-        console.log(error)
+        console.error(error)
         res.redirect('/pageError')
     }
 }

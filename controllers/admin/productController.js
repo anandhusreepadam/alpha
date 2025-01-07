@@ -62,7 +62,6 @@ const addProducts = async (req, res) => {
                 status: 'Available',
             });
             await newProduct.save();
-            console.log('products added successfully')
             return res.status(200).json({ redirectTo: '/admin/addProducts?success=true' });
         } else {
             return res.status(400).json('Product already exists, Please try with another name');
@@ -137,7 +136,7 @@ const removeProductOffer = async (req, res) => {
         await findProduct.save();
         res.json({ status: true })
     } catch (error) {
-        console.log(error);
+        console.error(error);
         res.redirect('/pageError');
     }
 }
@@ -212,7 +211,7 @@ const editProduct = async (req, res) => {
         await Product.findByIdAndUpdate(id, updateFields, { new: true });
         return res.status(200).json({ redirectTo: '/admin/products?success=true' });
     } catch (error) {
-        console.log(error)
+        console.error(error)
         res.redirect('/pageError')
 
     }
@@ -238,9 +237,8 @@ const deleteSingleImage = async (req, res) => {
         const imagePath = path.join('public', 'uploads', 're-image', imageNameToServer);
         if (fs.existsSync(imagePath)) {
             await fs.unlinkSync(imagePath);
-            console.log(`image ${imageNameToServer} deleted successfully`);
         } else {
-            console.log(`image ${imageNameToServer} not found`);
+            console.error(`image ${imageNameToServer} not found`);
         }
         res.status(200).json({success:true})
     } catch (error) {

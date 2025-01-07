@@ -42,7 +42,7 @@ const loadWishlist = async (req, res) => {
             messages
         });
     } catch (error) {
-        console.log('Failed to load Wishlist', error);
+        console.error('Failed to load Wishlist', error);
     }
 };
 
@@ -84,7 +84,7 @@ const addToWishlist = async(req,res)=>{
             message:'Product Added to wishlist successfully'
         })
     } catch (error) {
-        console.log(error)
+        console.error(error)
         res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
 }
@@ -93,14 +93,10 @@ const removeFromWishlist =async(req,res)=>{
     try {
         const userId = req.session.user._id;
         const { productId } = req.body;
-        
-        console.log(productId)
         const result = await Wishlist.updateOne(
             { userId },
             { $pull: { items: { productId } } }
         );
-        console.log(result)
-        console.log('hiii')
         res.json({ success: true, message: 'Item removed from wishlist' });
     } catch (error) {
         console.error('Error removing from wishlist:', error);

@@ -141,7 +141,7 @@ async function submitForm(event) {
                 swal('Error',result.message||"Failed to Save Address",'error');
             }
         } catch (error) {
-            console.log('Error saving Address',error);
+            console.error('Error saving Address',error);
             swal("Error",'An unexpected error occured while adding Address','error');
         }
     }
@@ -229,7 +229,7 @@ async function deleteAddress(addressId){
                     swal('Error',result.message||"Failed to delete Address",'error');
                 }
         } catch (error) {
-            console.log('Error deleting Address',error);
+            console.error('Error deleting Address',error);
             swal("Error",'An unexpected error occured while deleting Address','error');
         }
     }

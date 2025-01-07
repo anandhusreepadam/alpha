@@ -5,7 +5,6 @@ const { options } = require('../../routes/userRouter');
 const customerInfo = async (req, res) => {
     try {
         const { page = 1, search = '', filter = 'all' } = req.query;
-        console.log(req.query)
         const currentPage = parseInt(page, 10) || 1;
         const limit = 3;
 
@@ -46,9 +45,10 @@ const customerBlocked = async (req, res) => {
     try {
         let { id, page } = req.query;
         await User.updateOne({ _id: id }, { $set: { isBlocked: true } });
-        res.redirect(`/admin/users?page=${page}`)
+        res.redirect(`/admin/users?page=${page}`);
     } catch (error) {
-        res.redirect('/pageError')
+        console.error(error);
+        res.redirect('/pageError');
     }
 };
 
@@ -56,9 +56,10 @@ const customerUnblocked = async (req, res) => {
     try {
         let { id, page } = req.query;
         await User.updateOne({ _id: id }, { $set: { isBlocked: false } });
-        res.redirect(`/admin/users?page=${page}`)
+        res.redirect(`/admin/users?page=${page}`);
     } catch (error) {
-        res.redirect('/pageError')
+        console.error(error);
+        res.redirect('/pageError');
     }
 };
 

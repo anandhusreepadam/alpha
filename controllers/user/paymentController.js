@@ -5,7 +5,6 @@ const Order = require('../../models/orderSchema');
 const razorpay = require('../../config/razorpay');
 
 const retryPayment =  async(req, res)=> {
-    console.log('hii')
     const {orderId} = req.query;
     const user = req.session.user;
         try {
@@ -54,7 +53,7 @@ const retryPayment =  async(req, res)=> {
 
 
 
-    
+
     module.exports ={
         retryPayment,
         verifyPayment

@@ -19,7 +19,6 @@ const loadCheckout = async (req, res) => {
         const cart = await Cart.findOne({ userId: user._id }).populate('items.productId');
         const addressData = await Address.findOne({ userId: user._id });
         if (!cart || cart.items.length === 0) {
-            console.log('Nothing in cart');
             return res.redirect('/cart');
         }
         res.render('checkout', {
@@ -35,7 +34,6 @@ const loadCheckout = async (req, res) => {
 };
 
 const placeOrder = async (req, res) => {
-    console.log('in place order')
     try {
         const user = await User.findOne({ _id: req.session.user._id })
         const { addressId, paymentMethod, couponCode } = req.body;
@@ -118,8 +116,6 @@ const placeOrder = async (req, res) => {
                     couponCode,
                     discount
                 });
-                console.log('Generated Order ID:', newOrder.orderId);
-                console.log('RazorPay ID:', razorpayOrder.id);
                 await newOrder.save();
                 res.status(200).json({
                     success: true,
@@ -146,7 +142,6 @@ const placeOrder = async (req, res) => {
                 couponCode,
                 discount
             });
-            console.log('Generated Order ID:', newOrder.orderId);
             await newOrder.save();
             res.status(200).json({
                 success: true,
@@ -178,10 +173,7 @@ const placeOrder = async (req, res) => {
                 couponCode,
                 discount
             });
-
-            console.log('Generated Order ID:', newOrder.orderId);
             await newOrder.save();
-
             wallet.transactions.unshift({
                 order: newOrder._id,
                 orderId: newOrder.orderId,

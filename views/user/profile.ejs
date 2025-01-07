@@ -141,7 +141,7 @@
                         swal('Error', result.message || "Failed to Update User Data", 'error');
                     }
                 } catch (error) {
-                    console.log('Error updating user Data', error);
+                    console.error('Error updating user Data', error);
                     swal("Error", 'An unexpected error occured while updating user Data', 'error');
                 }
             }

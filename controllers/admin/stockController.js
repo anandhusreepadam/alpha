@@ -6,19 +6,12 @@ const loadStock =  async (req, res) => {
         const page = parseInt(req.query.page) || 1; 
         const limit = 6; 
         const skip = (page - 1) * limit; 
-
-        
         const stockData = await Product.find({})
             .sort({ createdAt: -1 }) 
             .skip(skip)
             .limit(limit);
-
         const totalStock = await Product.countDocuments();
-
-      
         const totalPages = Math.ceil(totalStock / limit);
-
-      
         res.render('stockManagement', {
             products: stockData, 
             currentPage: page, 

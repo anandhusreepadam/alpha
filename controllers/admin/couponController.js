@@ -15,7 +15,6 @@ const loadCoupons = async(req,res)=>{
 const createCoupon = async (req,res)=>{
     try {
         const {code,discountType,discountValue,minOrderValue,expiryDate,usageLimit} = req.body;
-        console.log(req.body)
         const newCoupon = new Coupon ({
             code,
             discountType,
@@ -38,7 +37,7 @@ const deleteCoupon = async(req,res)=>{
         await Coupon.findOneAndDelete({_id:id});
         res.status(200).json({message:'Coupon deleted Successfully'})
     } catch (error) {
-        console.log(error);
+        console.error(error);
         res.status(500).json({message:'Server error'})
     }
 }

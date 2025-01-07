@@ -113,7 +113,7 @@ async function submitForm(event) {
                 swal('Error',result.message||"Failed to Save Address",'error');
             }
         } catch (error) {
-            console.log('Error saving Address',error);
+            console.error('Error saving Address',error);
             swal("Error",'An unexpected error occured while adding Address','error');
         }
     }

@@ -13,7 +13,7 @@ const userAuth = (req, res, next) => {
                 }
             })
             .catch(error => {
-                console.log('Error in user auth middleware', error);
+                console.error('Error in user auth middleware', error);
                 res.status(500).send('Internal Server Error');
             })
     } else {
@@ -40,7 +40,7 @@ const adminAuth = (req, res, next) => {
             }
         })
         .catch(error => {
-            console.log("Error in admin auth Middleware", error);
+            console.error("Error in admin auth Middleware", error);
             res.status(500).send('Internal server error');
         })
 }

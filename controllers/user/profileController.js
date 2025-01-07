@@ -12,7 +12,7 @@ async function getUser(req) {
         return userSession ? await User.findById(userSession._id) : null;
 
     } catch (error) {
-        console.log(error)
+        console.error(error)
     }
 }
 
@@ -67,7 +67,7 @@ const changePassword = async (req, res) => {
         }
 
     } catch (error) {
-        console.log(error);
+        console.error(error);
         res.status(500).json({message:'server error',redirect:'/pageNotfound'});
     }
 }
@@ -80,7 +80,7 @@ const loadAddress = async (req, res) => {
         const cart = user ? await Cart.findOne({ userId: user._id }) : null;
         res.render('address', { title: "Address", user, addressData: addresses ,cart:cart||{items:[]},currentPage: 'address'});
     } catch (error) {
-        console.log(error);
+        console.error(error);
         res.redirect('/pageNotFound');
     }
 }
@@ -122,7 +122,7 @@ const addAddress = async (req, res) => {
         res.status(200).json('Address Saved Successfully');
 
     } catch (error) {
-        console.log(error);
+        console.error(error);
         res.status(500).json('Error while saving Address')
     }
 }
@@ -146,11 +146,10 @@ const loadEditAddress = async (req, res) => {
         if (!addressData) {
             return res.redirect('/pageNotFound')
         }
-
         res.render('editAddress', { address: addressData, user, title: 'Edit Address',cart:cart||{items:[]},currentPage: 'address'});
 
     } catch (error) {
-        console.log(error);
+        console.error(error);
         res.redirect('/pageNotFound');
     }
 }
@@ -183,7 +182,7 @@ const editAddress = async (req, res) => {
             })
         res.status(200).json({ redirect: '/address' })
     } catch (error) {
-        console.log(error);
+        console.error(error);
         res.status(500).json({ redirect: '/pageNotFound' });
     }
 
@@ -205,7 +204,7 @@ const deleteAddress = async (req,res) =>{
         )
         res.status(200).json("Address Deleted Successfully");
     } catch (error) {
-        console.log(error);
+        console.error(error);
         res.status(500).json({redirect:'/pageNotFound'});
     }
 }
