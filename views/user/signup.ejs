@@ -1,191 +1,177 @@
-<!DOCTYPE html>
-<html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign Up - Online Dress Shop</title>
-  <link rel="stylesheet" href="./css/login.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
+  <title>Sign Up - Chanel One</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    /* General Reset */
-body, h1, p {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    box-sizing: border-box;
-  }
-  
-  body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #f8f8f8;
-  }
-  
-  /* Container */
-  .container {
-    display: flex;
-    width: 80%;
-    max-width: 1200px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  
-  /* Image Section */
-  .image-section {
-    flex: 1;
-    background-color: #eee;
-  }
-  
-  .image-section img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  /* Form Section */
-  .form-section {
-    flex: 1;
-    padding: 40px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  
-  .form-section h1 {
-    font-size: 32px;
-    color: #333;
-    margin-bottom: 10px;
-  }
-  
-  .form-section p {
-    margin-bottom: 20px;
-    color: #666;
-  }
-  
-  label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-  
-  input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 16px;
-  }
-  
-  .signup-btn, .google-auth-btn {
-    width: 100%;
-    padding: 10px;
-    font-size: 18px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-bottom: 10px;
-  }
-  
-  .signup-btn {
-    background-color: #ff6b6b;
-    color: white;
-    transition: background 0.3s ease;
-  }
-  
-  .signup-btn:hover {
-    background-color: #ff5252;
-  }
-  
-  .google-auth-btn {
-    background-color: #4285f4;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .google-auth-btn:hover {
-    background-color: #357ae8;
-  }
-  
-  a {
-    color: #ff6b6b;
-    text-decoration: none;
-  }
-  
-  a:hover {
-    text-decoration: underline;
-  }
-  
-  .error-message{
-    color:red;
-    font-size: 1rem;
-    display: none;
-    position: relative;
-   bottom: 20px;
-  }
+    body {
+      background-color: #f5f5f5;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .signup-container {
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      max-width: 800px;
+      width: 100%;
+    }
+
+    .signup-image {
+      display: none;
+    }
+
+    .signup-form {
+      padding: 2rem;
+    }
+
+    .signup-form h1 {
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      color: #333;
+    }
+
+    .form-control {
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      font-size: 0.9rem;
+    }
+
+    .btn-custom {
+      background-color: #007bff;
+      color: white;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      width: 100%;
+    }
+
+    .btn-custom:hover {
+      background-color: #0056b3;
+    }
+
+    .divider {
+      text-align: center;
+      margin: 1.5rem 0;
+      position: relative;
+    }
+
+    .divider:before,
+    .divider:after {
+      content: "";
+      display: block;
+      height: 1px;
+      background-color: #ddd;
+      width: 40%;
+      position: absolute;
+      top: 50%;
+    }
+
+    .divider:before {
+      left: 0;
+    }
+
+    .divider:after {
+      right: 0;
+    }
+
+    .divider span {
+      background-color: white;
+      padding: 0 0.5rem;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .alternate-auth {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .alternate-auth a {
+      text-decoration: none;
+      color: #007bff;
+      font-size: 0.9rem;
+    }
+    .error-message {
+        color: red;
+        font-size: 1rem;
+        display: none;
+        position: relative;
+        bottom: 13px;
+      }
+
+    @media (min-width: 768px) {
+      .signup-container {
+        display: flex;
+      }
+
+      .signup-image {
+        display: block;
+        flex: 1;
+        background: url('images/Signup-1.png') no-repeat center center/cover;
+      }
+
+      .signup-form {
+        flex: 1;
+        padding: 3rem;
+      }
+
+      .signup-form h1 {
+        font-size: 2rem;
+      }
+    }
   </style>
-
 </head>
-
 <body>
-  <div class="container">
+  <div class="signup-container">
     <!-- Image Section -->
-    <div class="image-section">
-      <img src="images/Signup-1.png" alt="Fashionable Dresses">
-    </div>
+    <div class="signup-image"></div>
+
     <!-- Form Section -->
-    <div class="form-section">
-      <h1>Sign Up</h1>
-      <p>Create your account to explore the latest trends!</p>
-      <form id="signform" action="/signup" method="POST">
-        <label for="name">Name</label>
-        <input type="text" id="name" name="name" placeholder="Your Name">
-
+    <div class="signup-form">
+      <h1>Create Your Account</h1>
+      <form id="signupForm" action="/signup" method="POST">
+        <input type="text" class="form-control" id="name" name="name" placeholder="Your Name">
         <div id="error1" class="error-message"></div>
-
-        <label for="email">Email</label>
-        <input type="text" id="email" name="email" placeholder="Your Email">
-
+        <input type="text" class="form-control" id="email" name="email" placeholder="Your Email">
         <div id="error2" class="error-message"></div>
-
-        <label for="mobile">Mobile Number</label>
-        <input type="tel" id="phone" name="phone" placeholder="Your Mobile Number">
-
+        <input type="tel" class="form-control" id="phone" name="phone" placeholder="Your Mobile Number">
         <div id="error3" class="error-message"></div>
-
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" placeholder="Your Password">
-
+        <input type="password" class="form-control" id="password" name="password" placeholder="Password">
         <div id="error4" class="error-message"></div>
-
-        <label for="confirm-password">Confirm Password</label>
-        <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm Password">
-        
+        <input type="password" class="form-control" id="confirm-password" name="confirm-password" placeholder="Confirm Password">
         <div id="error5" class="error-message"></div>
-        
         <%if(locals.message && message.length>0){%>
           <div class="alert alert-danger text-center">
-              <%=message%>
+            <%=message%>
           </div>
-        <%}%>
-
-        <button type="submit" class="signup-btn">Sign Up</button  >
+          <%}%>
+        <button type="submit" class="btn btn-custom">Sign Up</button>
       </form>
 
-      <p>Or sign up with:</p>
-      <a href="/auth/google" class="google-auth-btn">Sign up with Google</a>
+      <div class="divider">
+        <span>Or sign up with</span>
+      </div>
 
-      <p>Already have an account? <a href="/login">Log In</a></p>
+      <div class="alternate-auth">
+        <a href="/auth/google" class="btn btn-custom bg-danger text-white">Sign up with Google</a>
+      </div>
+
+      <p class="text-center mt-3">Already have an account? <a href="/login">Log In</a></p>
     </div>
   </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 
   <script>
 
@@ -202,6 +188,8 @@ body, h1, p {
     const error5 = document.getElementById('error5');
 
     const signform = document.getElementById('signform');
+
+
 
     function nameValidateChecking() {
       const nameval = nameid.value.trim();
@@ -226,7 +214,7 @@ body, h1, p {
       if (emailval === "") {
         error2.style.display = "block";
         error2.innerHTML = "Email is required";
-      }else if (!emailpattern.test(emailval)) {
+      } else if (!emailpattern.test(emailval)) {
         error2.style.display = "block";
         error2.innerHTML = "Invalid email format";
       } else {
@@ -281,7 +269,7 @@ body, h1, p {
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-      signform.addEventListener("submit", (e) => {
+      signupForm.addEventListener("submit", (e) => {
         nameValidateChecking();
         emailValidateChecking();
         phoneValidateChecking();
@@ -300,8 +288,6 @@ body, h1, p {
     });
 
   </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
-
-
-</html>

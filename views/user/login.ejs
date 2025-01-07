@@ -1,242 +1,228 @@
-<!DOCTYPE html>
-<html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - Online Dress Shop</title>
-  <link rel="stylesheet" href="./css/login.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
+  <title> Chanel One</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-
-    body,
-    h1,
-    p {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      box-sizing: border-box;
-    }
-
     body {
+      background-color: #f5f5f5;
+      font-family: 'Poppins', sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
-      background-color: #f8f8f8;
+      height: 100vh;
+      margin: 0;
     }
 
-
-    .container {
-      display: flex;
-      width: 80%;
-      max-width: 1200px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      background-color: #fff;
-      border-radius: 8px;
+    .login-container {
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       overflow: hidden;
-    }
-
-
-    .image-section {
-      flex: 1;
-      background-color: #eee;
-    }
-
-    .image-section img {
+      max-width: 800px;
       width: 100%;
-      height: 100%;
-      object-fit: cover;
     }
 
-  
-    .form-section {
-      flex: 1;
-      padding: 40px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+    .login-image {
+      display: none;
     }
 
-    .form-section h1 {
-      font-size: 32px;
-      color: #333;
-      margin-bottom: 10px;
+    .login-form {
+      padding: 2rem;
     }
 
-    .form-section p {
-      margin-bottom: 20px;
-      color: #666;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 5px;
+    .login-form h1 {
+      font-size: 1.8rem;
       font-weight: bold;
+      margin-bottom: 1rem;
+      color: #333;
     }
 
-    input {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 20px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      font-size: 16px;
+    .form-control {
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      font-size: 0.9rem;
     }
 
-    .signup-btn,
-    .google-auth-btn {
-      width: 100%;
-      padding: 10px;
-      font-size: 18px;
+    .btn-custom {
+      background-color: #007bff;
+      color: white;
+      padding: 0.75rem;
+      font-size: 1rem;
       border: none;
       border-radius: 5px;
-      cursor: pointer;
-      margin-bottom: 10px;
+      width: 100%;
     }
 
-    .signup-btn {
-      background-color: #ff6b6b;
-      color: white;
-      transition: background 0.3s ease;
+    .btn-custom:hover {
+      background-color: #0056b3;
     }
 
-    .signup-btn:hover {
-      background-color: #ff5252;
-    }
-
-    .google-auth-btn {
-      background-color: #4285f4;
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .google-auth-btn:hover {
-      background-color: #357ae8;
-    }
-
-    a {
-      color: #ff6b6b;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    .error-message {
-      color: red;
-      font-size: 1rem;
-      display: block;
-      visibility: hidden;
-      margin-top: -10px;
-      margin-bottom: 10px;
+    .divider {
+      text-align: center;
+      margin: 1.5rem 0;
       position: relative;
-      bottom: 0;
+    }
+
+    .divider:before,
+    .divider:after {
+      content: "";
+      display: block;
+      height: 1px;
+      background-color: #ddd;
+      width: 40%;
+      position: absolute;
+      top: 50%;
+    }
+
+    .divider:before {
+      left: 0;
+    }
+
+    .divider:after {
+      right: 0;
+    }
+
+    .divider span {
+      background-color: white;
+      padding: 0 0.5rem;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .alternate-auth {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .alternate-auth a {
+      text-decoration: none;
+      color: #007bff;
+      font-size: 0.9rem;
+    }
+    .error-message {
+        color: red;
+        font-size: 1rem;
+        display: none;
+        position: relative;
+        bottom: 13px;
+      }
+
+    @media (min-width: 768px) {
+      .login-container {
+        display: flex;
+      }
+
+      .login-image {
+        display: block;
+        flex: 1;
+        background: url("images/Login-1.png") no-repeat center center/cover;
+      }
+
+      .login-form {
+        flex: 1;
+        padding: 3rem;
+      }
+
+      .login-form h1 {
+        font-size: 2rem;
+      }
     }
   </style>
-
 </head>
-
 <body>
-  <div class="container">
+  <div class="login-container">
+    <!-- Image Section -->
+    <div class="login-image"></div>
 
-    <div class="image-section">
-      <img src="images/Login-1.png" alt="Fashionable Dresses">
-    </div>
-
-    <div class="form-section">
+    <!-- Form Section -->
+    <div class="login-form">
       <h1>Log In</h1>
-      <p>Welcome back! Log in to explore more fashion.</p>
       <form id="loginForm" action="/login" method="POST">
-        <label for="email">Email</label>
-        <input type="text" id="email" name="email" placeholder="Your Email">
-        <span id="emailError" class="error-message"></span>
 
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" placeholder="Your Password">
-        <span id="passwordError" class="error-message"></span>
+        <input type="text" class="form-control" id="email" name="email" placeholder="Your Email">
+        <div id="error1" class="error-message"></div>
+
+        <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+        <div id="error2" class="error-message"></div>
 
         <%if(locals.message && message.length>0){%>
           <div class="alert alert-danger text-center">
             <%=message%>
           </div>
           <%}%>
-
-            <div>
-              <button type="submit" class="signup-btn">Log In</button>
-            </div>
+        <button type="submit" class="btn btn-custom">Log In</button>
       </form>
-      <p>Or sign in with:</p>
-      <a href="/auth/google" class="google-auth-btn">Sign in with Google</a>
 
-      <p>Don't have an account? <a href="/signup">Sign Up</a>
-        Forgot your Password? <a href="/forgotPassword">Reset Password</a></p>
+      <div class="divider">
+        <span>Or Log In with</span>
+      </div>
+
+      <div class="alternate-auth">
+        <a href="/auth/google" class="btn btn-custom bg-danger text-white">Log In with Google</a>
+      </div>
+
+      <p class="text-center mt-3">Don't have an account? <a href="/signup">Sign Up</a></p>
     </div>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-    crossorigin="anonymous"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
-</html>
+  <script>
 
+    const emailid = document.getElementById('email');
+    const passid = document.getElementById('password');
+    const error1 = document.getElementById('error1');
+    const error2 = document.getElementById('error2');
+    const loginForm = document.getElementById('loginForm');
 
-<script>
-  document.getElementById('loginForm').addEventListener('submit', function (event) {
+    function emailValidateChecking() {
+      const emailval = emailid.value.trim();
+      const emailpattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
-    document.querySelectorAll('.error-message').forEach((span) => {
-      span.style.visibility = 'hidden';
-      span.textContent = '';
-    });
-
-
-    const emailField = document.getElementById('email');
-    const passwordField = document.getElementById('password');
-    const emailError = document.getElementById('emailError');
-    const passwordError = document.getElementById('passwordError');
-
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    let valid = true;
-
-
-    if (!emailField.value.trim()) {
-      emailError.textContent = 'Email is required.';
-      emailError.style.visibility = 'visible';
-      valid = false;
-    } else if (!emailRegex.test(emailField.value)) {
-      emailError.textContent = 'Please enter a valid email address.';
-      emailError.style.visibility = 'visible';
-      valid = false;
-    }
-
-
-    if (!passwordField.value.trim()) {
-      passwordError.textContent = 'Password is required.';
-      passwordError.style.visibility = 'visible';
-      valid = false;
-    } else if (passwordField.value.length < 6) {
-      passwordError.textContent = 'Password must be at least 6 characters long.';
-      passwordError.style.visibility = 'visible';
-      valid = false;
-    }
-
-
-    if (!valid) {
-      event.preventDefault();
-
-      if (!emailField.value.trim() || !emailRegex.test(emailField.value)) {
-        emailField.focus();
-      } else if (!passwordField.value.trim() || passwordField.value.length < 6) {
-        passwordField.focus();
+      if (emailval === "") {
+        error1.style.display = "block";
+        error1.innerHTML = "Email is required";
+      } else if (!emailpattern.test(emailval)) {
+        error1.style.display = "block";
+        error1.innerHTML = "Invalid email format";
+      } else {
+        error1.style.display = "none";
+        error1.innerHTML = "";
       }
     }
-  });
 
-</script>
+    function passValidateChecking() {
+      const passval = passid.value.trim();
+      const alpha = /[a-zA-Z]/;
+      const digit = /\d/;
+
+      if (passval === "") {
+        error2.style.display = "block";
+        error2.innerHTML = "Enter a password";
+      } else if (passval.length < 8) {
+        error2.style.display = "block";
+        error2.innerHTML = "Password must contain at least 8 characters";
+      } else if (!alpha.test(passval) || !digit.test(passval)) {
+        error2.style.display = "block";
+        error2.innerHTML = "Password must contain both letters and digits";
+      } else {
+        error2.style.display = "none";
+        error2.innerHTML = "";
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loginForm.addEventListener("submit", (e) => {
+        emailValidateChecking();
+        passValidateChecking();
+
+        if (error1.innerHTML || error2.innerHTML ) {
+          e.preventDefault();
+        }
+      });
+    });
+
+  </script>
