@@ -119,7 +119,7 @@
                                                     Start Shopping
                                                 </a>
                                             </div>
-                                            <% } %>
+                                        <% } %>
                                 </div>
                     </div>
                 </div>
@@ -151,9 +151,15 @@
                                 </span>
                             </div>
                             <div class="size-209">
+                                <%if(cartTotal>0){%>
                                 <span class="mtext-110 cl2">
                                     +₹49
                                 </span>
+                            <%}else{%>
+                                <span class="mtext-110 cl2">
+                                    ₹0
+                                </span>
+                                <%}%>
                             </div>
 
                         </div>
@@ -164,9 +170,15 @@
                                 </span>
                             </div>
                             <div class="size-209">
+                                <%if(cartTotal>0){%>
                                 <span class="mtext-110 cl2">
                                     -₹49
                                 </span>
+                            <%}else{%>
+                                <span class="mtext-110 cl2">
+                                    ₹0
+                                </span>
+                                <%}%>
                             </div>
                         </div>
 
@@ -199,7 +211,6 @@
         <script>
 
             async function checkout(cartItems) {
-
                 try {
                     const response = await fetch('/checkStock', {
                         method: 'POST',

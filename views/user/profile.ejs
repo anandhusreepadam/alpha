@@ -2,7 +2,6 @@
 
     <head>
         <meta charset="utf-8" />
-
         <meta http-equiv="x-ua-compatible" content="ie=edge" />
         <meta name="description" content="" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -11,18 +10,12 @@
         <meta property="og:url" content="" />
         <meta property="og:image" content="" />
         <!-- Favicon -->
-
         <!-- Template CSS -->
         <link href="assets/css/main.css?v=1.1" rel="stylesheet" type="text/css" />
     </head>
 
     <body>
-
-
-        <div class="spacer">
-
-        </div>
-
+        <div class="spacer"></div>
         <section class="content-main">
             <div class="content-header">
                 <h2 class="content-title">Profile setting</h2>
@@ -31,118 +24,141 @@
                 <div class="card-body">
                     <div class="row gx-5">
                         <%-include("../../views/partials/user/profileAside")%>
-                        <div class="col-lg-9">
-                            <section class="content-body p-xl-4">
-                                <form id="userForm" enctype="multipart/form-data" onsubmit="submitForm(event)">
-                                    <div class="row">
-                                        <div class="col-lg-8">
-                                            <div class="row gx-3">
-                                                <div class="col-6 mb-3">
-                                                    <label class="form-label">First name</label>
-                                                    <input class="form-control" value="<%=user.name%>" name="name"
-                                                        type="text" placeholder="Type here" />
+                            <div class="col-lg-9">
+                                <section class="content-body p-xl-4">
+                                    <form id="userForm" enctype="multipart/form-data" onsubmit="submitForm(event)">
+                                        <div class="row">
+                                            <div class="col-lg-8">
+                                                <div class="row gx-3">
+                                                    <div class="col-6 mb-3">
+                                                        <label class="form-label">First name</label>
+                                                        <input class="form-control" value="<%=user.name%>" name="name"
+                                                            id="firstName" type="text" placeholder="Type here" />
+                                                        <span id="firstNameError" class="text-danger"
+                                                            style="font-size: 0.9rem;"></span>
+                                                    </div>
+                                                    <div class="col-6 mb-3">
+                                                        <label class="form-label">Last name</label>
+                                                        <input class="form-control" value="<%=user.lastName%>"
+                                                            name="lastName" id="lastName" type="text"
+                                                            placeholder="Type here" />
+                                                        <span id="lastNameError" class="text-danger"
+                                                            style="font-size: 0.9rem;"></span>
+                                                    </div>
+                                                    <div class="col-lg-6 mb-3">
+                                                        <label class="form-label">Phone</label>
+                                                        <input class="form-control" value="<%=user.phone%>" name="phone"
+                                                            id="phone" type="tel" placeholder="+1234567890" />
+                                                        <span id="phoneError" class="text-danger"
+                                                            style="font-size: 0.9rem;"></span>
+                                                    </div>
                                                 </div>
-                                                <!-- col .// -->
-                                                <div class="col-6 mb-3">
-                                                    <label class="form-label">Last name</label>
-                                                    <input class="form-control" value="<%=user.lastName%>"
-                                                        name="lastName" type="text" placeholder="Type here" />
-                                                </div>
-                                                <!-- col .// -->
-                                                <div class="col-lg-6 mb-3">
-                                                    <label class="form-label">Email</label>
-                                                    <input class="form-control" disabled value="<%=user.email%>"
-                                                        type="email" placeholder="example@mail.com" />
-                                                </div>
-                                                <!-- col .// -->
-                                                <div class="col-lg-6 mb-3">
-                                                    <label class="form-label">Phone</label>
-                                                    <input class="form-control" value="<%=user.phone%>" name="phone"
-                                                        type="tel" placeholder="+1234567890" />
-                                                </div>
-
-                                                <!-- col .// -->
                                             </div>
-                                            <!-- row.// -->
                                         </div>
-                                        <!-- col.// -->
-
-                                        <!-- col.// -->
+                                        <br />
+                                        <button class="btn btn-primary" type="submit">Save changes</button>
+                                    </form>
+                                    <hr class="my-5" />
+                                    <div class="row" style="max-width: 920px">
+                                        <div class="col-md">
+                                            <article class="box mb-3 bg-light">
+                                                <a class="btn float-end btn-light btn-sm rounded font-md"
+                                                    href="/changePassword">Change</a>
+                                                <h6>Password</h6>
+                                                <small class="text-muted d-block" style="width: 70%">You can reset or
+                                                    change
+                                                    your password by clicking here</small>
+                                            </article>
+                                        </div>
+                                        <div class="col-md">
+                                        </div>
                                     </div>
-                                    <!-- row.// -->
-                                    <br />
-                                    <button class="btn btn-primary" type="submit">Save changes</button>
-                                </form>
-                                <hr class="my-5" />
-                                <div class="row" style="max-width: 920px">
-                                    <div class="col-md">
-                                        <article class="box mb-3 bg-light">
-                                            <a class="btn float-end btn-light btn-sm rounded font-md"
-                                                href="/changePassword">Change</a>
-                                            <h6>Password</h6>
-                                            <small class="text-muted d-block" style="width: 70%">You can reset or change
-                                                your password by clicking here</small>
-                                        </article>
-                                    </div>
-                                    <!-- col.// -->
-                                    <div class="col-md">
-                                
-                                    </div>
-                                    <!-- col.// -->
-                                </div>
-                                <!-- row.// -->
-                            </section>
-                            <!-- content-body .// -->
-                        </div>
-                        <!-- col.// -->
+                                </section>
+                            </div>
                     </div>
-                    <!-- row.// -->
                 </div>
-                <!-- card body end// -->
             </div>
-            <!-- card end// -->
         </section>
-        <!-- content-main end// -->
-
-
         <script src="assets/js/vendors/jquery-3.6.0.min.js"></script>
         <script src="assets/js/vendors/bootstrap.bundle.min.js"></script>
         <script src="assets/js/vendors/select2.min.js"></script>
         <script src="assets/js/vendors/perfect-scrollbar.js"></script>
         <script src="assets/js/vendors/jquery.fullscreen.min.js"></script>
-        <!-- Main Script -->
         <script src="assets/js/main.js?v=1.1" type="text/javascript"></script>
-
     </body>
 
     <%-include("../../views/partials/user/footer")%>
 
         <script>
-            
+
             async function submitForm(event) {
                 event.preventDefault();
-                const formData = new FormData(document.getElementById('userForm'));
+
+                const firstNameInput = document.getElementById('firstName');
+                const lastNameInput = document.getElementById('lastName');
+                const phoneInput = document.getElementById('phone');
+
+                const firstNameError = document.getElementById('firstNameError');
+                const lastNameError = document.getElementById('lastNameError');
+                const phoneError = document.getElementById('phoneError');
+
+                const firstName = firstNameInput.value.trim();
+                const lastName = lastNameInput.value.trim();
+                const phone = phoneInput.value.trim();
+
+                // Regular Expressions for Validation
+                const namePattern = /^[A-Za-z]{2,}$/; // Only alphabets, minimum 2 characters
+                const lastNamePattern = /^[A-Za-z]{1,}$/; // Only alphabets, minimum 2 characters
+                const phonePattern = /^[0-9]{10}$/; // Exactly 10 digits
+
+                let isValid = true;
+
+                // Clear previous error messages
+                firstNameError.textContent = '';
+                lastNameError.textContent = '';
+                phoneError.textContent = '';
+
+                // Validation Checks
+                if (!namePattern.test(firstName)) {
+                    firstNameError.textContent = 'First name must contain only alphabets and be at least 2 characters long.';
+                    isValid = false;
+                }
+
+                if (!lastNamePattern.test(lastName)) {
+                    lastNameError.textContent = 'Last name must contain only alphabets and be at least 1 characters long.';
+                    isValid = false;
+                }
+                if (!phonePattern.test(phone)) {
+                    phoneError.textContent = 'Phone number must be exactly 10 digits long and contain only numbers.';
+                    isValid = false;
+                }
+                // Stop submission if validation fails
+                if (!isValid) {
+                    return;
+                }
+                // If validation passes, proceed to submit
                 try {
                     const response = await fetch('/saveUserData', {
                         method: 'POST',
-                        body: formData
-                    })
+                        body: new FormData(document.getElementById('userForm')),
+                    });
                     const result = await response.json();
+
                     if (response.ok) {
                         swal({
                             icon: 'success',
                             title: 'Saved!',
-                            text: 'The user data have been updated successfully',
+                            text: 'The user data have been updated successfully.',
                             confirmButtonText: 'OK',
                         }).then(() => {
                             location.reload();
                         });
                     } else {
-                        swal('Error', result.message || "Failed to Update User Data", 'error');
+                        swal('Error', result.message || 'Failed to update user data', 'error');
                     }
                 } catch (error) {
-                    console.error('Error updating user Data', error);
-                    swal("Error", 'An unexpected error occured while updating user Data', 'error');
+                    console.error('Error updating user data', error);
+                    swal('Error', 'An unexpected error occurred while updating user data.', 'error');
                 }
             }
 

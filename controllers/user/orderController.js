@@ -64,10 +64,10 @@ const placeOrder = async (req, res) => {
         }
 
         const totalAmount = cartItems.items.reduce((total, item) => total + (item.productId.salePrice * item.quantity), 0);
-
+        let coupon;
         let discount = 0;
         if (couponCode) {
-            const coupon = await Coupon.findOne({ code: couponCode });
+             coupon = await Coupon.findOne({ code: couponCode });
             if (!coupon) {
                 return res.status(400).json({ success: false, message: 'Invalid coupon code.' });
             }
@@ -82,9 +82,6 @@ const placeOrder = async (req, res) => {
 
             discount = coupon.discountType === 'percentage' ? (totalAmount * coupon.discountValue) / 100
                 : Math.min(coupon.discountValue, totalAmount-1);
-
-            user.usedCoupons.push(coupon._id);
-            await user.save();
         }
 
         const finalAmount = Number((totalAmount - discount).toFixed(2));
@@ -190,7 +187,10 @@ const placeOrder = async (req, res) => {
                 walletBalance: wallet.balance,
             });
         }
-
+        if (couponCode) {
+            user.usedCoupons.push(coupon._id);
+            await user.save();
+        }
         await Cart.findOneAndUpdate({ userId: user._id }, { $set: { items: [] } });
 
     } catch (error) {
@@ -455,17 +455,49 @@ const invoiceGenerate = async (req, res) => {
 };
 
 const cancelSingle = async(req,res) =>{
-
+    const user = req.session.user;
     const {productId,orderId} = req.params;
     try {
-        const order = await Order.findByIdAndUpdate({_id:orderId},{$pull:{items:{productId:productId}}},{ new: true });
+        const order = await Order.findById({_id:orderId});
+        let newOrder
         if(order){
-            const totalAmount = order.items.reduce((total, item) => total + (item.price * item.quantity), 0)
-            const discount = Math.min(order.discount||0, totalAmount-1)
-            order.totalAmount=totalAmount;
-            order.discount = discount;
-            order.finalAmount = totalAmount-discount;
-            await order.save();
+            if(order.items.length>1){
+                newOrder = await Order.findByIdAndUpdate({_id:orderId},{$pull:{items:{productId:productId}}},{ new: true });
+            }else{
+                newOrder = await Order.findByIdAndUpdate(
+                    orderId,
+                    { status: 'Cancelled',paymentStatus:'Refunded' },
+                    { new: true }
+                );
+            }
+            const totalAmount = newOrder.items.reduce((total, item) => total + (item.price * item.quantity), 0)
+            const discount = Math.min(newOrder.discount||0, totalAmount-1)
+            newOrder.totalAmount=totalAmount;
+            newOrder.discount = discount;
+            newOrder.finalAmount = totalAmount-discount;
+            await newOrder.save();
+            if(order.paymentStatus=='Paid'){
+                const wallet = await Wallet.findOne({ userId: user._id });
+                if (!wallet) {
+                    const wallet = new Wallet({
+                        order: updatedOrder._id,
+                        userId: user._id,
+                        balance: 0,
+                        transactions: [],
+                    });
+                }
+                const refundAmount = order.finalAmount-newOrder.finalAmount;
+                wallet.balance += refundAmount;
+                wallet.transactions.unshift({
+                    order: newOrder._id,
+                    orderId: newOrder.orderId,
+                    type: 'refund',
+                    amount: refundAmount,
+                    description: `Refund for cancelled order #${newOrder._id}`,
+                    date: new Date(),
+                });
+                await wallet.save();
+            }
             return res.status(200).json({success:true,message:"Successfully cancelled product"})
         }
         res.status(400).json({success:false,message:'failed to cancell'});

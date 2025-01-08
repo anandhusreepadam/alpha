@@ -221,10 +221,12 @@
                                 </p>
                             </div>
                             <div class="d-flex justify-content-between">
+                                <%if(order.status=='Pending'){%>
                                 <button class="btn btn-danger"
                                 onclick="cancelSingle('<%= order._id %>','<%= item.productId._id %>')">
                                 Cancel
                                 </button>
+                                <%}%>
                             </div>
                         </div>
                     </div>
@@ -438,6 +440,9 @@
                     const result = await response.json()
                     if(response.ok){
                         Swal.fire('success','Product Cancelled successfully','success')
+                        .then(()=>{
+                            location.reload();
+                        })
                     }else{
                         Swal.fire('error',result.message,'error')
                     }

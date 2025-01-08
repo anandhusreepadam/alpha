@@ -1,8 +1,28 @@
 <%- include("../../views/partials/user/header") %>
 
+    <br>
+    <br>
 
-    <br>
-    <br>
+    <style>
+        .clear-icon {
+            top: 50%;
+            right: 52%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: #aaa;
+            cursor: pointer;
+            display: none;
+        }
+
+        .clear-icon:hover {
+            color: #000;
+        }
+
+        .position-relative input {
+            padding-right: 30px;
+        }
+    </style>
+
     <div class="container bg0 p-t-75 p-b-85">
         <!-- Breadcrumb Navigation -->
         <nav>
@@ -19,9 +39,7 @@
         <div class="row">
             <!-- Left Section: Address Form & Saved Address Selection -->
             <div class="col-lg-7">
-
                 <h4 class="mtext-109 cl2 p-b-30">Shipping Address</h4>
-
                 <!-- Address Form -->
                 <form id="addressForm" class="mb-4">
                     <div class="row gx-3 mb-3">
@@ -79,9 +97,7 @@
                     <button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer mt-4"
                         type="submit" id="submitAddress">Save Address</button>
                 </form>
-
                 <hr>
-
                 <!-- Select Saved Address -->
                 <h5>Or, Select Saved Address</h5>
                 <% if (addresses.length===0) { %>
@@ -115,7 +131,6 @@
                                 <% }); %>
                         </div>
                         <% } %>
-
                             <h5 class="mt-4">Payment Method</h5>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="COD"
@@ -147,26 +162,6 @@
                     <div id="couponMessage" class="text-danger"></div>
                 </div>
 
-                <style>
-                    .clear-icon {
-                        top: 50%;
-                        right: 52%;
-                        transform: translateY(-50%);
-                        font-size: 18px;
-                        color: #aaa;
-                        cursor: pointer;
-                        display: none;
-                    }
-
-                    .clear-icon:hover {
-                        color: #000;
-                    }
-
-                    .position-relative input {
-                        padding-right: 30px;
-                    }
-                </style>
-
                 <div class="bor10 p-lr-40 p-t-30 p-b-40">
                     <h4 class="mtext-109 cl2 p-b-30">Cart Totals</h4>
                     <div class="flex-w flex-t bor12 p-b-13">
@@ -174,7 +169,7 @@
                             <span class="stext-110 cl2">Subtotal:</span>
                         </div>
                         <div class="size-209">
-                            <span id="subTotal" class="mtext-110 cl2">₹<%= cart.items.reduce((total, item)=> total +
+                            <span id="subTotal" class="mtext-110 cl2">₹<%= cart.items.reduce((total, item)=> total + 
                                     (item.productId.salePrice * item.quantity), 0).toFixed(2) %></span>
                         </div>
                     </div>
