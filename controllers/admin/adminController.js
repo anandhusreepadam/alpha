@@ -6,8 +6,6 @@ const ExcelJS = require('exceljs');
 const bcrypt = require('bcrypt');
 
 
-
-
 const pageError = async (req, res) => {
     try {
         return res.render('admin-error')
