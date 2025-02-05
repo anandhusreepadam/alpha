@@ -22,7 +22,6 @@ const orderController = require('../controllers/admin/orderController');
 const stockController = require('../controllers/admin/stockController');
 const couponController = require('../controllers/admin/couponController');
 
-
 //Admin Routes
 router.get('/pageError',adminController.pageError)
 router.get('/login',adminController.loadLogin)
