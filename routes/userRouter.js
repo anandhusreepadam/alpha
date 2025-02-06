@@ -5,7 +5,6 @@ const { userAuth, profileAuth ,signupAuth} = require('../middlewares/auth');
 const multer = require('multer');
 const upload = multer();
 
-
 //Controllers
 const userController = require('../controllers/user/userController');
 const profileController = require('../controllers/user/profileController');
@@ -21,7 +20,6 @@ const working = (req,res,next)=>{
 console.log('Route is working fine');
 next();
 }
-
 
 ////404
 router.get('/pageNotFound',userAuth,userController.pageNotFound);
