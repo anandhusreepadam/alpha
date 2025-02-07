@@ -24,7 +24,6 @@ next();
 ////404
 router.get('/pageNotFound',userAuth,userController.pageNotFound);
 
-
 ///Load Authentication pages
 router.get('/login',userController.loadLogin);
 router.post('/login',userController.login);
