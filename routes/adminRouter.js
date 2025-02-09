@@ -83,7 +83,6 @@ router.get('/coupons',adminAuth,couponController.loadCoupons);
 router.post('/coupons',adminAuth,couponController.createCoupon);
 router.delete('/coupons/:id',adminAuth,couponController.deleteCoupon)
 
-
 //Report
 router.get('/report',adminAuth,adminController.loadReport);
 router.post('/salesReport',adminController.salesReport);
