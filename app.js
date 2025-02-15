@@ -10,7 +10,6 @@ const adminRouter = require('./routes/adminRouter');
 const db = require('./config/db');
 db();
 
-
 app.use(express.static('public'))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
